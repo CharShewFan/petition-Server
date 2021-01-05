@@ -29,3 +29,4 @@ typings/
 # For petition site
 storage/photos/*
 !storage/photos/.gitkeep
+.DS_Store
