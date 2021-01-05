@@ -25,8 +25,8 @@ typings/
 *.tgz
 .yarn-integrity
 .env
+.DS_Store
 
 # For petition site
 storage/photos/*
 !storage/photos/.gitkeep
-.DS_Store
