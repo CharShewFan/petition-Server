@@ -31,7 +31,9 @@ INSERT INTO `event`(`id`, `title`, `description`, `date`, `image_name`, `is_onli
 INSERT INTO `event`(`id`, `title`, `description`, `date`, `image_name`, `is_online`, `url`, `venue`, `capacity`, `requires_attendance_control`, `fee`, `organizer_id`) VALUES ( 2, 'Pigeon Bay Walkway', 'Meet outside the Pigeon Bay Yacht Club at 10am. Pigeon Bay is about an hour and a half from Christchurch. There is no public transport there. We are also car pooling from Princess Margaret Hospital at 8.15 on the day, so be there if interested. Meet opposite the bus stop directly in front of PMH, but on the side where the river is. \n \n Bring a packed lunch and plenty of water, suitable clothing and sturdy shoes. The track is exposed, so bring sunscreen. \n \n 4-5 hours return. Easy/moderate grade. \n \n Description \n This walkway follows the eastern side of Pigeon bay out to the head of the bay. There are several stiles to cross fences, but the track is a slight incline from sea level up to the end point.\n \n Pigeon Bay Walkway features spectacular coastal views, titoki trees, akeake, and native passion vine/kohia at their southern limits. \n \n It is well signposted and follows a grassy vehicle track of easy grade. \n \n Getting there \n Follow Akaroa Highway to Hilltop, then turn left along Summit Road to the Pigeon Bay Road turnoff. Follow this road to the coast, turn right on to Wharf Road. The walking track starts at the end of Wharf Road, by the yacht club building. \n \n No Dogs. \n Know before you go \n There is significant fall risk at the end of the track. Take care. \n The walkway travels over private land. Be respectful of the farming operations. \n No camping or mountain biking.', '2021-11-22 08:15', 'event_2.jpg', 0, null, 'Rua 123', null, 0, 5.23, 1 );
 INSERT INTO `event`(`id`, `title`, `description`, `date`, `image_name`, `is_online`, `url`, `venue`, `capacity`, `requires_attendance_control`, `fee`, `organizer_id`) VALUES ( 3, 'Beginner JavaScript', 'Learn to be a JavaScript whiz in 2 hours at our Zoom meetup.', '2021-05-06 15:00:00', 'event_3.jpg', 1, 'https://zoom.us/javascript-training-xyz', null, 25, 1, 0.00, 2); 
 INSERT INTO `event`(`id`, `title`, `description`, `date`, `image_name`, `is_online`, `url`, `venue`, `capacity`, `requires_attendance_control`, `fee`, `organizer_id`) VALUES ( 4, 'Ethics for Dummies', 'Eat some moral desserts with the all time Ethics greats including Kant, Locke, and Thomas Aquinas.', '2021-05-10 12:00:00', 'event_4.jpg', 0, null, 'Chidi\'s office', 6, 1, 0.00, 9); 
-INSERT INTO `event`(`id`, `title`, `description`, `date`, `image_name`, `is_online`, `url`, `venue`, `capacity`, `requires_attendance_control`, `fee`, `organizer_id`) VALUES ( 5, 'Games night!', 'Come join us for a night of fun card and board games. Food and drinks are available for order if you want (but not required).\n We'll start at 6:30 with a few lighter games and then move into the main event board games after 7.', '2021-06-01 18:30:00', 'event_5.jpg', 0, null, 'Matuku Takotako: Sumner Centre\n14-16 Wakefield Avenue, Sumner\nChristchurch 8081', 20, 1, 0.00, 6);
+INSERT INTO `event`(`id`, `title`, `description`, `date`, `image_name`, `is_online`, `url`, `venue`, `capacity`, `requires_attendance_control`, `fee`, `organizer_id`) VALUES ( 5, 'Games night!', 'Come join us for a night of fun card and board games. Food and drinks are available for order if you want (but not required).\n We\'ll start at 6:30 with a few lighter games and then move into the main event board games after 7.', '2021-06-01 18:30:00', 'event_5.jpg', 0, null, 'Matuku Takotako: Sumner Centre\n14-16 Wakefield Avenue, Sumner\nChristchurch 8081', 20, 1, 0.00, 6);
+INSERT INTO `event`(`id`, `title`, `description`, `date`, `image_name`, `is_online`, `url`, `venue`, `capacity`, `requires_attendance_control`, `fee`, `organizer_id`) VALUES ( 6, 'VIP party', 'Expensive party with a huge jumbo shrimp cocktail.', '2021-07-01 22:30:00', 'event_6.gif', 0, null, 'The big house', 100, 1, 1000.00, 10);
+
 INSERT INTO `event_category`(`id`, `event_id`, `category_id`) VALUES ( 1, 1, 3 );
 INSERT INTO `event_category`(`id`, `event_id`, `category_id`) VALUES ( 2, 1, 6 );
 INSERT INTO `event_category`(`id`, `event_id`, `category_id`) VALUES ( 3, 1, 18 );
@@ -47,6 +49,9 @@ INSERT INTO `event_category`(`id`, `event_id`, `category_id`) VALUES ( 12, 4, 6 
 INSERT INTO `event_category`(`id`, `event_id`, `category_id`) VALUES ( 13, 4, 16 );
 INSERT INTO `event_category`(`id`, `event_id`, `category_id`) VALUES ( 14, 5, 15 );
 INSERT INTO `event_category`(`id`, `event_id`, `category_id`) VALUES ( 15, 5, 21 );
+INSERT INTO `event_category`(`id`, `event_id`, `category_id`) VALUES ( 16, 6, 8 );
+INSERT INTO `event_category`(`id`, `event_id`, `category_id`) VALUES ( 17, 6, 19 );
+INSERT INTO `event_category`(`id`, `event_id`, `category_id`) VALUES ( 18, 6, 23 );
 
 INSERT INTO `event_attendees`(`id`, `event_id`, `user_id`, `attendance_status_id`) VALUES ( 1, 1, 1, 1 );
 INSERT INTO `event_attendees`(`id`, `event_id`, `user_id`, `attendance_status_id`) VALUES ( 2, 1, 2, 1 );
@@ -69,6 +74,22 @@ INSERT INTO `event_attendees`(`id`, `event_id`, `user_id`, `attendance_status_id
 INSERT INTO `event_attendees`(`id`, `event_id`, `user_id`, `attendance_status_id`) VALUES ( 19, 5, 11, 1 );
 INSERT INTO `event_attendees`(`id`, `event_id`, `user_id`, `attendance_status_id`) VALUES ( 20, 5, 12, 1 );
 INSERT INTO `event_attendees`(`id`, `event_id`, `user_id`, `attendance_status_id`) VALUES ( 21, 5, 7, 1 );
-INSERT INTO `event_attendees`(`id`, `event_id`, `user_id`, `attendance_status_id`) VALUES ( 21, 5, 8, 1 );
-INSERT INTO `event_attendees`(`id`, `event_id`, `user_id`, `attendance_status_id`) VALUES ( 21, 5, 6, 1 );
-INSERT INTO `event_attendees`(`id`, `event_id`, `user_id`, `attendance_status_id`) VALUES ( 21, 5, 9, 1 );
+INSERT INTO `event_attendees`(`id`, `event_id`, `user_id`, `attendance_status_id`) VALUES ( 22, 5, 8, 1 );
+INSERT INTO `event_attendees`(`id`, `event_id`, `user_id`, `attendance_status_id`) VALUES ( 23, 5, 6, 1 );
+INSERT INTO `event_attendees`(`id`, `event_id`, `user_id`, `attendance_status_id`) VALUES ( 24, 5, 9, 1 );
+INSERT INTO `event_attendees`(`id`, `event_id`, `user_id`, `attendance_status_id`) VALUES ( 25, 6, 9, 1 );
+INSERT INTO `event_attendees`(`id`, `event_id`, `user_id`, `attendance_status_id`) VALUES ( 26, 6, 8, 1 );
+INSERT INTO `event_attendees`(`id`, `event_id`, `user_id`, `attendance_status_id`) VALUES ( 27, 6, 11, 1 );
+INSERT INTO `event_attendees`(`id`, `event_id`, `user_id`, `attendance_status_id`) VALUES ( 28, 6, 1, 3 );
+INSERT INTO `event_attendees`(`id`, `event_id`, `user_id`, `attendance_status_id`) VALUES ( 29, 6, 2, 3 );
+INSERT INTO `event_attendees`(`id`, `event_id`, `user_id`, `attendance_status_id`) VALUES ( 30, 6, 3, 3 );
+INSERT INTO `event_attendees`(`id`, `event_id`, `user_id`, `attendance_status_id`) VALUES ( 31, 6, 4, 3 );
+INSERT INTO `event_attendees`(`id`, `event_id`, `user_id`, `attendance_status_id`) VALUES ( 32, 6, 5, 3 );
+INSERT INTO `event_attendees`(`id`, `event_id`, `user_id`, `attendance_status_id`) VALUES ( 33, 6, 6, 3 );
+INSERT INTO `event_attendees`(`id`, `event_id`, `user_id`, `attendance_status_id`) VALUES ( 34, 6, 12, 2 );
+INSERT INTO `event_attendees`(`id`, `event_id`, `user_id`, `attendance_status_id`) VALUES ( 35, 6, 13, 2 );
+INSERT INTO `event_attendees`(`id`, `event_id`, `user_id`, `attendance_status_id`) VALUES ( 36, 6, 14, 2 );
+INSERT INTO `event_attendees`(`id`, `event_id`, `user_id`, `attendance_status_id`) VALUES ( 37, 6, 15, 2 );
+INSERT INTO `event_attendees`(`id`, `event_id`, `user_id`, `attendance_status_id`) VALUES ( 38, 6, 16, 2 );
+
+

@@ -18,7 +18,6 @@ CREATE TABLE `user` (
   `id`          int(11)       NOT NULL AUTO_INCREMENT,
   `email`       varchar(128)  NOT NULL,
   `first_name`  varchar(64)   NOT NULL,
-  `mid_name`    varchar(64)   DEFAULT NULL,
   `last_name`   varchar(64)   NOT NULL,
   `image_name`  varchar(64)   DEFAULT NULL,
   `password`    varchar(256)  NOT NULL COMMENT 'Only store the hash here, not the actual password!',
@@ -84,6 +83,7 @@ CREATE TABLE `event_attendees` (
   `event_id`             int(11)    NOT NULL,
   `user_id`              int(11)    NOT NULL,
   `attendance_status_id` int(11)    DEFAULT NULL,
+  `date_of_interest`     DATETIME   NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
   PRIMARY KEY (`id`),
   UNIQUE KEY (`event_id`, `user_id`),
