@@ -80,9 +80,9 @@ paths:
 
             * DATE_DESC: date, from latest to earliest
 
-            * ATTENDEES_ASC: the number of signed up attendees, from least to most
+            * ATTENDEES_ASC: the number of signed up (approved) attendees, from least to most
 
-            * ATTENDEES_DESC: the number of signed up attendees, from most to least
+            * ATTENDEES_DESC: the number of signed up (approved) attendees, from most to least
 
             Note: how ties (e.g. two events with 10 attendees each) are decided is undocumented behaviour, although it should be consistent each time.
           schema:
@@ -106,6 +106,9 @@ paths:
       summary: Add a new event.
       description: >-
         The elements of the category ids array `categoryIds` must each reference an existing category.
+        
+        
+        `title`, `description`, and `categoryIds` are required, other properties are optional.
       security:
         - UserToken: []
       requestBody:
@@ -124,10 +127,22 @@ paths:
                     $ref: '#/components/schemas/Category/properties/categoryId'
                 date:
                   $ref: '#/components/schemas/DateTimeInput'
+                isOnline:
+                  $ref: '#/components/schemas/Event/properties/isOnline'
+                url:
+                  $ref: '#/components/schemas/Event/properties/url'
+                venue:
+                  $ref: '#/components/schemas/Event/properties/venue'
+                capacity:
+                  $ref: '#/components/schemas/EventOverview/properties/capacity'
+                requiresAttendanceControl:
+                  $ref: '#/components/schemas/Event/properties/requiresAttendanceControl'
+                fee:
+                  $ref: '#/components/schemas/Event/properties/fee'
               required:
                 - title
                 - description
-                - categoryId
+                - categoryIds
       responses:
         '201':
           description: Created
@@ -172,7 +187,7 @@ paths:
         - events
       summary: Change an event's details.
       description: >-
-        Only accessible to the organizer of the event. The `categoryIds` must reference an existing category.
+        Only accessible to the organizer of the event. If updated, the `categoryIds` must each reference an existing category.
 
 
         Not accessible after the event has happened (i.e. the date is in the past).
@@ -194,6 +209,18 @@ paths:
                     $ref: '#/components/schemas/Category/properties/categoryId'
                 date:
                   $ref: '#/components/schemas/DateTimeInput'
+                isOnline:
+                  $ref: '#/components/schemas/Event/properties/isOnline'
+                url:
+                  $ref: '#/components/schemas/Event/properties/url'
+                venue:
+                  $ref: '#/components/schemas/Event/properties/venue'
+                capacity:
+                  $ref: '#/components/schemas/EventOverview/properties/capacity'
+                requiresAttendanceControl:
+                  $ref: '#/components/schemas/Event/properties/requiresAttendanceControl'
+                fee:
+                  $ref: '#/components/schemas/Event/properties/fee'
       responses:
         '200':
           description: OK
@@ -321,8 +348,7 @@ paths:
         - events.attendees
       summary: Retrieve an event's attendees.
       description: >-
-        The attendees are returned in chronological order (from earliest to
-        latest).
+        The attendees are returned in chronological order of `dateOfInterest` (from earliest to latest). **Only *accepted* attendees** are returned unless the currently authenticated user is the organizer of the event. The only exception to this is if the authenticated user is **pending** or **rejected** from the event, in which case the current user is also returned.
       responses:
         '200':
           description: OK
@@ -366,6 +392,52 @@ paths:
       responses:
         '200':
           description: OK
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+        '500':
+          description: Internal Server Error
+  '/events/{event_id}/attendees/{attendee_id}':
+    parameters:
+      - name: event_id
+        description: ID of the event.
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/EventOverview/properties/eventId'
+      - name: attendee_id
+        description: ID of the user.
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/FullUser/properties/userId'
+    patch:
+      tags:
+        - events.attendees
+      summary: Change the status of an attendee of an event.
+      description: >-
+        Only the organizer of the event (as the currently authenticated user) can change the status of an attendee.
+        
+        
+        `status` must be one of: "accepted", "pending", or "rejected".
+      security:
+        - UserToken: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              title: ChangeAttendeeRequest
+              properties:
+                status:
+                  $ref: '#/components/schemas/AttendeeStatus'
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Bad Request
         '401':
           description: Unauthorized
         '403':
@@ -722,12 +794,32 @@ components:
       properties:
         description:
           type: string
-          example: Pizza party on campus.
+          example: Pizza party to celebrate the nice weather.
         organizerId:
           $ref: '#/components/schemas/FullUser/properties/userId'
         date:
           allOf:
             - $ref: '#/components/schemas/DateTimeOutput'
+          nullable: true
+        isOnline:
+          type: boolean
+          example: false
+          nullable: true
+        url:
+          type: string
+          example: http://example.com
+          nullable: true
+        venue:
+          type: string
+          example: Town Hall
+          nullable: true
+        requiresAttendanceControl:
+          type: boolean
+          example: true
+          nullable: true
+        fee:
+          type: number
+          example: 10.00
           nullable: true
     EventOverview:
       title: EventOverview
@@ -748,9 +840,11 @@ components:
           $ref: '#/components/schemas/User/properties/firstName'
         organizerLastName:
           $ref: '#/components/schemas/User/properties/lastName'
-        attendeeCount:
+        capacity:
           type: integer
-          example: 42
+          minimum: 1
+          example: 100
+          nullable: true
     Category:
       title: Category
       type: object
@@ -802,12 +896,22 @@ components:
       properties:
         attendeeId:
           $ref: '#/components/schemas/FullUser/properties/userId'
+        status:
+          $ref: '#/components/schemas/AttendeeStatus'
         firstName:
           $ref: '#/components/schemas/User/properties/firstName'
         lastName:
           $ref: '#/components/schemas/User/properties/lastName'
-        date:
+        dateOfInterest:
           $ref: '#/components/schemas/DateTimeOutput'
+    AttendeeStatus:
+      title: AttendeeStatus
+      type: string
+      enum:
+        - accepted
+        - pending
+        - rejected
+      example: accepted
     DateTimeInput:
       title: DateTimeInput
       description: >-
@@ -851,6 +955,7 @@ components:
           type: integer
     SqlResultSet:
       type: array
+      items: {}
   securitySchemes:
     UserToken:
       type: apiKey
