@@ -1,8 +1,8 @@
 const db = require('../../config/db');
 const fs = require('mz/fs');
 
-const photoDirectory = './storage/photos/';
-const defaultPhotoDirectory = './storage/default/';
+const imageDirectory = './storage/images/';
+const defaultImageDirectory = './storage/default/';
 
 exports.resetDb = async function () {
     let promises = [];
@@ -10,12 +10,12 @@ exports.resetDb = async function () {
     const sql = await fs.readFile('app/resources/create_database.sql', 'utf8');
     promises.push(db.getPool().query(sql));  // sync call to recreate DB
 
-    const files = await fs.readdir(photoDirectory);
+    const files = await fs.readdir(imageDirectory);
     for (const file of files) {
-        if (file !== '.gitkeep') promises.push(fs.unlink(photoDirectory + file));  // sync call to delete photo
+        if (file !== '.gitkeep') promises.push(fs.unlink(imageDirectory + file));  // sync call to delete image
     }
 
-    return Promise.all(promises);  // async wait for DB recreation and photos to be deleted
+    return Promise.all(promises);  // async wait for DB recreation and images to be deleted
 };
 
 exports.loadData = async function () {
@@ -28,8 +28,8 @@ exports.loadData = async function () {
         throw err;
     }
 
-    const defaultPhotos = await fs.readdir(defaultPhotoDirectory);
-    const promises = defaultPhotos.map(file => fs.copyFile(defaultPhotoDirectory + file, photoDirectory + file));
+    const defaultImages = await fs.readdir(defaultImageDirectory);
+    const promises = defaultImages.map(file => fs.copyFile(defaultImageDirectory + file, imageDirectory + file));
     return Promise.all(promises);
 };
 
@@ -39,8 +39,7 @@ exports.loadData = async function () {
  * @returns {Promise<void>}
  */
 async function populateDefaultUsers() {
-    const createSQL = `INSERT INTO user (email, first_name, mid_name, last_name, image_name)
-                       VALUES ?`;
+    const createSQL = 'INSERT INTO `user` (`first_name`, `last_name`, `email`, `password`, `image_filename`) VALUES ?';
     let {properties, usersData} = require('../resources/default_users');
 
     // Shallow copy all the user arrays within the main data array

@@ -48,7 +48,7 @@ paths:
             $ref: '#/components/schemas/EventSearchRequest/properties/count'
         - in: query
           name: q
-          description: Only include events that have the search term within their title.
+          description: Only include events that have the search term within their title or description.
           schema:
             $ref: '#/components/schemas/EventSearchRequest/properties/q'
         - in: query
@@ -109,6 +109,9 @@ paths:
         
         
         `title`, `description`, and `categoryIds` are required, other properties are optional.
+        
+        
+        The event `date` must be in the future.
       security:
         - UserToken: []
       requestBody:
@@ -386,7 +389,7 @@ paths:
         - events.attendees
       summary: Remove an attendee from an event.
       description: >-
-        A user cannot remove themselves as an attendee from an event they haven't joined, from an event they are organizer of, or from an event from the past.
+        A user cannot remove themselves as an attendee from an event they haven't joined or from an event from the past. They also cannot remove themselves from an event if their `attendance_status` is `rejected`. This is to ensure that they do not remove themselves and re-register as an attendee.
       security:
         - UserToken: []
       responses:
@@ -400,7 +403,7 @@ paths:
           description: Not Found
         '500':
           description: Internal Server Error
-  '/events/{event_id}/attendees/{attendee_id}':
+  '/events/{event_id}/attendees/{user_id}':
     parameters:
       - name: event_id
         description: ID of the event.
@@ -408,7 +411,7 @@ paths:
         required: true
         schema:
           $ref: '#/components/schemas/EventOverview/properties/eventId'
-      - name: attendee_id
+      - name: user_id
         description: ID of the user.
         in: path
         required: true
@@ -429,10 +432,7 @@ paths:
         content:
           application/json:
             schema:
-              title: ChangeAttendeeRequest
-              properties:
-                status:
-                  $ref: '#/components/schemas/AttendeeStatus'
+              $ref: '#/components/schemas/ChangeAttendeeStatusRequest'
       responses:
         '200':
           description: OK
@@ -468,7 +468,8 @@ paths:
                 password:
                   $ref: '#/components/schemas/FullUser/properties/password'
               required:
-                - name
+                - firstName
+                - lastName
                 - email
                 - password
       responses:
@@ -884,8 +885,8 @@ components:
             - ALPHABETICAL_DESC
             - DATE_ASC
             - DATE_DESC
-            - ATTENDEES_ASC
-            - ATTENDEES_DESC
+            - CAPACITY_ASC
+            - CAPACITY_DESC
           default: DATE_DESC
         reverseSort:
           type: boolean
@@ -912,6 +913,12 @@ components:
         - pending
         - rejected
       example: accepted
+    ChangeAttendeeStatusRequest:
+      title: ChangeAttendeeStatusRequest
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/AttendeeStatus'
     DateTimeInput:
       title: DateTimeInput
       description: >-

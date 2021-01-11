@@ -1,5 +1,5 @@
 {
-  "properties": ["email", "first_name", "last_name", "image_name", "password"],
+  "properties": ["email", "first_name", "last_name", "image_filename", "password"],
   "usersData": [
     ["k@gmail.com", "Kristy", "Lincoln", null, "abc123"],
     ["a@gmail.com", "Amanda", "Faria", null, "abc234"],

@@ -4,12 +4,12 @@
 ### DROP EVERYTHING ###
 # Tables/views must be dropped in reverse order due to referential constraints (foreign keys).
 
-DROP TABLE IF EXISTS event_attendees;
-DROP TABLE IF EXISTS event_category;
-DROP TABLE IF EXISTS event;
-DROP TABLE IF EXISTS user;
-DROP TABLE IF EXISTS attendance_status;
-DROP TABLE IF EXISTS category;
+DROP TABLE IF EXISTS `event_attendees`;
+DROP TABLE IF EXISTS `event_category`;
+DROP TABLE IF EXISTS `event`;
+DROP TABLE IF EXISTS `user`;
+DROP TABLE IF EXISTS `attendance_status`;
+DROP TABLE IF EXISTS `category`;
 
 ### TABLES ###
 # Tables must be created in a particular order due to referential constraints i.e. foreign keys.
@@ -19,7 +19,7 @@ CREATE TABLE `user` (
   `email`       varchar(128)  NOT NULL,
   `first_name`  varchar(64)   NOT NULL,
   `last_name`   varchar(64)   NOT NULL,
-  `image_name`  varchar(64)   DEFAULT NULL,
+  `image_filename`  varchar(64)   DEFAULT NULL,
   `password`    varchar(256)  NOT NULL COMMENT 'Only store the hash here, not the actual password!',
   `auth_token`  varchar(256)  DEFAULT NULL,
 
@@ -33,7 +33,7 @@ CREATE TABLE `event` (
   `title`                       VARCHAR(128)  NOT NULL,
   `description`                 VARCHAR(2048) NOT NULL,
   `date`                        DATETIME      NOT NULL,
-  `image_name`                  VARCHAR(32)   NULL,
+  `image_filename`              VARCHAR(64)   NULL,
   `is_online`                   tinyint(1)    NOT NULL DEFAULT 0,
   `url`                         VARCHAR(128)  DEFAULT NULL,
   `venue`                       VARCHAR(512)  DEFAULT NULL,

@@ -27,6 +27,6 @@ typings/
 .env
 .DS_Store
 
-# For petition site
-storage/photos/*
-!storage/photos/.gitkeep
+# For event site
+storage/images/*
+!storage/images/.gitkeep

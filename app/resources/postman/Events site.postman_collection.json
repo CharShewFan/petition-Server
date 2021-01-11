@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "49551436-7ce1-4c71-9a77-6a574aa9c54b",
+		"_postman_id": "462823b9-b5bf-491a-9286-d0c384dd299d",
 		"name": "Events site",
 		"description": "Postman collection for events site, for SENG365-21S1.",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
@@ -93,8 +93,7 @@
 					},
 					"response": []
 				}
-			],
-			"protocolProfileBehavior": {}
+			]
 		},
 		{
 			"name": "events",
@@ -122,7 +121,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{BASE_URL}}/events?q=the&categoryId=7&organizerId=4&sortBy=DATE_ASC&count=5&startIndex=0",
+							"raw": "{{BASE_URL}}/events?q=the&categoryIds=6&categoryIds=11&organizerId=3&sortBy=DATE_ASC&count=5&startIndex=0",
 							"host": [
 								"{{BASE_URL}}"
 							],
@@ -135,12 +134,16 @@
 									"value": "the"
 								},
 								{
-									"key": "categoryId",
-									"value": "7"
+									"key": "categoryIds",
+									"value": "6"
+								},
+								{
+									"key": "categoryIds",
+									"value": "11"
 								},
 								{
 									"key": "organizerId",
-									"value": "4"
+									"value": "3"
 								},
 								{
 									"key": "sortBy",
@@ -165,7 +168,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "d26071fd-d793-4452-8de7-d0a3eec3f6b8",
 								"exec": [
 									"pm.test(\"Set event_id after creating an event\", function() {",
 									"    const eventId = pm.response.json().eventId;",
@@ -193,7 +195,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"title\": \"Film Club\",\n\t\"description\": \"Meetup with others to watch interesting movies.\",\n\t\"categoryIds\": [14,17,23],\n\t\"date\": \"2021-01-01 18:25:43.511\"\n}"
+							"raw": "{\n\t\"title\": \"Film Club\",\n\t\"description\": \"Meetup with others to watch interesting movies.\",\n    \"venue\": \"Haere-roa\",\n\t\"categoryIds\": [14,17,23],\n\t\"date\": \"2021-07-02 18:25:00\"\n}"
 						},
 						"url": {
 							"raw": "{{BASE_URL}}/events",
@@ -208,25 +210,43 @@
 					"response": []
 				},
 				{
-					"name": "GET /petitions/:id",
+					"name": "GET /events/:id (mine)",
 					"request": {
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{BASE_URL}}/petitions/9",
+							"raw": "{{BASE_URL}}/events/3",
 							"host": [
 								"{{BASE_URL}}"
 							],
 							"path": [
-								"petitions",
-								"9"
+								"events",
+								"3"
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "PATCH /petitions/:id (mine)",
+					"name": "GET /events/:id (someone else's)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/events/3",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"events",
+								"3"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PATCH /events/:id (mine)",
 					"request": {
 						"method": "PATCH",
 						"header": [
@@ -242,23 +262,23 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"title\": \"Keep Hawkins Lab open\",\n\t\"description\": \"They seem like cool people.\"\n}"
+							"raw": "{\n\t\"title\": \"Keep Hawkins Lab open\",\n\t\"description\": \"They seem like cool people.\",\n    \"categoryIds\": [5,6,7,8,9]\n}"
 						},
 						"url": {
-							"raw": "{{BASE_URL}}/petitions/{{petition_id}}",
+							"raw": "{{BASE_URL}}/events/{{event_id}}",
 							"host": [
 								"{{BASE_URL}}"
 							],
 							"path": [
-								"petitions",
-								"{{petition_id}}"
+								"events",
+								"{{event_id}}"
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "PATCH /petitions/:id (someone else's)",
+					"name": "PATCH /events/:id (someone else's)",
 					"request": {
 						"method": "PATCH",
 						"header": [
@@ -277,12 +297,12 @@
 							"raw": "{\n\t\"title\": \"hackerman waz here\"\n}"
 						},
 						"url": {
-							"raw": "{{BASE_URL}}/petitions/1",
+							"raw": "{{BASE_URL}}/events/1",
 							"host": [
 								"{{BASE_URL}}"
 							],
 							"path": [
-								"petitions",
+								"events",
 								"1"
 							]
 						}
@@ -290,7 +310,7 @@
 					"response": []
 				},
 				{
-					"name": "DELETE /petitions/:id (mine)",
+					"name": "DELETE /events/:id (mine)",
 					"request": {
 						"method": "DELETE",
 						"header": [
@@ -309,20 +329,20 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{BASE_URL}}/petitions/{{petition_id}}",
+							"raw": "{{BASE_URL}}/events/{{event_id}}",
 							"host": [
 								"{{BASE_URL}}"
 							],
 							"path": [
-								"petitions",
-								"{{petition_id}}"
+								"events",
+								"{{event_id}}"
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "DELETE /petitions/:id (someone else's)",
+					"name": "DELETE /events/:id (someone else's)",
 					"request": {
 						"method": "DELETE",
 						"header": [
@@ -341,12 +361,12 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{BASE_URL}}/petitions/1",
+							"raw": "{{BASE_URL}}/events/1",
 							"host": [
 								"{{BASE_URL}}"
 							],
 							"path": [
-								"petitions",
+								"events",
 								"1"
 							]
 						}
@@ -354,69 +374,68 @@
 					"response": []
 				},
 				{
-					"name": "GET /petitions/categories",
+					"name": "GET /events/categories",
 					"request": {
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{BASE_URL}}/petitions/categories",
+							"raw": "{{BASE_URL}}/events/categories",
 							"host": [
 								"{{BASE_URL}}"
 							],
 							"path": [
-								"petitions",
+								"events",
 								"categories"
 							]
 						}
 					},
 					"response": []
 				}
-			],
-			"protocolProfileBehavior": {}
+			]
 		},
 		{
-			"name": "petitions.photos",
+			"name": "events.images",
 			"item": [
 				{
-					"name": "GET /petitions/:id/photo (mine)",
+					"name": "GET /events/:id/image (mine)",
 					"request": {
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{BASE_URL}}/petitions/{{petition_id}}/photo",
+							"raw": "{{BASE_URL}}/events/{{event_id}}/image",
 							"host": [
 								"{{BASE_URL}}"
 							],
 							"path": [
-								"petitions",
-								"{{petition_id}}",
-								"photo"
+								"events",
+								"{{event_id}}",
+								"image"
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "GET /petitions/:id/photo (someone else's)",
+					"name": "GET /events/:id/image (someone else's)",
 					"request": {
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{BASE_URL}}/petitions/9/photo",
+							"raw": "{{BASE_URL}}/events/3/image",
 							"host": [
 								"{{BASE_URL}}"
 							],
 							"path": [
-								"petitions",
-								"9",
-								"photo"
+								"events",
+								"3",
+								"image"
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "PUT /petitions/:id/photo (mine; jpeg)",
+					"name": "PUT /events/:id/image (mine; jpeg)",
 					"request": {
 						"method": "PUT",
 						"header": [
@@ -435,25 +454,25 @@
 						"body": {
 							"mode": "file",
 							"file": {
-								"src": "petition_sample.jpg"
+								"src": "event_sample.jpg"
 							}
 						},
 						"url": {
-							"raw": "{{BASE_URL}}/petitions/{{petition_id}}/photo",
+							"raw": "{{BASE_URL}}/events/{{event_id}}/image",
 							"host": [
 								"{{BASE_URL}}"
 							],
 							"path": [
-								"petitions",
-								"{{petition_id}}",
-								"photo"
+								"events",
+								"{{event_id}}",
+								"image"
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "PUT /petitions/:id/photo (mine; png)",
+					"name": "PUT /event/:id/image (mine; png)",
 					"request": {
 						"method": "PUT",
 						"header": [
@@ -472,25 +491,25 @@
 						"body": {
 							"mode": "file",
 							"file": {
-								"src": "petition_sample.png"
+								"src": "event_sample.png"
 							}
 						},
 						"url": {
-							"raw": "{{BASE_URL}}/petitions/{{petition_id}}/photo",
+							"raw": "{{BASE_URL}}/events/{{event_id}}/image",
 							"host": [
 								"{{BASE_URL}}"
 							],
 							"path": [
-								"petitions",
-								"{{petition_id}}",
-								"photo"
+								"events",
+								"{{event_id}}",
+								"image"
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "PUT /petitions/:id/photo (mine; gif)",
+					"name": "PUT /events/:id/image (mine; gif)",
 					"request": {
 						"method": "PUT",
 						"header": [
@@ -509,25 +528,25 @@
 						"body": {
 							"mode": "file",
 							"file": {
-								"src": "petition_sample.gif"
+								"src": "event_sample.gif"
 							}
 						},
 						"url": {
-							"raw": "{{BASE_URL}}/petitions/{{petition_id}}/photo",
+							"raw": "{{BASE_URL}}/events/{{event_id}}/image",
 							"host": [
 								"{{BASE_URL}}"
 							],
 							"path": [
-								"petitions",
-								"{{petition_id}}",
-								"photo"
+								"events",
+								"{{event_id}}",
+								"image"
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "PUT /petitions/:id/photo (someone else's)",
+					"name": "PUT /events/:id/image (someone else's)",
 					"request": {
 						"method": "PUT",
 						"header": [
@@ -546,50 +565,49 @@
 						"body": {
 							"mode": "file",
 							"file": {
-								"src": "petition_sample.jpg"
+								"src": "event_sample.jpg"
 							}
 						},
 						"url": {
-							"raw": "{{BASE_URL}}/petitions/1/photo",
+							"raw": "{{BASE_URL}}/events/1/image",
 							"host": [
 								"{{BASE_URL}}"
 							],
 							"path": [
-								"petitions",
+								"events",
 								"1",
-								"photo"
+								"image"
 							]
 						}
 					},
 					"response": []
 				}
-			],
-			"protocolProfileBehavior": {}
+			]
 		},
 		{
-			"name": "petitions.signatures",
+			"name": "events.attendees",
 			"item": [
 				{
-					"name": "GET /petitions/:id/signatures",
+					"name": "GET /events/:id/attendees",
 					"request": {
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{BASE_URL}}/petitions/1/signatures",
+							"raw": "{{BASE_URL}}/events/1/attendees",
 							"host": [
 								"{{BASE_URL}}"
 							],
 							"path": [
-								"petitions",
+								"events",
 								"1",
-								"signatures"
+								"attendees"
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "POST /petitions/:id/signatures",
+					"name": "POST /events/:id/attendees",
 					"request": {
 						"method": "POST",
 						"header": [
@@ -600,21 +618,21 @@
 							}
 						],
 						"url": {
-							"raw": "{{BASE_URL}}/petitions/1/signatures",
+							"raw": "{{BASE_URL}}/events/1/attendees",
 							"host": [
 								"{{BASE_URL}}"
 							],
 							"path": [
-								"petitions",
+								"events",
 								"1",
-								"signatures"
+								"attendees"
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "DELETE /petitions/:id/signatures",
+					"name": "DELETE /events/:id/attendees",
 					"request": {
 						"method": "DELETE",
 						"header": [
@@ -625,21 +643,20 @@
 							}
 						],
 						"url": {
-							"raw": "{{BASE_URL}}/petitions/1/signatures",
+							"raw": "{{BASE_URL}}/events/1/attendees",
 							"host": [
 								"{{BASE_URL}}"
 							],
 							"path": [
-								"petitions",
+								"events",
 								"1",
-								"signatures"
+								"attendees"
 							]
 						}
 					},
 					"response": []
 				}
-			],
-			"protocolProfileBehavior": {}
+			]
 		},
 		{
 			"name": "users",
@@ -656,34 +673,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"name\": \"Mike Wheeler\",\n\t\"email\": \"mike.wheeler@hawkinsmiddle.school.us\",\n\t\"password\": \"paladin\",\n\t\"city\": \"Hawkins\",\n\t\"country\": \"USA\"\n}"
-						},
-						"url": {
-							"raw": "{{BASE_URL}}/users/register",
-							"host": [
-								"{{BASE_URL}}"
-							],
-							"path": [
-								"users",
-								"register"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "POST /users/register (no city/country)",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n\t\"name\": \"Will Byers\",\n\t\"email\": \"willbyers@gmail.com\",\n\t\"password\": \"cleric\"\n}"
+							"raw": "{\n\t\"firstName\": \"Mike\",\n\t\"lastName\": \"Wheeler\",\n\t\"email\": \"mike.wheeler@hawkinsmiddle.school.us\",\n\t\"password\": \"paladin\"\n}"
 						},
 						"url": {
 							"raw": "{{BASE_URL}}/users/register",
@@ -710,7 +700,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"name\": \"Lucas Sinclair\",\n\t\"email\": \"lucassinclair.gmail.com\",\n\t\"password\": \"ranger\"\n}"
+							"raw": "{\n\t\"firstName\": \"Lucas\",\n\t\"lastName\": \"Sinclair\",\n\t\"email\": \"lucassinclair.gmail.com\",\n\t\"password\": \"ranger\"\n}"
 						},
 						"url": {
 							"raw": "{{BASE_URL}}/users/register",
@@ -731,7 +721,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "e9f018fd-4ca9-42f7-bc52-681285678b33",
 								"exec": [
 									"pm.test(\"Set auth_token and user_id after login\", function() {",
 									"    const authToken = pm.response.json().token;",
@@ -779,7 +768,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "548241d0-8641-4fdc-95c0-1d03f0906046",
 								"exec": [
 									"pm.test(\"Remove auth_token and user_id after logout\", function() {",
 									"    if (responseCode.code === 200) {",
@@ -883,7 +871,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"country\": \"United States\",\n\t\"password\": \"new secure password\",\n\t\"currentPassword\": \"paladin\"\n}"
+							"raw": "{\n\t\"password\": \"new secure password\",\n\t\"currentPassword\": \"paladin\"\n}"
 						},
 						"url": {
 							"raw": "{{BASE_URL}}/users/{{user_id}}",
@@ -931,52 +919,51 @@
 					},
 					"response": []
 				}
-			],
-			"protocolProfileBehavior": {}
+			]
 		},
 		{
-			"name": "users.photos",
+			"name": "users.images",
 			"item": [
 				{
-					"name": "GET /users/:id/photo (me)",
+					"name": "GET /users/:id/image (me)",
 					"request": {
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{BASE_URL}}/users/{{user_id}}/photo",
+							"raw": "{{BASE_URL}}/users/{{user_id}}/image",
 							"host": [
 								"{{BASE_URL}}"
 							],
 							"path": [
 								"users",
 								"{{user_id}}",
-								"photo"
+								"image"
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "GET /users/:id/photo (another user)",
+					"name": "GET /users/:id/image (another user)",
 					"request": {
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{BASE_URL}}/users/1/photo",
+							"raw": "{{BASE_URL}}/users/1/image",
 							"host": [
 								"{{BASE_URL}}"
 							],
 							"path": [
 								"users",
 								"1",
-								"photo"
+								"image"
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "PUT /users/:id/photo (me)",
+					"name": "PUT /users/:id/image (me)",
 					"request": {
 						"method": "PUT",
 						"header": [
@@ -995,25 +982,25 @@
 						"body": {
 							"mode": "file",
 							"file": {
-								"src": "user_sample.jpg"
+								"src": "files/user_sample.jpg"
 							}
 						},
 						"url": {
-							"raw": "{{BASE_URL}}/users/{{user_id}}/photo",
+							"raw": "{{BASE_URL}}/users/{{user_id}}/image",
 							"host": [
 								"{{BASE_URL}}"
 							],
 							"path": [
 								"users",
 								"{{user_id}}",
-								"photo"
+								"image"
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "PUT /users/:id/photo (another user)",
+					"name": "PUT /users/:id/image (another user)",
 					"request": {
 						"method": "PUT",
 						"header": [
@@ -1036,21 +1023,21 @@
 							}
 						},
 						"url": {
-							"raw": "{{BASE_URL}}/users/1/photo",
+							"raw": "{{BASE_URL}}/users/1/image",
 							"host": [
 								"{{BASE_URL}}"
 							],
 							"path": [
 								"users",
 								"1",
-								"photo"
+								"image"
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "DELETE /users/:id/photo (me)",
+					"name": "DELETE /users/:id/image (me)",
 					"request": {
 						"method": "DELETE",
 						"header": [
@@ -1067,21 +1054,21 @@
 							}
 						},
 						"url": {
-							"raw": "{{BASE_URL}}/users/{{user_id}}/photo",
+							"raw": "{{BASE_URL}}/users/{{user_id}}/image",
 							"host": [
 								"{{BASE_URL}}"
 							],
 							"path": [
 								"users",
 								"{{user_id}}",
-								"photo"
+								"image"
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "DELETE /users/:id/photo (another user)",
+					"name": "DELETE /users/:id/image (another user)",
 					"request": {
 						"method": "DELETE",
 						"header": [
@@ -1098,14 +1085,14 @@
 							}
 						},
 						"url": {
-							"raw": "{{BASE_URL}}/users/1/photo",
+							"raw": "{{BASE_URL}}/users/1/image",
 							"host": [
 								"{{BASE_URL}}"
 							],
 							"path": [
 								"users",
 								"1",
-								"photo"
+								"image"
 							]
 						}
 					},
@@ -1116,7 +1103,6 @@
 				{
 					"listen": "prerequest",
 					"script": {
-						"id": "7f5e40b4-823f-42cb-a931-d981be171d4e",
 						"type": "text/javascript",
 						"exec": [
 							""
@@ -1126,16 +1112,13 @@
 				{
 					"listen": "test",
 					"script": {
-						"id": "e345ded7-f7fc-4b03-a9ea-803eb1b3d596",
 						"type": "text/javascript",
 						"exec": [
 							""
 						]
 					}
 				}
-			],
-			"protocolProfileBehavior": {}
+			]
 		}
-	],
-	"protocolProfileBehavior": {}
+	]
 }

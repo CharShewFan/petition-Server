@@ -1,0 +1,1381 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "SENG365 2021: Meetup Site API",
+    "version": "1.0.0",
+    "description": "This specification documents the API that must be implemented for Assignment 1.\nThe API provides all of the server-side functionality necessary in order to implement the user stories for Assignment 2."
+  },
+  "servers": [
+    {
+      "url": "http://seng365-apitest.csse.canterbury.ac.nz:4001/api/v1",
+      "description": "reference server"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Backdoor",
+      "description": "Development-only endpoints for resetting and resampling the database."
+    },
+    {
+      "name": "events",
+      "description": "Endpoints for retrieving, creating, modifying, and deleting events."
+    },
+    {
+      "name": "events.images",
+      "description": "Endpoints for retrieving and uploading event hero images."
+    },
+    {
+      "name": "events.attendees",
+      "description": "Endpoints for retrieving, adding, and deleting attendees for events."
+    },
+    {
+      "name": "users",
+      "description": "Endpoints for registering, logging in, and retrieving/modifying user information."
+    },
+    {
+      "name": "users.images",
+      "description": "Endpoints for retrieving, uploading, and deleting user profile images."
+    }
+  ],
+  "paths": {
+    "/events": {
+      "get": {
+        "tags": [
+          "events"
+        ],
+        "summary": "View events.",
+        "description": "By default, the events should be sorted by date of the events.\nThe list should be filtered, then sorted, then paginated using `startIndex` and `count`.",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "startIndex",
+            "description": "Number of items to skip before returning results.",
+            "schema": {
+              "$ref": "#/components/schemas/EventSearchRequest/properties/startIndex"
+            }
+          },
+          {
+            "in": "query",
+            "name": "count",
+            "description": "Number of items to include in results.",
+            "schema": {
+              "$ref": "#/components/schemas/EventSearchRequest/properties/count"
+            }
+          },
+          {
+            "in": "query",
+            "name": "q",
+            "description": "Only include events that have the search term within their title or description.",
+            "schema": {
+              "$ref": "#/components/schemas/EventSearchRequest/properties/q"
+            }
+          },
+          {
+            "in": "query",
+            "name": "categoryIds",
+            "description": "Only include events of this category (id).\n\nOnly IDs that map to categories are allowed.",
+            "schema": {
+              "$ref": "#/components/schemas/EventSearchRequest/properties/categoryIds"
+            }
+          },
+          {
+            "in": "query",
+            "name": "organizerId",
+            "description": "Only include events that have the given user (id) as their organizer.",
+            "schema": {
+              "$ref": "#/components/schemas/EventSearchRequest/properties/organizerId"
+            }
+          },
+          {
+            "in": "query",
+            "name": "sortBy",
+            "description": "Sort the events by the given property, according to the following rules:\n* ALPHABETICAL_ASC: alphabetically by title, A - Z\n* ALPHABETICAL_DESC: alphabetically by title, Z - A\n* DATE_ASC: date, from earliest to latest\n* DATE_DESC: date, from latest to earliest\n* ATTENDEES_ASC: the number of signed up (approved) attendees, from least to most\n* ATTENDEES_DESC: the number of signed up (approved) attendees, from most to least\nNote: how ties (e.g. two events with 10 attendees each) are decided is undocumented behaviour, although it should be consistent each time.",
+            "schema": {
+              "$ref": "#/components/schemas/EventSearchRequest/properties/sortBy"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/EventOverview"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "events"
+        ],
+        "summary": "Add a new event.",
+        "description": "The elements of the category ids array `categoryIds` must each reference an existing category.\n\n`title`, `description`, and `categoryIds` are required, other properties are optional.\n\nThe event `date` must be in the future.",
+        "security": [
+          {
+            "UserToken": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "title": "CreateEventRequest",
+                "properties": {
+                  "title": {
+                    "$ref": "#/components/schemas/EventOverview/properties/title"
+                  },
+                  "description": {
+                    "$ref": "#/components/schemas/Event/properties/description"
+                  },
+                  "categoryIds": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/Category/properties/categoryId"
+                    }
+                  },
+                  "date": {
+                    "$ref": "#/components/schemas/DateTimeInput"
+                  },
+                  "isOnline": {
+                    "$ref": "#/components/schemas/Event/properties/isOnline"
+                  },
+                  "url": {
+                    "$ref": "#/components/schemas/Event/properties/url"
+                  },
+                  "venue": {
+                    "$ref": "#/components/schemas/Event/properties/venue"
+                  },
+                  "capacity": {
+                    "$ref": "#/components/schemas/EventOverview/properties/capacity"
+                  },
+                  "requiresAttendanceControl": {
+                    "$ref": "#/components/schemas/Event/properties/requiresAttendanceControl"
+                  },
+                  "fee": {
+                    "$ref": "#/components/schemas/Event/properties/fee"
+                  }
+                },
+                "required": [
+                  "title",
+                  "description",
+                  "categoryIds"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "eventId": {
+                      "$ref": "#/components/schemas/EventOverview/properties/eventId"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/events/{id}": {
+      "parameters": [
+        {
+          "name": "id",
+          "description": "ID of the event.",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/EventOverview/properties/eventId"
+          }
+        }
+      ],
+      "get": {
+        "tags": [
+          "events"
+        ],
+        "summary": "Retrieve detailed information about an event.",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Event"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "events"
+        ],
+        "summary": "Change an event's details.",
+        "description": "Only accessible to the organizer of the event. If updated, the `categoryIds` must each reference an existing category.\n\nNot accessible after the event has happened (i.e. the date is in the past).",
+        "security": [
+          {
+            "UserToken": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "title": "ChangeEventDetailsRequest",
+                "properties": {
+                  "title": {
+                    "$ref": "#/components/schemas/EventOverview/properties/title"
+                  },
+                  "description": {
+                    "$ref": "#/components/schemas/Event/properties/description"
+                  },
+                  "categoryIds": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/Category/properties/categoryId"
+                    }
+                  },
+                  "date": {
+                    "$ref": "#/components/schemas/DateTimeInput"
+                  },
+                  "isOnline": {
+                    "$ref": "#/components/schemas/Event/properties/isOnline"
+                  },
+                  "url": {
+                    "$ref": "#/components/schemas/Event/properties/url"
+                  },
+                  "venue": {
+                    "$ref": "#/components/schemas/Event/properties/venue"
+                  },
+                  "capacity": {
+                    "$ref": "#/components/schemas/EventOverview/properties/capacity"
+                  },
+                  "requiresAttendanceControl": {
+                    "$ref": "#/components/schemas/Event/properties/requiresAttendanceControl"
+                  },
+                  "fee": {
+                    "$ref": "#/components/schemas/Event/properties/fee"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "events"
+        ],
+        "summary": "Delete an event.",
+        "description": "Only accessible to the organizer of the event. All attendees for the event will also be deleted.",
+        "security": [
+          {
+            "UserToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/events/categories": {
+      "get": {
+        "tags": [
+          "events"
+        ],
+        "summary": "Retrieve all data about event categories.",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Category"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/events/{id}/image": {
+      "parameters": [
+        {
+          "name": "id",
+          "description": "ID of the event.",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/EventOverview/properties/eventId"
+          }
+        }
+      ],
+      "get": {
+        "tags": [
+          "events.images"
+        ],
+        "summary": "Retrieve an event's hero image.",
+        "description": "The response MIME type will be either `image/png`, `image/jpeg`, or `image/gif`, depending on the file type of the image being retrieved.",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "image": {
+                "schema": {
+                  "$ref": "#/components/schemas/BinaryImageFile"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "events.images"
+        ],
+        "summary": "Set an event's hero image.",
+        "description": "Only accessible to the organizer of the event. If the event already has a hero image, the current hero image will be replaced with it, and a 200 OK response will be sent. If not, a 201 Created response will be sent.\n\nIf the file is a `.png`, the request will be sent with `Content-Type: image/png`. If the file is a `.jpeg` or `.jpg`, the request will be sent with `Content-Type: image/jpeg`. If the file is a `.gif`, the request will be sent with `Content-Type: image/gif`.\n\nThe request body should contain the raw binary content of the photo, i.e. it should not be in `multipart/form-data` format or contain any file metadata. ",
+        "security": [
+          {
+            "UserToken": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "image/png": {
+              "schema": {
+                "$ref": "#/components/schemas/BinaryImageFile"
+              }
+            },
+            "image/jpeg": {
+              "schema": {
+                "$ref": "#/components/schemas/BinaryImageFile"
+              }
+            },
+            "image/gif": {
+              "schema": {
+                "$ref": "#/components/schemas/BinaryImageFile"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "201": {
+            "description": "Created"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/events/{id}/attendees": {
+      "parameters": [
+        {
+          "name": "id",
+          "description": "ID of the event.",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/EventOverview/properties/eventId"
+          }
+        }
+      ],
+      "get": {
+        "tags": [
+          "events.attendees"
+        ],
+        "summary": "Retrieve an event's attendees.",
+        "description": "The attendees are returned in chronological order of `dateOfInterest` (from earliest to latest). **Only *accepted* attendees** are returned unless the currently authenticated user is the organizer of the event. The only exception to this is if the authenticated user is **pending** or **rejected** from the event, in which case the current user is also returned.",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Attendee"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "events.attendees"
+        ],
+        "summary": "Request attendance to an event.",
+        "description": "A user cannot join an event as an attendee that they have already joined, or an event that has happened in the past.",
+        "security": [
+          {
+            "UserToken": []
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "events.attendees"
+        ],
+        "summary": "Remove an attendee from an event.",
+        "description": "A user cannot remove themselves as an attendee from an event they haven't joined or from an event from the past. They also cannot remove themselves from an event if their `attendance_status` is `rejected`. This is to ensure that they do not remove themselves and re-register as an attendee.",
+        "security": [
+          {
+            "UserToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/events/{event_id}/attendees/{user_id}": {
+      "parameters": [
+        {
+          "name": "event_id",
+          "description": "ID of the event.",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/EventOverview/properties/eventId"
+          }
+        },
+        {
+          "name": "user_id",
+          "description": "ID of the user.",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/FullUser/properties/userId"
+          }
+        }
+      ],
+      "patch": {
+        "tags": [
+          "events.attendees"
+        ],
+        "summary": "Change the status of an attendee of an event.",
+        "description": "Only the organizer of the event (as the currently authenticated user) can change the status of an attendee.\n\n`status` must be one of: \"accepted\", \"pending\", or \"rejected\".",
+        "security": [
+          {
+            "UserToken": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChangeAttendeeStatusRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/users/register": {
+      "post": {
+        "tags": [
+          "users"
+        ],
+        "summary": "Register as a new user.",
+        "description": "The email must be syntactically valid (e.g. it has to include an `@`, but whether or not it is actually a registered email address will not be checked). The email address must not already be in use. The password must not be empty.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "title": "RegisterUserRequest",
+                "properties": {
+                  "firstName": {
+                    "$ref": "#/components/schemas/User/properties/firstName"
+                  },
+                  "lastName": {
+                    "$ref": "#/components/schemas/User/properties/lastName"
+                  },
+                  "email": {
+                    "$ref": "#/components/schemas/User/properties/email"
+                  },
+                  "password": {
+                    "$ref": "#/components/schemas/FullUser/properties/password"
+                  }
+                },
+                "required": [
+                  "firstName",
+                  "lastName",
+                  "email",
+                  "password"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "userId": {
+                      "$ref": "#/components/schemas/FullUser/properties/userId"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/users/login": {
+      "post": {
+        "tags": [
+          "users"
+        ],
+        "summary": "Log in as an existing user.",
+        "description": "The response will contain a (unique) randomly-generated token that the client-side should store. \n\nWhenever the client makes a request that requires authentication, it should provide that same token as the value of the `X-Authorization` header in the request. \n\nThe server will compare this to the value it has stored in the database to authenticate that request.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "title": "LoginRequest",
+                "properties": {
+                  "email": {
+                    "$ref": "#/components/schemas/User/properties/email"
+                  },
+                  "password": {
+                    "$ref": "#/components/schemas/FullUser/properties/password"
+                  }
+                },
+                "required": [
+                  "email",
+                  "password"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "LoginSuccessResponse",
+                  "properties": {
+                    "userId": {
+                      "$ref": "#/components/schemas/FullUser/properties/userId"
+                    },
+                    "token": {
+                      "$ref": "#/components/schemas/FullUser/properties/userToken"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/users/logout": {
+      "post": {
+        "tags": [
+          "users"
+        ],
+        "summary": "Log out the currently authorised user.",
+        "security": [
+          {
+            "UserToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/users/{id}": {
+      "parameters": [
+        {
+          "name": "id",
+          "description": "ID of the user.",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/FullUser/properties/userId"
+          }
+        }
+      ],
+      "get": {
+        "tags": [
+          "users"
+        ],
+        "summary": "Retrieve information about a user.",
+        "description": "The email field is only included when the currently authenticated user is viewing their **own** details.",
+        "security": [
+          {},
+          {
+            "UserToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "users"
+        ],
+        "summary": "Change a user's details.",
+        "description": "Only accessible by the user themselves. The email must be syntactically valid (e.g. it has to include an `@`, but whether or not it is actually a registered email address will not be checked). The email address must not already be in use. The password must not be empty. If the password is being changed, then the current password must also be provided.",
+        "security": [
+          {
+            "UserToken": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "title": "ChangeUserDetailsRequest",
+                "properties": {
+                  "firstName": {
+                    "$ref": "#/components/schemas/User/properties/firstName"
+                  },
+                  "lastName": {
+                    "$ref": "#/components/schemas/User/properties/lastName"
+                  },
+                  "email": {
+                    "$ref": "#/components/schemas/User/properties/email"
+                  },
+                  "password": {
+                    "$ref": "#/components/schemas/FullUser/properties/password"
+                  },
+                  "currentPassword": {
+                    "$ref": "#/components/schemas/FullUser/properties/password"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/users/{id}/image": {
+      "parameters": [
+        {
+          "name": "id",
+          "description": "ID of the user.",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/FullUser/properties/userId"
+          }
+        }
+      ],
+      "get": {
+        "tags": [
+          "users.images"
+        ],
+        "summary": "Retrieve a user's profile image.",
+        "description": "The response MIME type will be either `image/png`, `image/jpeg`, or `image/gif`, depending on the file type of the image being retrieved.",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "image": {
+                "schema": {
+                  "$ref": "#/components/schemas/BinaryImageFile"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "users.images"
+        ],
+        "summary": "Set a user's profile image.",
+        "description": "Only accessible to the user themselves. If the user already has a profile photo, the current profile photo will be replaced with it, and a 200 OK response will be sent. If not, a 201 Created response will be sent.\n\nIf the file is a `.png`, the request will be sent with `Content-Type: image/png`. If the file is a `.jpeg` or `.jpg`, the request will be sent with `Content-Type: image/jpeg`. If the file is a `.gif`, the request will be sent with `Content-Type: image/gif`.\n\nThe request body should contain the raw binary content of the photo, i.e. it should not be in `multipart/form-data` format or contain any file metadata. ",
+        "security": [
+          {
+            "UserToken": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "image/png": {
+              "schema": {
+                "$ref": "#/components/schemas/BinaryImageFile"
+              }
+            },
+            "image/jpeg": {
+              "schema": {
+                "$ref": "#/components/schemas/BinaryImageFile"
+              }
+            },
+            "image/gif": {
+              "schema": {
+                "$ref": "#/components/schemas/BinaryImageFile"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "201": {
+            "description": "Created"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "users.images"
+        ],
+        "summary": "Delete a user's profile image.",
+        "security": [
+          {
+            "UserToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/reload": {
+      "post": {
+        "tags": [
+          "Backdoor"
+        ],
+        "summary": "Force reset of database to original structure and reload sample of data into database.",
+        "responses": {
+          "201": {
+            "description": "Created"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/reset": {
+      "post": {
+        "tags": [
+          "Backdoor"
+        ],
+        "summary": "Force reset of database to original structure.",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/resample": {
+      "post": {
+        "tags": [
+          "Backdoor"
+        ],
+        "summary": "Reload sample of data into database.",
+        "responses": {
+          "201": {
+            "description": "Created"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/executeSql": {
+      "post": {
+        "tags": [
+          "Backdoor"
+        ],
+        "summary": "Execute any arbitrary SQL statement provided, and return the output from the database.",
+        "description": "This is an enormous security hole, and wouldn't be present in any real application. However, we're using it for testing purposes in this assignment.",
+        "requestBody": {
+          "content": {
+            "text/plain": {
+              "schema": {
+                "title": "SqlCommand",
+                "type": "string",
+                "example": "SELECT * FROM Venue;"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/SqlResult"
+                    },
+                    {
+                      "$ref": "#/components/schemas/SqlResultSet"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "User": {
+        "title": "User",
+        "type": "object",
+        "properties": {
+          "firstName": {
+            "type": "string",
+            "minLength": 1,
+            "example": "Adam"
+          },
+          "lastName": {
+            "type": "string",
+            "minLength": 1,
+            "example": "Anderson"
+          },
+          "email": {
+            "type": "string",
+            "minLength": 1,
+            "format": "email",
+            "example": "aaa11@uclive.ac.nz"
+          }
+        }
+      },
+      "FullUser": {
+        "title": "FullUser",
+        "type": "object",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/User"
+          }
+        ],
+        "properties": {
+          "userId": {
+            "type": "integer",
+            "minimum": 0,
+            "example": 11
+          },
+          "password": {
+            "type": "string",
+            "minLength": 1,
+            "format": "password",
+            "example": "letmein"
+          },
+          "userToken": {
+            "type": "string",
+            "example": "JSkIEpXk0b2jLgDpRuKAjGwCbFnDM0Tj"
+          }
+        }
+      },
+      "Event": {
+        "title": "Event",
+        "type": "object",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/EventOverview"
+          }
+        ],
+        "properties": {
+          "description": {
+            "type": "string",
+            "example": "Pizza party to celebrate the nice weather."
+          },
+          "organizerId": {
+            "$ref": "#/components/schemas/FullUser/properties/userId"
+          },
+          "date": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/DateTimeOutput"
+              }
+            ],
+            "nullable": true
+          },
+          "isOnline": {
+            "type": "boolean",
+            "example": false,
+            "nullable": true
+          },
+          "url": {
+            "type": "string",
+            "example": "http://example.com",
+            "nullable": true
+          },
+          "venue": {
+            "type": "string",
+            "example": "Town Hall",
+            "nullable": true
+          },
+          "requiresAttendanceControl": {
+            "type": "boolean",
+            "example": true,
+            "nullable": true
+          },
+          "fee": {
+            "type": "number",
+            "example": 10,
+            "nullable": true
+          }
+        }
+      },
+      "EventOverview": {
+        "title": "EventOverview",
+        "type": "object",
+        "properties": {
+          "eventId": {
+            "type": "integer",
+            "example": 1
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1,
+            "example": "Pizza party"
+          },
+          "categories": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Category/properties/name"
+            }
+          },
+          "organizerFirstName": {
+            "$ref": "#/components/schemas/User/properties/firstName"
+          },
+          "organizerLastName": {
+            "$ref": "#/components/schemas/User/properties/lastName"
+          },
+          "capacity": {
+            "type": "integer",
+            "minimum": 1,
+            "example": 100,
+            "nullable": true
+          }
+        }
+      },
+      "Category": {
+        "title": "Category",
+        "type": "object",
+        "properties": {
+          "categoryId": {
+            "type": "integer",
+            "example": 1
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "example": "Film"
+          }
+        }
+      },
+      "EventSearchRequest": {
+        "title": "EventSearchRequest",
+        "type": "object",
+        "properties": {
+          "startIndex": {
+            "type": "integer",
+            "minimum": 0,
+            "default": 0,
+            "example": 20
+          },
+          "count": {
+            "type": "integer",
+            "minimum": 0,
+            "example": 10
+          },
+          "q": {
+            "$ref": "#/components/schemas/EventOverview/properties/title"
+          },
+          "categoryIds": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Category/properties/categoryId"
+            }
+          },
+          "organizerId": {
+            "$ref": "#/components/schemas/FullUser/properties/userId"
+          },
+          "sortBy": {
+            "type": "string",
+            "enum": [
+              "ALPHABETICAL_ASC",
+              "ALPHABETICAL_DESC",
+              "DATE_ASC",
+              "DATE_DESC",
+              "CAPACITY_ASC",
+              "CAPACITY_DESC"
+            ],
+            "default": "DATE_DESC"
+          },
+          "reverseSort": {
+            "type": "boolean",
+            "default": false
+          }
+        }
+      },
+      "Attendee": {
+        "title": "Attendee",
+        "type": "object",
+        "properties": {
+          "attendeeId": {
+            "$ref": "#/components/schemas/FullUser/properties/userId"
+          },
+          "status": {
+            "$ref": "#/components/schemas/AttendeeStatus"
+          },
+          "firstName": {
+            "$ref": "#/components/schemas/User/properties/firstName"
+          },
+          "lastName": {
+            "$ref": "#/components/schemas/User/properties/lastName"
+          },
+          "dateOfInterest": {
+            "$ref": "#/components/schemas/DateTimeOutput"
+          }
+        }
+      },
+      "AttendeeStatus": {
+        "title": "AttendeeStatus",
+        "type": "string",
+        "enum": [
+          "accepted",
+          "pending",
+          "rejected"
+        ],
+        "example": "accepted"
+      },
+      "ChangeAttendeeStatusRequest": {
+        "title": "ChangeAttendeeStatusRequest",
+        "type": "object",
+        "properties": {
+          "status": {
+            "$ref": "#/components/schemas/AttendeeStatus"
+          }
+        }
+      },
+      "DateTimeInput": {
+        "title": "DateTimeInput",
+        "description": "A datetime expressed with no timezone, as either a date (yyyy-MM-dd) or date and time (yyyy-MM-dd hh:mm:ss.sss)",
+        "type": "string",
+        "example": "2012-04-23 18:25:43.511"
+      },
+      "DateTimeOutput": {
+        "title": "DateTimeOutput",
+        "description": "A UTC datetime expressed in ISO8601 format (yyyy-MM-ddThh:mm:ss.sssZ)",
+        "type": "string",
+        "example": "2012-04-23T18:25:43.511Z"
+      },
+      "BinaryImageFile": {
+        "type": "string",
+        "format": "binary",
+        "description": "The raw content of the PNG, JPEG, or GIF image file.",
+        "example": "(raw content of PNG, JPEG, or GIF image file)"
+      },
+      "SqlResult": {
+        "type": "object",
+        "properties": {
+          "fieldCount": {
+            "type": "integer",
+            "example": 0
+          },
+          "affectedRows": {
+            "type": "integer",
+            "example": 1
+          },
+          "insertId": {
+            "type": "integer",
+            "example": 0
+          },
+          "serverStatus": {
+            "type": "integer",
+            "example": 2
+          },
+          "warningCount": {
+            "type": "integer",
+            "example": 0
+          },
+          "message": {
+            "type": "string",
+            "example": "(Rows matched: 1  Changed: 0  Warnings: 0"
+          },
+          "protocol41": {
+            "type": "boolean"
+          },
+          "changedRows": {
+            "type": "integer"
+          }
+        }
+      },
+      "SqlResultSet": {
+        "type": "array",
+        "items": {}
+      }
+    },
+    "securitySchemes": {
+      "UserToken": {
+        "type": "apiKey",
+        "name": "X-Authorization",
+        "in": "header"
+      }
+    }
+  }
+}
