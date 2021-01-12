@@ -588,18 +588,24 @@
 			"name": "events.attendees",
 			"item": [
 				{
-					"name": "GET /events/:id/attendees",
+					"name": "GET /events/:id/attendees (my event)",
 					"request": {
 						"method": "GET",
-						"header": [],
+						"header": [
+							{
+								"key": "X-Authorization",
+								"value": "{{auth_token}}",
+								"type": "text"
+							}
+						],
 						"url": {
-							"raw": "{{BASE_URL}}/events/1/attendees",
+							"raw": "{{BASE_URL}}/events/{{event_id}}/attendees",
 							"host": [
 								"{{BASE_URL}}"
 							],
 							"path": [
 								"events",
-								"1",
+								"{{event_id}}",
 								"attendees"
 							]
 						}
@@ -607,7 +613,32 @@
 					"response": []
 				},
 				{
-					"name": "POST /events/:id/attendees",
+					"name": "GET /events/:id/attendees (other event)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-Authorization",
+								"value": "{{auth_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{BASE_URL}}/events/3/attendees",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"events",
+								"3",
+								"attendees"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST /events/:id/attendees (my event)",
 					"request": {
 						"method": "POST",
 						"header": [
@@ -632,6 +663,31 @@
 					"response": []
 				},
 				{
+					"name": "POST /events/:id/attendees (other event) Copy",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-Authorization",
+								"type": "text",
+								"value": "{{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{BASE_URL}}/events/3/attendees",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"events",
+								"3",
+								"attendees"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "DELETE /events/:id/attendees",
 					"request": {
 						"method": "DELETE",
@@ -643,16 +699,46 @@
 							}
 						],
 						"url": {
-							"raw": "{{BASE_URL}}/events/1/attendees",
+							"raw": "{{BASE_URL}}/events/3/attendees",
 							"host": [
 								"{{BASE_URL}}"
 							],
 							"path": [
 								"events",
-								"1",
+								"3",
 								"attendees"
 							]
 						}
+					},
+					"response": []
+				},
+				{
+					"name": "PATCH /events/:event_id/attendees/:user_id",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"status\": \"accepted\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/events/{{event_id}}/attendees/{{user_id}}",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"events",
+								"{{event_id}}",
+								"attendees",
+								"{{user_id}}"
+							]
+						},
+						"description": "Change the status of an attendee of an event."
 					},
 					"response": []
 				}
