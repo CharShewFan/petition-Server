@@ -44,7 +44,7 @@
           "events"
         ],
         "summary": "View events.",
-        "description": "By default, the events should be sorted by date of the events.\nThe list should be filtered, then sorted, then paginated using `startIndex` and `count`.",
+        "description": "By default, the events should be sorted by date of the events.\nThe list should be filtered, then sorted, then paginated using `startIndex` and `count`. ",
         "parameters": [
           {
             "in": "query",
@@ -89,7 +89,7 @@
           {
             "in": "query",
             "name": "sortBy",
-            "description": "Sort the events by the given property, according to the following rules:\n* ALPHABETICAL_ASC: alphabetically by title, A - Z\n* ALPHABETICAL_DESC: alphabetically by title, Z - A\n* DATE_ASC: date, from earliest to latest\n* DATE_DESC: date, from latest to earliest\n* ATTENDEES_ASC: the number of signed up (approved) attendees, from least to most\n* ATTENDEES_DESC: the number of signed up (approved) attendees, from most to least\nNote: how ties (e.g. two events with 10 attendees each) are decided is undocumented behaviour, although it should be consistent each time.",
+            "description": "Sort the events by the given property, according to the following rules:\n* ALPHABETICAL_ASC: alphabetically by title, A - Z\n* ALPHABETICAL_DESC: alphabetically by title, Z - A\n* DATE_ASC: date, from earliest to latest\n* DATE_DESC: date, from latest to earliest\n* ATTENDEES_ASC: the number of signed up (approved) attendees, from least to most\n* ATTENDEES_DESC: the number of signed up (approved) attendees, from most to least\n* CAPACITY_ASC: the capacity from least to most\n* CAPACITY_DESC: the capacity from most to least\n\nNote: how ties (e.g. two events with 10 attendees each) are decided is undocumented behaviour, although it should be consistent each time.",
             "schema": {
               "$ref": "#/components/schemas/EventSearchRequest/properties/sortBy"
             }
@@ -122,7 +122,7 @@
           "events"
         ],
         "summary": "Add a new event.",
-        "description": "The elements of the category ids array `categoryIds` must each reference an existing category.\n\n`title`, `description`, and `categoryIds` are required, other properties are optional.\n\nThe event `date` must be in the future.",
+        "description": "The elements of the category ids array `categoryIds` must each reference an existing category.\n\n`title`, `description`, and `categoryIds` are required, other properties are optional. An event without `capacity` defined or set to `null` means there is no limit on the number of attendees.\n\nThe event `date` must be in the future.",
         "security": [
           {
             "UserToken": []
@@ -1195,7 +1195,7 @@
           "categories": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/Category/properties/name"
+              "$ref": "#/components/schemas/Category/properties/categoryId"
             }
           },
           "organizerFirstName": {
@@ -1203,6 +1203,12 @@
           },
           "organizerLastName": {
             "$ref": "#/components/schemas/User/properties/lastName"
+          },
+          "numAcceptedAttendees": {
+            "type": "integer",
+            "minimum": 0,
+            "example": 37,
+            "nullable": true
           },
           "capacity": {
             "type": "integer",
@@ -1259,6 +1265,8 @@
             "enum": [
               "ALPHABETICAL_ASC",
               "ALPHABETICAL_DESC",
+              "ATTENDEES_ASC",
+              "ATTENDEES_DESC",
               "DATE_ASC",
               "DATE_DESC",
               "CAPACITY_ASC",

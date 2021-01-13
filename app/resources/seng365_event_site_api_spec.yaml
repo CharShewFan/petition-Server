@@ -33,8 +33,7 @@ paths:
       description: >-
         By default, the events should be sorted by date of the events.
 
-        The list should be filtered, then sorted, then paginated using
-        `startIndex` and `count`.
+        The list should be filtered, then sorted, then paginated using `startIndex` and `count`. 
       parameters:
         - in: query
           name: startIndex
@@ -83,6 +82,11 @@ paths:
             * ATTENDEES_ASC: the number of signed up (approved) attendees, from least to most
 
             * ATTENDEES_DESC: the number of signed up (approved) attendees, from most to least
+            
+            * CAPACITY_ASC: the capacity from least to most
+
+            * CAPACITY_DESC: the capacity from most to least
+
 
             Note: how ties (e.g. two events with 10 attendees each) are decided is undocumented behaviour, although it should be consistent each time.
           schema:
@@ -108,7 +112,7 @@ paths:
         The elements of the category ids array `categoryIds` must each reference an existing category.
         
         
-        `title`, `description`, and `categoryIds` are required, other properties are optional.
+        `title`, `description`, and `categoryIds` are required, other properties are optional. An event without `capacity` defined or set to `null` means there is no limit on the number of attendees.
         
         
         The event `date` must be in the future.
@@ -836,11 +840,16 @@ components:
         categories:
           type: array
           items:
-            $ref: '#/components/schemas/Category/properties/name'
+            $ref: '#/components/schemas/Category/properties/categoryId'
         organizerFirstName:
           $ref: '#/components/schemas/User/properties/firstName'
         organizerLastName:
           $ref: '#/components/schemas/User/properties/lastName'
+        numAcceptedAttendees:
+          type: integer
+          minimum: 0
+          example: 37
+          nullable: true
         capacity:
           type: integer
           minimum: 1
@@ -883,6 +892,8 @@ components:
           enum:
             - ALPHABETICAL_ASC
             - ALPHABETICAL_DESC
+            - ATTENDEES_ASC
+            - ATTENDEES_DESC
             - DATE_ASC
             - DATE_DESC
             - CAPACITY_ASC
