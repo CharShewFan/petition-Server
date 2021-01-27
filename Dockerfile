@@ -20,7 +20,7 @@ COPY . /usr/src/app
 
 # Note that we are building the app in one container (named as build) and running it in a 2nd container, this sort of
 # simulates the distinction environment between dev and production
-FROM 14.15.4-alpine3.10
+FROM node:14.15.4-alpine3.10
 
 RUN npm install -g npm@7.4.2
 
