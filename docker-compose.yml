@@ -1,8 +1,14 @@
-version: "3"
-services:
+# The docker-compose.yml file describes the services that make your app. The compose file also describes which
+# Docker images these services use, how they link together, any volumes they might need to be mounted inside the
+# containers. Finally, the docker-compose.yml file describes which ports these services expose. See the
+# docker-compose.yml reference for more information on how  this file works. Refer to
+# https://docs.docker.com/compose/ for details
+
+version: "3.7"                 
+services:                       # Each service of the docker-compose is a container that will be built (to be reviewed).
   app:
-    build: .
-    ports:
+    build: .                    # Run the Dockerfile that is in the current folder (`docker build .`)
+    ports:                      # Ports to be exposed
       - "${SENG365_PORT}:4941"
     environment:
       - SENG365_MYSQL_HOST
@@ -10,6 +16,3 @@ services:
       - SENG365_MYSQL_PASSWORD
       - SENG365_MYSQL_DATABASE
     restart: on-failure
-networks:
-  default:
-    driver: overlay
