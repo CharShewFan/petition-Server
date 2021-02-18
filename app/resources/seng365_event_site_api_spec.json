@@ -633,7 +633,7 @@
           "users"
         ],
         "summary": "Register as a new user.",
-        "description": "The email must be syntactically valid (e.g. it has to include an `@`, but whether or not it is actually a registered email address will not be checked). The email address must not already be in use. The password must not be empty.",
+        "description": "The email must be syntactically valid (e.g. it has to include an `@`, but whether or not it is actually a registered email address will not be checked). The email address must not already be in use. The password must not be empty an empty string.",
         "requestBody": {
           "content": {
             "application/json": {
@@ -815,7 +815,7 @@
           "users"
         ],
         "summary": "Change a user's details.",
-        "description": "Only accessible by the user themselves. The email must be syntactically valid (e.g. it has to include an `@`, but whether or not it is actually a registered email address will not be checked). The email address must not already be in use. The password must not be empty. If the password is being changed, then the current password must also be provided.",
+        "description": "Only accessible by the user themselves. The email must be syntactically valid (e.g. it has to include an `@`, but whether or not it is actually a registered email address will not be checked). The email address must not already be in use. The password must not be an empty string. If the password is being changed, then the current password must also be provided.",
         "security": [
           {
             "UserToken": []
