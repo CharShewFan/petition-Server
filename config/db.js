@@ -9,7 +9,7 @@ exports.createPool = async function () {
         user: process.env.SENG365_MYSQL_USER,
         password: process.env.SENG365_MYSQL_PASSWORD,
         database: process.env.SENG365_MYSQL_DATABASE,
-        port: process.env.SENG365_MYSQL_PORT || 2234
+        port: process.env.SENG365_MYSQL_PORT // config to .env file to adjust different git update|| 2234
     });
 };
 
