@@ -13,7 +13,7 @@ module.exports = function () {
     app.use(bodyParser.json());
     app.use(bodyParser.raw({ type: 'text/plain' }));  // for the /executeSql endpoint
 
-    // DEBUG (you can remove these)
+    /*// DEBUG (you can remove these)
     app.use((req, res, next) => {
         console.log(`##### ${req.method} ${req.path} #####`);
         next();
@@ -21,10 +21,21 @@ module.exports = function () {
 
     app.get('/', function (req, res) {
         res.send({ 'message': 'Hello World!' })
-    });
+    });*/
 
     // ROUTES
     require('../app/routes/backdoor.routes')(app);
+    require('../app/routes/user.server.routes')(app);
+    require('../app/routes/category.server.routes')(app);
+    //require('../app/routes/event.server.routes')(app);
 
+
+
+    /*
+    require('../app/routes/event.server.routes')(app);
+
+    require('../app/routes/attendance.server.routes')(app);
+
+      */
     return app;
 };

@@ -7,6 +7,7 @@ module.exports = function (app){
         .patch(users.updateUser) //auth user update personal detail
 
     app.route('/user')
+        .get(users.listAllUsers)
         .post(users.addUser) // register a user
 
 }

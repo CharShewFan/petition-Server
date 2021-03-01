@@ -22,3 +22,4 @@ testDbConnection()
             console.log(`Listening on port: http://localhost:${port}`);
         });
     });
+
