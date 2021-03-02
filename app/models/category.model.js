@@ -1,8 +1,9 @@
 const db = require('../../config/db')
 
-exports.listCategory = async function(){
+exports.listCategory = async function(req,res){
         const sql = "SELECT * FROM category";
         const connection = await db.getPool().getConnection();
-        const [rows,fields] = await connection.query(sql)
-        return rows;
+        let [rows,fields] = await connection.query(sql)
+        return rows
+
 }
