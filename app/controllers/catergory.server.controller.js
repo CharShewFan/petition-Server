@@ -10,12 +10,6 @@ exports.list_Category = new Promise((resolve ,reject)=>{
 //Error: Route.get() requires a callback function but got a [object Promise]
 
 
-
-
-
-
-
-
 exports.list_Category = async function(req,res){
     try{
         const list_db_object = await Category.listCategory()
@@ -40,12 +34,24 @@ exports.addCategory = async function(){
 exports.rmCategory = async function(){
     return null;
 }
-/*
 
+exports.findCategory = async function(req,res,next){
+    console.log("controller called")
+    const id = req.params.id
+    try{
+        let dbResult = await Category.findById(id)
+        let result = Tools.parseCategory(dbResult)
+        res.send(result)
+        res.status(200)
+    }catch (e) {
+        console.log(e)
+        res.status(500)
+        res.send("retrieve data from db failed" + e)
+    }
+}
+
+/*
 exports.listCategory = async function(){
     return null;
 }
-
-exports.listCategory = async function(){
-    return null;
-}*/
+*/
