@@ -16,16 +16,19 @@ exports.list_Category = new Promise((resolve ,reject)=>{
 
 
 
-exports.list_Category = async function(){
+exports.list_Category = async function(req,res){
     try{
         const list_db_object = await Category.listCategory()
         let result = Tools.parseCategory(list_db_object);
-        for(index in result){
+        for(let index in result){
             console.log(result[index].id);
             console.log(result[index].name);
         }
+        res.status(200)
+        res.send(result)
 
     }catch(e){
+        res.status(500)
             console.log(`error happened + ${e}`)
     }
 }
