@@ -30,7 +30,6 @@ module.exports = function () {
     //require('../app/routes/event.server.routes')(app);
 
 
-
     /*
     require('../app/routes/event.server.routes')(app);
 

@@ -1,6 +1,6 @@
 exports.parseCategory = function (an_object){
     let content  = [];
-    for(index in an_object){
+    for(let index in an_object){
         let id = an_object[index].id ;
         let name =  an_object[index].name ;
        // let string_set = an_object[item_1]
