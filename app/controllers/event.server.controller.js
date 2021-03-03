@@ -1,7 +1,18 @@
-const events = require('../models/user.server.model');
+const Events = require('../models/user.server.model');
 
 exports.listEvents = async function(req,res){
-    return null;
+    console.log("event controller called")
+    try{
+        const result = await Events.dbListEvents()
+        if(result != null){
+            res.send(result)
+            res.status(200)
+        }
+        console.log("nothing received")
+    }catch (e) {
+        res.send(e)
+        res.status(401)
+    }
 }
 
 exports.addEvents = async function(){

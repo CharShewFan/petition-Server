@@ -1,13 +1,5 @@
 const Category = require('../models/category.model')
 const Tools = require('../middleware/parseCategory')
-/*
-exports.list_Category = new Promise((resolve ,reject)=>{
-    const category_list = Category.listCategory()
-    resolve(category_list)
-}).catch(err=>{
-    console.log(err)
-})*/
-//Error: Route.get() requires a callback function but got a [object Promise]
 
 
 exports.list_Category = async function(req,res){
@@ -41,12 +33,12 @@ exports.findCategory = async function(req,res,next){
     try{
         let dbResult = await Category.findById(id)
         let result = Tools.parseCategory(dbResult)
-        res.send(result)
+        res.json(result)
         res.status(200)
     }catch (e) {
         console.log(e)
         res.status(500)
-        res.send("retrieve data from db failed" + e)
+        res.send("retrieve data from db failed: " + e)
     }
 }
 
@@ -55,3 +47,13 @@ exports.listCategory = async function(){
     return null;
 }
 */
+
+/*
+exports.list_Category = new Promise((resolve ,reject)=>{
+    const category_list = Category.listCategory()
+    resolve(category_list)
+}).catch(err=>{
+    console.log(err)
+})*/
+//Error: Route.get() requires a callback function but got a [object Promise]
+
