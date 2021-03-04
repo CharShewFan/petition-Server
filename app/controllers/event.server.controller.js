@@ -1,12 +1,15 @@
 const Events = require('../models/event.model');
 const middleware = require('../middleware/sortEventByDate')
 
+
+//list events test failed
 exports.listEvents = async function(req,res){
     console.log("event controller called")
     try{
         const result = await Events.dbListEvents()
         //let sortedResult = middleware.sortByDate(result)
-        res.send(result)
+        console.log(result[1].id)
+        res.send(result[1].id)
         res.status(200)
 
         console.log("nothing received")
@@ -17,9 +20,19 @@ exports.listEvents = async function(req,res){
 
 }
 
-exports.addEvents = async function(){
-    return null;
+//need authentication 
+exports.addEvents = async function(req,res){
+    try{
+        const params = req.params.body;
+        const result = Events.add_events
+
+    }catch(e){
+        console.log(e)
+    }
 }
+
+
+
 exports.indexSearcher = async function(req,res){
     let index = req.body.params
     const result = await Events.dbListEvents(index)
