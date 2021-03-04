@@ -12,5 +12,8 @@
     "humps": "^2.0.1",
     "mz": "^2.7.0",
     "mysql2": "^2.1.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.7"
   }
 }

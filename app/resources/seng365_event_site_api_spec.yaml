@@ -24,6 +24,9 @@ tags:
       information.
   - name: users.images
     description: 'Endpoints for retrieving, uploading, and deleting user profile images.'
+
+
+
 paths:
   /events:
     get:
@@ -35,21 +38,25 @@ paths:
 
         The list should be filtered, then sorted, then paginated using `startIndex` and `count`. 
       parameters:
+        -
         - in: query
           name: startIndex
           description: Number of items to skip before returning results.
           schema:
             $ref: '#/components/schemas/EventSearchRequest/properties/startIndex'
+
         - in: query
           name: count
           description: Number of items to include in results.
           schema:
             $ref: '#/components/schemas/EventSearchRequest/properties/count'
+
         - in: query
           name: q
           description: Only include events that have the search term within their title or description.
           schema:
             $ref: '#/components/schemas/EventSearchRequest/properties/q'
+
         - in: query
           name: categoryIds
           description: |-

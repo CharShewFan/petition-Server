@@ -4,6 +4,7 @@ exports.listCategory = async function(){
         const sql = "SELECT * FROM category";
         const connection = await db.getPool().getConnection();
         let [rows,fields] = await connection.query(sql)
+        console.log(rows)
         return rows
 
 }

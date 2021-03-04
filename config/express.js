@@ -27,7 +27,7 @@ module.exports = function () {
     require('../app/routes/backdoor.routes')(app);
     require('../app/routes/user.server.routes')(app);
     require('../app/routes/category.server.routes')(app);
-    //require('../app/routes/event.server.routes')(app);
+    require('../app/routes/event.server.routes')(app);
 
 
     /*
