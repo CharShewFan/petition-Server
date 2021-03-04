@@ -1,17 +1,21 @@
 const User = require('../models/user.model');
 
+//retrieve all users data
 exports.listAllUsers = async function(req,res){
+    console.log("user constroller call")
     try{
         let user_list = await User.listUsers();
+        
         res.status(200)
-            .send(user_list)
+        res.send(user_list)
     }catch (e){
-        res.status(500)
-            .send(`error getting user list ${e}`)
+        res.send(e)
         console.log(e)
 
     }
 }
+
+
 
 exports.getDetails = async function(req,res){
     return null;

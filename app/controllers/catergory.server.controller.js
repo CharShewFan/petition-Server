@@ -6,10 +6,10 @@ exports.list_Category = async function(req,res){
     try{
         const list_db_object = await Category.listCategory()
         let result = Tools.parseCategory(list_db_object);
-        for(let index in result){
-            console.log(result[index].id);
-            console.log(result[index].name);
-        }
+        // for(let index in result){
+        //     console.log(result[index].id);
+        //     console.log(result[index].name);
+        // }
         res.status(200)
         res.send(result)
 
