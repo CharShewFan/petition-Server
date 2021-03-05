@@ -1,0 +1,3 @@
+### How it works: your user ID, token, etc.
+
+Some of the Postman requests, such as POST /users/login, have scripts included, in the Tests tab. These set global variables, such as your user ID and the auth token, which are then used in other requests. For example, `auth_token` is used in the `X-Authorization` header of PATCH /users/:id. The POST /users/logout request then has a script to delete the user ID and token.
