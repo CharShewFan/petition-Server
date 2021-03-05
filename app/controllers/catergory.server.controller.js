@@ -1,7 +1,6 @@
 const Category = require('../models/category.model')
 const Tools = require('../middleware/parseCategory')
 
-
 exports.list_Category = async function(req,res){
     try{
         const list_db_object = await Category.listCategory()
