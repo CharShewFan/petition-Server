@@ -15,6 +15,7 @@ module.exports = function () {
     app.use(allowCrossOriginRequestsMiddleware);
     app.use(bodyParser.json());
     app.use(bodyParser.raw({ type: 'text/plain' }));  // for the /executeSql endpoint
+    
     //what is express session for ?
     //app.use(require('express-session')({ secret: 'keyboard cat', resave: true, saveUninitialized: true }));
      app.use(passport.initialize());
