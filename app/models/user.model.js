@@ -17,7 +17,7 @@ exports.listById = async function (id){
 }
 
 exports.addUser = async function(params){
-    console.log("add user model called ")
+    console.log("addUser model called ")
     const sql = `INSERT INTO user(email, first_name, last_name, image_filename, password, auth_token) VALUES (${params}) `
     const connection = await db.getPool.getConnection()
     const status = await connection.query(sql)

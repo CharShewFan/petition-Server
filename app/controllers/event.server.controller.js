@@ -11,8 +11,6 @@ exports.listEvents = async function(req,res){
         console.log(result[1].id)
         res.send(result[1].id)
         res.status(200)
-
-        console.log("nothing received")
     }catch (e) {
         res.send(e)
         res.status(401)
@@ -49,7 +47,16 @@ exports.indexSearcher = async function(req,res){
 }
 
 exports.rmEvents = async function(req,res){
-    return null;
+    try{
+        const password = req.body.password;
+        const user_id = req.body.user_id;
+        const user_email = req.body.email;
+        const result = Events.deleteEvent(password,user_id,user_email);
+        
+    }catch(e){
+        res.send(e)
+    }
+
 }
 
 exports.updateEvents = async function(req,res){
