@@ -27,10 +27,10 @@ exports.add_events  = async function(data){
 }
 
 // auth user delete own event
-exports.deleteEvent = async function(auth_token,email,user_id){
-    const connection = db.getPool().getConnection()
-    const feedback = connection.query(`DELETE user_id,user_email from user where user_id = ${user_id} and email = ${email}`)
-    let [rows,]
-    const check = connection.query
-}
+// exports.deleteEvent = async function(auth_token,email,user_id){
+//     const connection = db.getPool().getConnection()
+//     connection.query(`DELETE user_id,user_email from user where user_id = ${user_id} and email = ${email}`)
+//     let check = connection.query(`SELECT user_id,user_email from user where user_id = ${user_id} and email = ${email}`)
+//     const check = connection.query
+// }
 
