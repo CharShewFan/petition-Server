@@ -11,24 +11,30 @@ exports.listUsers = async function (){
 exports.listById = async function (id){
     console.log("user model called")
     const sql = `SELECT id, email,first_name,last_name,image_filename FROM user WHERE id = ${id}`
-    const connection = await db.getPool.getConnection()
+    const connection = await db.getPool().getConnection()
     const [rows,fields] = await connection.query(sql)
     return rows
 }
 
-exports.addUser = async function(params){
+exports.addUser = async function(firstName,lastName,email,password){
     console.log("addUser model called ")
-    const sql = `INSERT INTO user(email, first_name, last_name, image_filename, password, auth_token) VALUES (${params}) `
-    const connection = await db.getPool.getConnection()
-    const status = await connection.query(sql)
-    const [rows,fields] = await listById(params.id)
-    return [[rows,fields],status]
+    let values = [
+        [email],
+        [firstName],
+        [lastName],
+        [password],
+    ]
+    const sql = 'INSERT INTO user (email, first_name, last_name, password) VALUES (?) '
+    const connection = await db.getPool().getConnection()
+    const status = await connection.query(sql,[values])
+    //const [rows,fields] = await listById(params.id)
+    return status
 }
 
 exports.deleteUser = async function(params){
     console.log("delete user module called")
     const sql = `DELETE from user where id = ${pramas.id}`
-    const connection = await db.getPool.getConnection()
+    const connection = await db.getPool().getConnection()
     const status = await connection.query(sql)
     return status
 }

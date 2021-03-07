@@ -26,28 +26,35 @@ exports.getDetails = async function(req,res){
 }
 
 exports.addUser = async function(req,res){
-    let  name = req.body.userName
-    let  password = req.body.password
+    let Fname = req.body.firstName
+    let Lname = req.body.lastName
+    var password = req.body.password
     let email = req.body.email
     let password2 = req.body.password2
-    const errorList = validate.validationTest(name,email,password,password2)
+    console.log(password,email,password2)
+    console.log(typeof(password))
+    const errorList = validate.validationTest(Fname,Lname,email,password,password2)
     if(validate.reportError(errorList)){
-        
+        console.log("validation result:" + validate.reportError(errorList))
         //hash pasword
         bcrypt.genSalt(10,(err,salt)=>{
-            bcrypt.hash(password,salt,(err,hash)=>{
-                if(err)throw err;
+            bcrypt.hash(password.toString(),salt,(err,hash)=>{
+                if(err) throw err;
                 password = hash;
+                console.log(hash)
+                console.log(password)
+                try{
+                    let result = User.addUser(Fname,Lname,email,password)
+                    res.send(result)
+                    res.status(200)
+                    
+                }catch(e){
+                    res.send("the error come from controller addUser" + e)
+                }
             })
         })
-        try{
-            let result = User.addUser(name,email,password)
-            res.send(result)
-            res.status(200)
-            
-        }catch(e){
-            res.send(e)
-        }
+        
+        
 
     }
 }
