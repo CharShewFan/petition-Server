@@ -1,3 +1,5 @@
+//email Regx:  /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+
 exports.validationTest = function(user_name,user_email,user_password,password2){
     if(user_name == null || user_email == ""){
         error.push({userName:"user name empty and null"})

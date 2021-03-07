@@ -53,7 +53,10 @@ exports.rmEvents = async function(req,res){
         const user_email = req.body.email;
         const result = Events.deleteEvent(password,user_id,user_email);
         
+    }catch(e){
+        res.send(e)
     }
+
 }
 
 exports.updateEvents = async function(req,res){

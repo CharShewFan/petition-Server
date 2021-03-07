@@ -1,5 +1,8 @@
 const User = require('../models/user.model');
 const validate = require('../middleware/user/validation')
+const bcrypt = require('bcryptjs')
+const passport = require('passport')
+
 
 //retrieve all users data
 exports.listAllUsers = async function(req,res){
@@ -29,9 +32,16 @@ exports.addUser = async function(req,res){
     let password2 = req.body.password2
     const errorList = validate.validationTest(name,email,password,password2)
     if(validate.reportError(errorList)){
-        // add an password hash-to-token method here (auth0)
+        
+        //hash pasword
+        bcrypt.genSalt(10,(err,salt)=>{
+            bcrypt.hash(password,salt,(err,hash)=>{
+                if(err)throw err;
+                password = hash;
+            })
+        })
         try{
-            let result = User.addUser(name,email,password,password2)
+            let result = User.addUser(name,email,password)
             res.send(result)
             res.status(200)
             
