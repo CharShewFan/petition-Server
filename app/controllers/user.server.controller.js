@@ -2,9 +2,10 @@ const User = require('../models/user.model');
 const validate = require('../middleware/user/validation')
 const bcrypt = require('bcryptjs')
 const passport = require('passport')
+const existence = require('../middleware/user/checkRg')
 
 
-//retrieve all users data
+//retrieve all users data with eamil
 exports.listUserDetails = async function(req,res){
     console.log("user constroller call")
     try{
@@ -18,13 +19,25 @@ exports.listUserDetails = async function(req,res){
     }
 }
 
-
 /* two case to get user details : 
 1,user already login in ,use autn_token to auth request
 */
-exports.getDetails = async function(req,res){
-     return null;
+exports.getDetails = async function(email){
+    try{
+        const [object] = await User.listUsers(email) //use await to unfold promise obj
+        console.log(object[0].email)
+        //let showObj = object[0]
+        //let email = object[index].email
+        //console.log(showObj)
+       // console.log("check getDetails " + object[0].email) //object[0].email = "33334d987@gmail.com"
+       // console.log(typeof(object[0].email)) string
+        return object[0].email
+        
+   }catch(e){
+       console.log("getDetail:   "+ e)
+   }
 }
+
 
 
 exports.addUser = async function(req,res){
@@ -33,18 +46,16 @@ exports.addUser = async function(req,res){
     let password = req.body.password
     let email = req.body.email
     let password2 = req.body.password2
-    // console.log(password,email,password2)
-    // console.log(typeof(password))
-    
-    const errorList = validate.validationTest(Fname,Lname,email,password,password2)
+    let errorList = validate.validationTest(Fname,Lname,email,password,password2)//return a error type:[]
 
-    //check whether user is already exit: 
-    // const userNotExist = User.checkExist(email)
-    // if (userNotExist == false){
-    //     errorList.push({message:"email already registered"})
-    // }
+    //check whether user is already exit: //有 getDetail
+     const repeatRg = existence.checkExites(email,errorList).then(function(result){ 
+         return result; //result.exists = true
+     })
 
-    if(validate.reportError(errorList)){
+    //console.log(errorList)
+
+    if(validate.reportError(errorList) == true && (await repeatRg).exists == false) {
         //console.log("validation result:" + validate.reportError(errorList))
         //hash pasword
         bcrypt.genSalt(10,(err,salt)=>{
@@ -54,18 +65,24 @@ exports.addUser = async function(req,res){
                 console.log(hash)
                 console.log(password)
                 try{
-                    let result = User.addUser(Fname,Lname,email,password)
-                    res.send(result)
-                    res.status(200)
+                    User.addUser(Fname,Lname,email,password)
+                    //check add user status and return info of new user 
+                    // if(existence.checkRgStatus(email) == true){
+                    //     console.log("add user sucessfully")
+                    //let  user_detail = User.listUsers(email).then(function(userInfo){
+                        // return userInfo
+                       //  });
+                    res.status(201)
+                    res.send("hello world")
+
+                    // }
+                    //res.send(result)
                     
                 }catch(e){
                     res.send(e)
                 }
             })
         })
-        
-        
-
     }else{
         res.send(errorList)
     }

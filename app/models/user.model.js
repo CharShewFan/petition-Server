@@ -5,20 +5,20 @@ exports.listUsers = async function (email){
     const sql = "SELECT * from user WHERE email = ?"
     const connection = await db.getPool().getConnection();
     let [rows,feilds] = await connection.query(sql,[email]);
-    return rows;
+    return [rows];
 }
 
-exports.checkExist = async function (email){
-    console.log("user model called")
-    const sql = `SELECT id, email,first_name,last_name,image_filename FROM user WHERE email = ${email}`
-    const connection = await db.getPool().getConnection()
-    const [rows,fields] = await connection.query(sql)
-    if (rows == "{}"){
-        return true
-    }else{
-        return false
-    }
-}
+// exports.checkExist = async function (email){
+//     console.log("user model called")
+//     const sql = `SELECT id, email,first_name,last_name,image_filename FROM user WHERE email = ${email}`
+//     const connection = await db.getPool().getConnection()
+//     const [rows,fields] = await connection.query(sql)
+//     if (rows == "{}"){
+//         return true
+//     }else{
+//         return false
+//     }
+// }
 
 exports.addUser = async function(firstName,lastName,email,password){
     console.log("addUser model called ")

@@ -10,14 +10,14 @@ exports.validationTest = function(fisrstName,lastName,user_email,user_password,p
         error.push("last name can not be empty")
     }
     if((fisrstName && lastName) == null || user_email == ""){
-        error.push({userName:"user name empty and null"})
+        error.push("user name empty and null")
     }
     let emailPattern = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     if (emailPattern.test(user_email) == false){
-        error.push({userEmail:"email is not validate"})
+        error.push("email is not validate")
     }
     if(user_password !== password2){
-        error.push({password:"password does not match"})
+        error.push("password does not match")
     }
 
     if(user_password == null || user_password == ""){
@@ -27,15 +27,19 @@ exports.validationTest = function(fisrstName,lastName,user_email,user_password,p
     if(password2 == "" || password2 == null){
         error.push("must fill the confirm password")
     }
-    return error
+
+    console.log(error)
+    return error //return an array call error
 }
 
+
+
 exports.reportError = function(error){
-    if(error.length != 0){
-        for(let errorMsg in error){
-            console.log(errorMsg)
+    if(error.length != 0){ //has error
+        for(let i = 0; i < error.length; i++){
+            console.log(error[i])
         }
-    }else{
+    }else{ // no error
         return true;
     }
 }
