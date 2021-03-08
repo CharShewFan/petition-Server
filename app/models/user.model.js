@@ -1,19 +1,23 @@
 const db = require('../../config/db');
 
-exports.listUsers = async function (){
+exports.listUsers = async function (email){
     console.log("user model called")
-    const sql = "SELECT * from user"
+    const sql = "SELECT * from user WHERE email = ?"
     const connection = await db.getPool().getConnection();
-    let [rows,feilds] = await connection.query(sql);
+    let [rows,feilds] = await connection.query(sql,[email]);
     return rows;
 }
 
-exports.listById = async function (id){
+exports.checkExist = async function (email){
     console.log("user model called")
-    const sql = `SELECT id, email,first_name,last_name,image_filename FROM user WHERE id = ${id}`
+    const sql = `SELECT id, email,first_name,last_name,image_filename FROM user WHERE email = ${email}`
     const connection = await db.getPool().getConnection()
     const [rows,fields] = await connection.query(sql)
-    return rows
+    if (rows == "{}"){
+        return true
+    }else{
+        return false
+    }
 }
 
 exports.addUser = async function(firstName,lastName,email,password){

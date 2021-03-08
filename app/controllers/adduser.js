@@ -4,29 +4,6 @@ const bcrypt = require('bcryptjs')
 const passport = require('passport')
 
 
-//retrieve all users data
-exports.listUserDetails = async function(req,res){
-    console.log("user constroller call")
-    try{
-        let user_detail = await User.listUsers(req.body.email);
-        res.status(200)
-        res.send(user_detail)
-    }catch (e){
-        res.send(e)
-        console.log(e)
-
-    }
-}
-
-
-/* two case to get user details : 
-1,user already login in ,use autn_token to auth request
-*/
-exports.getDetails = async function(req,res){
-     return null;
-}
-
-
 exports.addUser = async function(req,res){
     let Fname = req.body.firstName
     let Lname = req.body.lastName
@@ -55,8 +32,10 @@ exports.addUser = async function(req,res){
                 console.log(password)
                 try{
                     let result = User.addUser(Fname,Lname,email,password)
+                    // 判别是否成功注册到数据库： 返回 201 ？ 不合适，因为 db 注册成功后本身不返回任何数据，返回数据的是 server发出的
+                    if()
                     res.send(result)
-                    res.status(200)
+                    res.status(201)
                     
                 }catch(e){
                     res.send(e)
@@ -69,12 +48,4 @@ exports.addUser = async function(req,res){
     }else{
         res.send(errorList)
     }
-}
-
-exports.rmUser = async function(req,res){
-    return null;
-}
-
-exports.updateUser = async function(req,res){
-    return null;
 }
