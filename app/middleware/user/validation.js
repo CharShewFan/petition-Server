@@ -2,6 +2,13 @@
 
 exports.validationTest = function(fisrstName,lastName,user_email,user_password,password2){
     let error = []
+
+    if(fisrstName == "" || fisrstName == null){
+        error.push("first name can not be empty")
+    }
+    if(lastName == "" || lastName == null){
+        error.push("last name can not be empty")
+    }
     if((fisrstName && lastName) == null || user_email == ""){
         error.push({userName:"user name empty and null"})
     }
@@ -11,6 +18,14 @@ exports.validationTest = function(fisrstName,lastName,user_email,user_password,p
     }
     if(user_password !== password2){
         error.push({password:"password does not match"})
+    }
+
+    if(user_password == null || user_password == ""){
+        error.push("password empty")
+    }
+
+    if(password2 == "" || password2 == null){
+        error.push("must fill the confirm password")
     }
     return error
 }

@@ -28,7 +28,7 @@ exports.getDetails = async function(req,res){
 exports.addUser = async function(req,res){
     let Fname = req.body.firstName
     let Lname = req.body.lastName
-    var password = req.body.password
+    let password = req.body.password
     let email = req.body.email
     let password2 = req.body.password2
     console.log(password,email,password2)
@@ -56,6 +56,8 @@ exports.addUser = async function(req,res){
         
         
 
+    }else{
+        res.send(errorList)
     }
 }
 
