@@ -21,7 +21,7 @@ module.exports = function () {
      app.use(passport.initialize());
      app.use(passport.session());
 
-    /*// DEBUG (you can remove these)
+    // DEBUG (you can remove these)
     app.use((req, res, next) => {
         console.log(`##### ${req.method} ${req.path} #####`);
         next();
@@ -29,7 +29,12 @@ module.exports = function () {
 
     app.get('/', function (req, res) {
         res.send({ 'message': 'Hello World!' })
-    });*/
+    });
+
+    app.get(app.rootUrl,(req,res)=>{
+        res.send("hello rootUrl")
+        res.status(200)
+    })
 
     // ROUTES
    require('../app/routes/backdoor.routes')(app);
