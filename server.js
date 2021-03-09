@@ -6,7 +6,7 @@ const bcrypt = require('bcryptjs')
 
 
 const app = express();
-const port = process.env.PORT || 4941;
+const port = process.env.PORT || 4129;
 
 // Test connection to MySQL on start-up
 async function testDbConnection() {

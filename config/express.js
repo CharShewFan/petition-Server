@@ -18,8 +18,8 @@ module.exports = function () {
     
     //what is express session for ?
     //app.use(require('express-session')({ secret: 'keyboard cat', resave: true, saveUninitialized: true }));
-     app.use(passport.initialize());
-     app.use(passport.session());
+     app.use(passport.initialize()); // ?
+     app.use(passport.session()); // ?
 
     // DEBUG (you can remove these)
     app.use((req, res, next) => {

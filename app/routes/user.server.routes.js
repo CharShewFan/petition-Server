@@ -13,4 +13,7 @@ module.exports = function (app){
     app.route(app.rootUrl + '/users' + "/register")// register a user
         .post(users.addUser)
 
+    app.route(app.rootUrl + '/users/login')
+        .post(users.login)
+
 }

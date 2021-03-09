@@ -3,6 +3,8 @@ const validate = require('../middleware/user/validation')
 const bcrypt = require('bcryptjs')
 const passport = require('passport')
 const existence = require('../middleware/user/checkRg')
+const joi  = require('joi')
+const LoginValid = require('../middleware/validations/loginValidation')
 
 
 //retrieve all users data with eamil
@@ -55,9 +57,9 @@ exports.addUser = async function(req,res){
 
     //console.log(errorList)
 
-    if(validate.reportError(errorList) == true && (await repeatRg).exists == false) {
+    if(validate.reportError(errorList) === true && (await repeatRg).exists === false) {
         //console.log("validation result:" + validate.reportError(errorList))
-        //hash pasword
+        //hash password
         bcrypt.genSalt(10,(err,salt)=>{
             bcrypt.hash(password.toString(),salt,(err,hash)=>{
                 if(err) throw err;
@@ -68,7 +70,7 @@ exports.addUser = async function(req,res){
                     User.addUser(Fname,Lname,email,password)
                     //check add user status and return info of new user 
                     // if(existence.checkRgStatus(email) == true){
-                    //     console.log("add user sucessfully")
+                    //     console.log("add user ")
                     //let  user_detail = User.listUsers(email).then(function(userInfo){
                         // return userInfo
                        //  });
@@ -94,4 +96,15 @@ exports.rmUser = async function(req,res){
 
 exports.updateUser = async function(req,res){
     return null;
+}
+
+
+/*login function*/
+exports.login =  function(req,res){
+    const hashedPassword = req.body.password
+    const sql = `SELECT email , id WHERE email = ${req.body.email} and password = ${hashedPassword}`
+    const validation = LoginValid.loginValid({email:req.body.email,password:hashedPassword})
+    //console.log(validation.error)
+    if(validation.error) return res.status(400) .send(validation.error.details[0].message)
+
 }
