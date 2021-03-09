@@ -1,0 +1,65 @@
+// 成功测试用例
+{
+    "firstName":"li",
+    "lastName":"kevin",
+    "password":123456,
+    "password2":123456,
+    "email":"36987@gmail.com"
+}
+
+//空用户名
+//expectation: server 发回错误记录的 array 并在client 端显示{userName:"user name empty and null"}
+{
+    "firstName":"",
+    "lastName":"kevin",
+    "password":123456,
+    "password2":123456,
+    "email":"36987@gmail.com"
+}
+
+//空 lastname
+//expectation: server 发回错误记录的 array 并在client 端显示{userName:"user name empty and null"}
+
+{
+    "firstName":"li",
+    "lastName":"",
+    "password":123456,
+    "password2":123456,
+    "email":"36987@gmail.com"
+}
+
+//空 password
+{
+    "firstName":"",
+    "lastName":"kevin",
+    "password":,
+    "password2":123456,
+    "email":"36987@gmail.com"
+}
+
+//空 second password
+{
+    "firstName":"li",
+    "lastName":"kevin",
+    "password":123456,
+    "password2":,
+    "email":"36987@gmail.com"
+}
+
+//不匹配password
+{
+    "firstName":"li",
+    "lastName":"kevin",
+    "password":123456,
+    "password2":654321,
+    "email":"36987@gmail.com"
+}
+
+//非法邮箱地址
+{
+    "firstName":"li",
+    "lastName":"kevin",
+    "password":123456,
+    "password2":123456,
+    "email":"34343554.,/;"
+}
