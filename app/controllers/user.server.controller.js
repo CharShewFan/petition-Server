@@ -6,23 +6,23 @@ const existence = require('../middleware/user/checkRg')
 const joi  = require('joi')
 const LoginValid = require('../middleware/validations/loginValidation')
 const Register = require('../middleware/validations/registerValid');
-const { func } = require('joi');
-
+const jwt = require('jsonwebtoken')
 
 //retrieve all users data with eamil
 exports.listUserDetails = async function(req,res){
-    console.log("user controller call")
+    console.log("list user detailed call")
     try{
-        let user_detail = await User.listUsers(req.body.email);
+        let [rows,fields] = await User.listUsers(req.body.email);
         res.status(200)
-        res.send(user_detail)
+        res.send(rows[0])
+        return rows
     }catch (e){
+        res.status(400)
         res.send(e)
         console.log(e)
 
     }
 }
-
 
 //create new user in db  with email,password,fname,lname ; expected response 201 or 400
 exports.register = async function(req,res){
@@ -52,7 +52,6 @@ exports.register = async function(req,res){
                         res.status(201)
                         res.send(result.toString())
                     })
-
                 }catch(e){
                     res.status(500)
                     res.send("internal server error: " + e)
@@ -73,11 +72,46 @@ exports.updateUser = async function(req,res){
 
 
 /*login function*/
-exports.login =  function(req,res){
-    const hashedPassword = req.body.password
-    const sql = `SELECT email , id WHERE email = ${req.body.email} and password = ${hashedPassword}`
-    const validation = LoginValid.loginValid({email:req.body.email,password:hashedPassword})
-    //console.log(validation.error)
-    if(validation.error) return res.status(400) .send(validation.error.details[0].message)
+exports.logIn = async function(req,res){
+    try{
+        const validation = LoginValid.loginValid({email:req.body.email,password:req.body.password})
+        if(validation.error)  res.status(400).send(validation.error.details[0].message)
 
+        const repeatRg = await existence.checkExist(req.body.email).then(function(result){
+            return (result) ; //result.exists = true
+        })
+        console.log(repeatRg.exists)
+        if( repeatRg.exists === false) res.status(400).send("email not exist")
+
+        const userInfo = await User.listUsers(req.body.email)
+        console.log("dbPassword")
+        console.log(userInfo[0].password)
+
+        const checkPassword = await bcrypt.compare(req.body.password,userInfo[0].password)
+        console.log(checkPassword)
+        if(!checkPassword)  res.status(400).send("password not valid")
+
+        /*create json web token*/
+        //let randomString = Math.random().toString(36).replace(/[^a-z]+/g, '').substr(0, 5);
+        let token = jwt.sign({id:userInfo.id},"randomString")
+        res.setHeader("X-Authorization",token)
+        const result = await User.loginUser(token,req.body.email)
+        console.log(result)
+        if (result) res.status(200).send({"id":result[0].id,"token":token})
+    }catch (e) {
+        console.log(e)
+    }
 }
+
+exports.logOut = async function(req,res){
+    console.log(req.header('X-Authorization'))
+    try{
+        const isLogOut = await User.logOutUser(req.header('X-Authorization'))
+        if(isLogOut) res.status(200).send('ok')
+    }catch (e){
+        res.status(500)
+        res.send(e)
+    }
+}
+
+

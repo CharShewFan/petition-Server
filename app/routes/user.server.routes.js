@@ -10,10 +10,13 @@ module.exports = function (app){
         .get(users.listUserDetails)
         
     
-    app.route(app.rootUrl + '/users' + "/register")// register a user
+    app.route(app.rootUrl + '/users' + '/register')
         .post(users.register)
 
     app.route(app.rootUrl + '/users/login')
-        .post(users.login)
+        .post(users.logIn)
+
+    app.route(app.rootUrl + '/users' + '/logout')
+        .post(users.logOut)
 
 }

@@ -1,11 +1,13 @@
 const db = require('../../config/db');
 
+
+
 exports.listUsers = async function (email){
     console.log("user model called")
     const sql = "SELECT * from user WHERE email = ?"
     const connection = await db.getPool().getConnection();
     let [rows,feilds] = await connection.query(sql,[email]);
-    return [rows];
+    return rows;
 }
 
 
@@ -77,13 +79,42 @@ exports.deleteUser = async function(params){
 
 exports.updateUserInfo = async function(params){
     console.log("update user module called")
-    const sql = `UPDATE user SET email=${params.email},first_name=${first_name},last_name=${params.last_name},image_filename=${params.image_filename},password=${params.password},auth_token=${params.auth_token} WHERE id = ${params.id}`
+   // const sql = `UPDATE user SET email=${params.email},first_name=${first_name},last_name=${params.last_name},image_filename=${params.image_filename},password=${params.password},auth_token=${params.auth_token} WHERE id = ${params.id}`
     const connection = await db.getPool().getConnection()
     const status = await connection.query(sql)
     const [rows,fields] = await listById(params.id)
     return [rows]
 }
 
+/*-------------------------------------------------*/
+
+
+exports.loginUser = async function(token,email) {
+    try{
+        console.log("model called")
+        const sql = `UPDATE user SET auth_token = '${token}' where email = '${email}'` // 规范查询📖
+        const sql2 = `SELECT id FROM user WHERE email = '${email}'`
+        const connection = await db.getPool().getConnection();
+        const loginQuery = await connection.query(sql)
+        const [rows, fields] = await connection.query(sql2)
+        return rows
+    }catch (e) {
+        console.log(e)
+    }
+}
+
+/*-------------------------------------------------*/
+
+exports.logOutUser = async function(token){
+    try{
+        const sql = `UPDATE user SET auth_token = NULL where auth_token = '${token}'`
+        const connection = await db.getPool().getConnection();
+        const logOutQuery = await connection.query(sql)
+        return true
+    }catch (e){
+        return e
+    }
+}
 
 
 
