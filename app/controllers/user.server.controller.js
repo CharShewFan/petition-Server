@@ -5,11 +5,13 @@ const passport = require('passport')
 const existence = require('../middleware/user/checkRg')
 const joi  = require('joi')
 const LoginValid = require('../middleware/validations/loginValidation')
+const Register = require('../middleware/validations/registerValid');
+const { func } = require('joi');
 
 
 //retrieve all users data with eamil
 exports.listUserDetails = async function(req,res){
-    console.log("user constroller call")
+    console.log("user controller call")
     try{
         let user_detail = await User.listUsers(req.body.email);
         res.status(200)
@@ -21,72 +23,43 @@ exports.listUserDetails = async function(req,res){
     }
 }
 
-/* two case to get user details : 
-1,user already login in ,use autn_token to auth request
-*/
-exports.getDetails = async function(email){
-    try{
-        const [object] = await User.listUsers(email) //use await to unfold promise obj
-        console.log(object[0].email)
-        //let showObj = object[0]
-        //let email = object[index].email
-        //console.log(showObj)
-       // console.log("check getDetails " + object[0].email) //object[0].email = "33334d987@gmail.com"
-       // console.log(typeof(object[0].email)) string
-        return object[0].email
-        
-   }catch(e){
-       console.log("getDetail:   "+ e)
-   }
-}
 
+//create new user in db  with email,password,fname,lname ; expected response 201 or 400
+exports.register = async function(req,res){
+    let fname = req.body.firstName
+    let lname = req.body.lastName
+    let passwords = req.body.password
+    let emails = req.body.email
 
-
-exports.addUser = async function(req,res){
-    let Fname = req.body.firstName
-    let Lname = req.body.lastName
-    let password = req.body.password
-    let email = req.body.email
-    let password2 = req.body.password2
-    let errorList = validate.validationTest(Fname,Lname,email,password,password2)//return a error type:[]
-
+    let validation = Register.registerValid({firstName:fname,lastName:lname,password:passwords,email:emails})
     //check whether user is already exit: //有 getDetail
-     const repeatRg = existence.checkExites(email,errorList).then(function(result){ 
+     const repeatRg = existence.checkExist(emails).then(function(result){
          return result; //result.exists = true
-     })
+        })
 
-    //console.log(errorList)
-
-    if(validate.reportError(errorList) === true && (await repeatRg).exists === false) {
-        //console.log("validation result:" + validate.reportError(errorList))
-        //hash password
+        
+        // condition check : both validation and none existed in db
+    if(validation.error || (await repeatRg).exists === true) {
+        res.status(400)
+        res.send("bad request")
+    }else{
         bcrypt.genSalt(10,(err,salt)=>{
-            bcrypt.hash(password.toString(),salt,(err,hash)=>{
+            bcrypt.hash(passwords.toString(),salt,(err,hash)=>{
                 if(err) throw err;
-                password = hash;
-                console.log(hash)
-                console.log(password)
+                passwords = hash;
                 try{
-                    User.addUser(Fname,Lname,email,password)
-                    //check add user status and return info of new user 
-                    // if(existence.checkRgStatus(email) == true){
-                    //     console.log("add user ")
-                    //let  user_detail = User.listUsers(email).then(function(userInfo){
-                        // return userInfo
-                       //  });
-                    res.status(201)
-                    res.send("hello world")
+                    const promiseId =  User.addUser(fname,lname,emails,passwords).then((result)=>{
+                        res.status(201)
+                        res.send(result.toString())
+                    })
 
-                    // }
-                    //res.send(result)
-                    
                 }catch(e){
-                    res.send(e)
+                    res.status(500)
+                    res.send("internal server error: " + e)
+                    
                 }
             })
         })
-    }else{
-        res.send(errorList)
     }
 }
 

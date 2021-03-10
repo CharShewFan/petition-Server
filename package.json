@@ -2,7 +2,7 @@
   "name": "seng365-meetup-site-api",
   "version": "0.0.1",
   "scripts": {
-    "start": "node server.js",
+    "start": "nodemon server.js",
     "debug": "node --trace-warnings %NODE_DEBUG_OPTION% server.js"
   },
   "dependencies": {

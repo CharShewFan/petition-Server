@@ -1,36 +1,23 @@
-const User = require('../../controllers/user.server.controller')
+const User = require('../../models/user.model')
 
 
-exports.checkExites =async function(email,errorList){
+/*check whether user email was registered*/
+exports.checkExist = async function(email){
     try{
-        const result = await User.getDetails(email)
-        //console.log("checkExites    " + result)
-        if(result == email) {
-            errorList.push("user already exists")
-            return {"exists":true}
-        }
-        else{
+        const result = await User.returnEmail(email)
+        //console.log("result from checkExist")
+       // console.log(result)
+        if (result === false){
             return {"exists":false}
         }
+        if(result === email) {
+            
+            return {"exists":true}
+        }
     }catch(e){
-        console.log("checkExites" + e)
+        console.log("checkExist" + e)
     }
 }
 
 
 /*-------------------------------------------------*/
-
-
-exports.checkRgStatus = async function(email){
-    try{
-        const result =await User.getDetails(email)
-        if (result == email){
-            return true 
-        }
-        else{
-            return false // add user failed
-        }
-    }catch(e){
-        console.log("error from checkRgStatus:    "+ e)
-    }  
-}

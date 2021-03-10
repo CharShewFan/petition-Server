@@ -8,40 +8,72 @@ exports.listUsers = async function (email){
     return [rows];
 }
 
-// exports.checkExist = async function (email){
-//     console.log("user model called")
-//     const sql = `SELECT id, email,first_name,last_name,image_filename FROM user WHERE email = ${email}`
-//     const connection = await db.getPool().getConnection()
-//     const [rows,fields] = await connection.query(sql)
-//     if (rows == "{}"){
-//         return true
-//     }else{
-//         return false
-//     }
-// }
+
+/*return a user id by query with a email when create user successfully*/
+exports.returnEmail = async function(email){
+    try{
+        const sql = 'SELECT email FROM user WHERE email = ?'
+        const connection = await db.getPool().getConnection()
+        const [rows,fields] = await connection.query(sql,[email])
+        let isExist = false
+        rows.forEach(item => {
+            if (item.email) {
+                isExist = true
+            }
+        })
+        if (isExist) {
+            return rows[0].email
+        }
+
+        else{
+            return  false
+        }
+
+    }catch (e) {
+        console.log(e)
+    }
+
+}
+
+
+/*-------------------------------------------------*/
+
 
 exports.addUser = async function(firstName,lastName,email,password){
-    console.log("addUser model called ")
     let values = [
         [email],
         [firstName],
         [lastName],
         [password],
     ]
+
+try{
     const sql = 'INSERT INTO user (email, first_name, last_name, password) VALUES (?) '
+    const sql2 = 'SELECT id from user WHERE email = ?'
     const connection = await db.getPool().getConnection()
-    const status = await connection.query(sql,[values])
-    //const [rows,fields] = await listById(params.id)
-    return status
+    await connection.query(sql,[values])
+    const [rows,fields] = await connection.query(sql2,[email])
+    return rows[0].id
+}catch (e) {
+    console.log(e)
 }
+}
+
+
+/*-------------------------------------------------*/
+
 
 exports.deleteUser = async function(params){
     console.log("delete user module called")
-    const sql = `DELETE from user where id = ${pramas.id}`
+    const sql = `DELETE from user where id = ${params.id}`
     const connection = await db.getPool().getConnection()
     const status = await connection.query(sql)
     return status
 }
+
+
+/*-------------------------------------------------*/
+
 
 exports.updateUserInfo = async function(params){
     console.log("update user module called")
@@ -49,7 +81,7 @@ exports.updateUserInfo = async function(params){
     const connection = await db.getPool().getConnection()
     const status = await connection.query(sql)
     const [rows,fields] = await listById(params.id)
-    return [[rows,fields],status]
+    return [rows]
 }
 
 
