@@ -7,8 +7,9 @@ const joi  = require('joi')
 const LoginValid = require('../middleware/validations/loginValidation')
 const Register = require('../middleware/validations/registerValid');
 const jwt = require('jsonwebtoken')
+const verify = require('../../app/verifyToken')
 
-//retrieve all users data with eamil
+//retrieve all users data with email
 exports.listUserDetails = async function(req,res){
     console.log("list user detailed call")
     try{
@@ -93,24 +94,41 @@ exports.logIn = async function(req,res){
 
         /*create json web token*/
         //let randomString = Math.random().toString(36).replace(/[^a-z]+/g, '').substr(0, 5);
-        let token = jwt.sign({id:userInfo.id},"randomString")
-        res.setHeader("X-Authorization",token)
+        let token = jwt.sign({"id":userInfo[0].id},"randomString")
+        res.setHeader("auth-token",token)
         const result = await User.loginUser(token,req.body.email)
         console.log(result)
-        if (result) res.status(200).send({"id":result[0].id,"token":token})
+        if (result) res.status(200).send({"id":result[0].id.toString(),"token":token})
     }catch (e) {
         console.log(e)
     }
 }
 
 exports.logOut = async function(req,res){
-    console.log(req.header('X-Authorization'))
+    //console.log(req.header('X-Authorization'))
     try{
         const isLogOut = await User.logOutUser(req.header('X-Authorization'))
-        if(isLogOut) res.status(200).send('ok')
+        if(isLogOut === true) {
+            res.status(200).send('ok')}
+        else {
+            res.status(401).send('not authorized')
+        }
     }catch (e){
         res.status(500)
         res.send(e)
+    }
+}
+
+
+exports.getDetails = async function(req,res){
+    try{
+        let token = req.header('auth-token')
+        //console.log(token)
+        const user = await User.listUsersById({"id":req.params.id})
+        verify.auth(req,res,user)
+        //console.log("verified.id: (next row)")
+    }catch (e) {
+        console.log(e)
     }
 }
 

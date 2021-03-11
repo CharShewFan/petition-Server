@@ -10,6 +10,19 @@ exports.listUsers = async function (email){
     return rows;
 }
 
+exports.listUsersById = async function (params){
+    try{
+        const sql1 = `SELECT * FROM user WHERE id = '${params.id}'`
+        const connection = await db.getPool().getConnection()
+        const [rows,fileds] = await connection.query(sql1)
+        console.log("01")
+        console.log(rows[0])
+        return rows;
+    }catch (e){
+        return e
+    }
+}
+
 
 /*return a user id by query with a email when create user successfully*/
 exports.returnEmail = async function(email){
@@ -107,14 +120,78 @@ exports.loginUser = async function(token,email) {
 
 exports.logOutUser = async function(token){
     try{
-        const sql = `UPDATE user SET auth_token = NULL where auth_token = '${token}'`
         const connection = await db.getPool().getConnection();
-        const logOutQuery = await connection.query(sql)
-        return true
+
+        const sql1 = `SELECT * FROM use where auth_token = '${token}'`
+        const [rows,fields] = await connection.query(sql1)
+
+        let isExist = false
+        rows.forEach(item => {
+            if (item.email) {
+                isExist = true
+            }
+        })
+
+        if (isExist) {
+            const sql2 = `UPDATE user SET auth_token = NULL where auth_token = '${token}'`
+            const [rows2,fields2] = await connection.query(sql2)
+            return true
+        }else{
+            return  false
+        }
     }catch (e){
         return e
     }
 }
 
 
+/*========================================*/
+/*
+if(params.token){
+    const sql = `SELECT * FROM user WHERE auth_token = '${params.token}'`
+    const [rows,fileds] = await connection.query(sql)
+    let isExist = false
+    rows.forEach((item)=>{
+        if(item.email){
+            isExist = true
+            return rows
+        }
+    })
 
+    if(isExist === false){
+        const sql2 = `SELECT * FROM user WHERE id = '${params.id}'`
+        const [rows2,fileds2] = await connection.query(sql2)
+
+    }
+
+    //return rows
+}else{
+    const sql2 = `SELECT id,`
+}*/
+
+/*
+    [{
+    "id":rows[0].id.toString,
+    "first name":rows[0].first_name,
+    "last name":rows[0].last_name,
+
+    "email":rows[0].email
+}]*/
+
+/*
+*                 if( params.token && params.token.toString() === rows[0].auth_token){
+                    console.log("03")
+                    return rows
+                    if (rows[0].image_filename === null){
+                        rows[0].image_filename = "not exist"
+                    }
+/*                     "image file name":rows[0].image_filename,
+                   console.log([rows[0].id, rows[0].lastname,rows[0].firstname,rows[0].email,rows[0].image_filename])
+
+}else{
+    console.log("04")
+    //console.log([rows[0].id, rows[0].last_name,rows[0].first_name,rows[0].image_filename])
+    return rows
+}
+
+ */
