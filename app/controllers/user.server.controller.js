@@ -7,11 +7,12 @@ const joi  = require('joi')
 const LoginValid = require('../middleware/validations/loginValidation')
 const Register = require('../middleware/validations/registerValid');
 const jwt = require('jsonwebtoken')
-const verify = require('../../app/verifyToken')
-
-//retrieve all users data with email
+const verify = require('../middleware/user/verifyToken')
+const patchValidate = require('../middleware/validations/patchValidation')
+const patchToken = require('../middleware/user/patchToken')
+/*retrieve users info with email address*/
 exports.listUserDetails = async function(req,res){
-    console.log("list user detailed call")
+    //console.log("list user detailed call")
     try{
         let [rows,fields] = await User.listUsers(req.body.email);
         res.status(200)
@@ -20,7 +21,7 @@ exports.listUserDetails = async function(req,res){
     }catch (e){
         res.status(400)
         res.send(e)
-        console.log(e)
+        //console.log(e)
 
     }
 }
@@ -68,28 +69,45 @@ exports.rmUser = async function(req,res){
 }
 
 exports.updateUser = async function(req,res){
-    return null;
+    try{
+        // query db to request id from user and match
+        //after check and match query update to db
+        //only update query with "200" return from ignory other case
+
+        //user data to find id
+        const user = await User.listUsersById(req.params)
+        //validate user input
+        const validated = patchValidate.patchValid(req.body)
+        console.log("validated")
+        console.log(validated)
+        if(validated === true){
+            const statusCode = patchToken(req,res,user)
+            if(statusCode === "200"){
+                //update info
+                await User.updateUserInfo(req.body)
+            }
+        }
+    }catch(e){
+        console.log(e)
+    }
+
 }
 
-
-/*login function*/
+/*login function generate token set it to db and header*/
 exports.logIn = async function(req,res){
     try{
         const validation = LoginValid.loginValid({email:req.body.email,password:req.body.password})
         if(validation.error)  res.status(400).send(validation.error.details[0].message)
 
         const repeatRg = await existence.checkExist(req.body.email).then(function(result){
-            return (result) ; //result.exists = true
+            return result ; //result.exists = true
         })
-        console.log(repeatRg.exists)
         if( repeatRg.exists === false) res.status(400).send("email not exist")
 
         const userInfo = await User.listUsers(req.body.email)
-        console.log("dbPassword")
-        console.log(userInfo[0].password)
+
 
         const checkPassword = await bcrypt.compare(req.body.password,userInfo[0].password)
-        console.log(checkPassword)
         if(!checkPassword)  res.status(400).send("password not valid")
 
         /*create json web token*/
@@ -104,8 +122,8 @@ exports.logIn = async function(req,res){
     }
 }
 
+/*login function delete token in db*/
 exports.logOut = async function(req,res){
-    //console.log(req.header('X-Authorization'))
     try{
         const isLogOut = await User.logOutUser(req.header('X-Authorization'))
         if(isLogOut === true) {
@@ -119,14 +137,12 @@ exports.logOut = async function(req,res){
     }
 }
 
-
+/*get user info with/without token*/
 exports.getDetails = async function(req,res){
     try{
         let token = req.header('auth-token')
-        //console.log(token)
         const user = await User.listUsersById({"id":req.params.id})
         verify.auth(req,res,user)
-        //console.log("verified.id: (next row)")
     }catch (e) {
         console.log(e)
     }

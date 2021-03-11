@@ -1,7 +1,6 @@
 const jwt = require('jsonwebtoken')
 
 
-
 exports.auth = function(req,res,info){
     let token = req.get('auth-token')
     //console.log(token)
@@ -45,21 +44,9 @@ exports.auth = function(req,res,info){
             }
         }
     }catch (e) {
-        console.log(e)
+        res.status(500)
+        res.send("Internal Server Error")
     }
 
 
 }
-
-
-/*
-res.status(200)
-res.json(
-    {
-        "id": info[0].id,
-        "email": info[0].email,
-        "fisrstName": info[0].fisrt_name,
-        "lastName":info[0].last_name
-    }
-)
-res.status(401).send("access denied");*/
