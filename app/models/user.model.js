@@ -88,7 +88,7 @@ exports.deleteUser = async function(params){
 }
 
 
-/*-------------------------------------------------*/
+/*----------------------update user info---------------------------*/
 
 
 exports.updateUserInfo = async function(params){
@@ -101,7 +101,7 @@ exports.updateUserInfo = async function(params){
     return [rows]
 }
 
-/*-------------------------------------------------*/
+/*--------------------login user-----------------------------*/
 
 
 exports.loginUser = async function(token,email) {
@@ -118,7 +118,7 @@ exports.loginUser = async function(token,email) {
     }
 }
 
-/*-------------------------------------------------*/
+/*--------------------logout user-----------------------------*/
 
 
 exports.logOutUser = async function(token){
@@ -147,5 +147,31 @@ exports.logOutUser = async function(token){
 }
 
 
-/*========================================*/
+/*==================upload image======================*/
+exports.imgUpload = async function (params) { //check whether exist first . then upload
+    try{
+        res.send("hello ya")
+    }catch(e){
+        res.send(e)
+    }
+}
+
+exports.imgDelete = async function (){
+
+}
+
+exports.imgGet = async function (req,res){
+    const sql = `SELECT image_filename FROM user WHERE id = "${req.id}"`
+    try{
+        const connection = await db.getPool().getConnection()
+        const [rows,fields] = await connection.query(sql)
+        return rows
+        
+    }catch(e){
+        console.log(e)
+        res.status(500).send("Interal Server Error")
+    }
+}
+
+
 

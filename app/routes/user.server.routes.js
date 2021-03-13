@@ -10,14 +10,20 @@ module.exports = function (app){
         .get(users.listUserDetails)
         
     
-    app.route(app.rootUrl + '/users' + '/register')
+    app.route(app.rootUrl + '/users/register')
         .post(users.register)
 
 
     app.route(app.rootUrl + '/users/login')
         .post(users.logIn)
 
-    app.route(app.rootUrl + '/users' + '/logout')
+    app.route(app.rootUrl + '/users/logout')
         .post(users.logOut)
+
+    
+    app.route(app.rootUrl + '/users/:id/image')
+        .get(users.getImg) 
+        .put(users.uploadImg)
+        //.delete(user.deleteImg)
 
 }

@@ -10,6 +10,9 @@ const jwt = require('jsonwebtoken')
 const verify = require('../middleware/user/verifyToken')
 const patchValidate = require('../middleware/validations/patchValidation')
 const patchToken = require('../middleware/user/patchToken')
+const fs = require('../middleware/HandleImage/fileHandle')
+
+
 /*retrieve users info with email address*/
 exports.listUserDetails = async function(req,res){
     //console.log("list user detailed call")
@@ -146,6 +149,31 @@ exports.getDetails = async function(req,res){
     }catch (e) {
         console.log(e)
     }
+}
+
+
+/*get user img with/without token*/
+
+exports.uploadImg = async function(req,res){
+    return null;
+}
+
+exports.getImg = async function(req,res){
+    try{
+        // const result = await User.imgGet(req,res)
+        // if(result[0].image_filename) {
+        // 交给 middleware 读取名字=》 返回数据？ receive binary from middleware and send the binary to postman
+        fs.readImg()
+            //res.status(200).send(result)
+        
+        
+    }catch(e){
+        console.log(e)
+    }
+}
+
+exports.deleteImg = function(req,res){
+    return null;
 }
 
 
