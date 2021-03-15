@@ -10,7 +10,9 @@ const jwt = require('jsonwebtoken')
 const verify = require('../middleware/user/verifyToken')
 const patchValidate = require('../middleware/validations/patchValidation')
 const patchToken = require('../middleware/user/patchToken')
-const fs = require('../middleware/HandleImage/fileHandle')
+//const fs = require('../middleware/HandleImage/fileHandle')
+const imageHandler = require('../../storage/default/fileHandle')
+
 
 
 /*retrieve users info with email address*/
@@ -155,25 +157,59 @@ exports.getDetails = async function(req,res){
 /*get user img with/without token*/
 
 exports.uploadImg = async function(req,res){
-    return null;
+    try{
+        res.send("test")
+        imageHandler.imgType()
+        
+
+    }catch(e){
+        console.log(e)
+    }
+    //console.log(result)
 }
 
 exports.getImg = async function(req,res){
     try{
-        // const result = await User.imgGet(req,res)
-        // if(result[0].image_filename) {
-        // 交给 middleware 读取名字=》 返回数据？ receive binary from middleware and send the binary to postman
-        fs.readImg()
-            //res.status(200).send(result)
+        const result = await User.imgGet(req,res)
+        let isExist = false;
+
+        result.forEach(item=>{
+            if(item.image_filename){
+                isExist = true
+            }
+        })
+
+        if(isExist){
+            const data = imageHandler.readImg(result[0].image_filename)
+            res.writeHead(200, {'Content-Type': 'image/jpeg'}) // need to tell which format
+            res.send(data)
+        }else{
+            res.status(404).send("image not found")
+        }
         
-        
-    }catch(e){
-        console.log(e)
+
+}catch(e){
+    console.log(e)
+    res.status(500).send("Interal Server Error")
     }
 }
+
 
 exports.deleteImg = function(req,res){
     return null;
 }
 
 
+/*
+var http = require('http')
+var fs = require('fs')
+
+fs.readFile('image.jpg', function(err, data) {
+  if (err) throw err // Fail if the file can't be read.
+  http.createServer(function(req, res) {
+    res.writeHead(200, {'Content-Type': 'image/jpeg'})
+    res.send(data) // Send the file data to the browser.
+  }).listen(8124)
+  console.log('Server running at http://localhost:8124/')
+}) 
+*/
