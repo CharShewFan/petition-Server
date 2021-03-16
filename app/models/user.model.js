@@ -156,8 +156,14 @@ exports.imgUpload = async function (params) { //check whether exist first . then
     }
 }
 
-exports.imgDelete = async function (){
-
+exports.imgDelete = async function (req,res){
+    const sql = `UPDATE user SET image_filename = NULL WHERE id = ${req.params.id}`
+    try{
+        const connection = await db.getPool().getConnection()
+        const result = connection.query(sql)
+    }catch(e){
+        res.status(500)
+    }
 }
 
 exports.imgGet = async function (req,res){

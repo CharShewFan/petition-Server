@@ -24,6 +24,6 @@ module.exports = function (app){
     app.route(app.rootUrl + '/users/:id/image')
         .get(users.getImg) 
         .put(users.uploadImg)
-        //.delete(user.deleteImg)
+        .delete(users.deleteImg)
 
 }

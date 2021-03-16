@@ -1,13 +1,14 @@
 const User = require('../models/user.model');
-const validate = require('../middleware/user/validation')
+// const validate = require('../middleware/user/validation')
 const bcrypt = require('bcryptjs')
 const passport = require('passport')
 const existence = require('../middleware/user/checkRg')
-const joi  = require('joi')
+//const joi  = require('joi') 
 const LoginValid = require('../middleware/validations/loginValidation')
 const Register = require('../middleware/validations/registerValid');
 const jwt = require('jsonwebtoken')
 const verify = require('../middleware/user/verifyToken')
+const verifyUpgrade = require('../middleware/user/verifyTokenUpgrade')
 const patchValidate = require('../middleware/validations/patchValidation')
 const patchToken = require('../middleware/user/patchToken')
 //const fs = require('../middleware/HandleImage/fileHandle')
@@ -198,35 +199,23 @@ exports.getImg = async function(req,res){
     }
 }
 
-/*
 
-const body = 'hello world';
-response
-  .writeHead(200, {
-    'Content-Length': Buffer.byteLength(body),
-    'Content-Type': 'text/plain'
-  })
-  .end(body);
-
-  */
 
 
 
 exports.deleteImg = function(req,res){
-    return null;
+    try{
+        //要先判断 auth 的模块
+        const auth = verifyUpgrade.auth
+        if(auth === true){
+            const execution = User.imgDelete(req,res)
+            res.status(200).send('user profile image delete')
+        }else{
+            res.status(401).send("user not authorized")
+        }
+    }catch(e){
+        res.status(500).send("Interal Server Error")
+    }
 }
 
 
-/*
-var http = require('http')
-var fs = require('fs')
-
-fs.readFile('image.jpg', function(err, data) {
-  if (err) throw err // Fail if the file can't be read.
-  http.createServer(function(req, res) {
-    res.writeHead(200, {'Content-Type': 'image/jpeg'})
-    res.send(data) // Send the file data to the browser.
-  }).listen(8124)
-  console.log('Server running at http://localhost:8124/')
-}) 
-*/
