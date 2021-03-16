@@ -11,7 +11,7 @@ const verify = require('../middleware/user/verifyToken')
 const patchValidate = require('../middleware/validations/patchValidation')
 const patchToken = require('../middleware/user/patchToken')
 //const fs = require('../middleware/HandleImage/fileHandle')
-const imageHandler = require('../../storage/default/fileHandle')
+const imageHandler = require('../../storage/fileHandle')
 
 
 
@@ -158,8 +158,9 @@ exports.getDetails = async function(req,res){
 
 exports.uploadImg = async function(req,res){
     try{
-        res.send("test")
+        
         imageHandler.imgType()
+        res.send("test")
         
 
     }catch(e){
@@ -179,20 +180,36 @@ exports.getImg = async function(req,res){
             }
         })
 
-        if(isExist){
-            const data = imageHandler.readImg(result[0].image_filename)
-            res.writeHead(200, {'Content-Type': 'image/jpeg'}) // need to tell which format
-            res.send(data)
+        if(isExist == true){
+            let image_filename = result[0].image_filename
+            console.log(image_filename)
+            const data = imageHandler.readImg(image_filename)
+            let imageType = imageHandler.imgType(image_filename)
+            console.log(imageType.mime)
+            res.writeHead(200, {
+                'Content-Type': `${imageType.mime}`
+            }).end(data) 
         }else{
             res.status(404).send("image not found")
         }
-        
-
 }catch(e){
     console.log(e)
     res.status(500).send("Interal Server Error")
     }
 }
+
+/*
+
+const body = 'hello world';
+response
+  .writeHead(200, {
+    'Content-Length': Buffer.byteLength(body),
+    'Content-Type': 'text/plain'
+  })
+  .end(body);
+
+  */
+
 
 
 exports.deleteImg = function(req,res){

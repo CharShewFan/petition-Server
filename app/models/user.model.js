@@ -161,10 +161,14 @@ exports.imgDelete = async function (){
 }
 
 exports.imgGet = async function (req,res){
-    const sql = `SELECT image_filename FROM user WHERE id = "${req.id}"`
+    const sql = `SELECT image_filename FROM user WHERE id = "${req.params.id}"`
+    console.log(req.params.id)
+
     try{
         const connection = await db.getPool().getConnection()
         const [rows,fields] = await connection.query(sql)
+        console.log("-----------------------")
+        console.log(rows)
         return rows
         
     }catch(e){
