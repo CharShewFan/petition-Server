@@ -2,8 +2,8 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const { allowCrossOriginRequestsMiddleware } = require('../app/middleware/cors.middleware');
 const passport = require('passport')
-const bcrypt = require('bcryptjs')
-
+//const bcrypt = require('bcryptjs')
+const fileUpload = require('express-fileupload');
 
 
 module.exports = function () {
@@ -12,6 +12,7 @@ module.exports = function () {
     app.rootUrl = '/api/v1';
 
     // MIDDLEWARE
+    app.use(fileUpload()); // express module process fileUpload
     app.use(allowCrossOriginRequestsMiddleware);
     app.use(bodyParser.json());
     app.use(bodyParser.raw({ type: 'text/plain' }));  // for the /executeSql endpoint

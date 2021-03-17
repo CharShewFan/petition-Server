@@ -159,9 +159,10 @@ exports.getDetails = async function(req,res){
 
 exports.uploadImg = async function(req,res){
     try{
-        
-        imageHandler.imgType()
-        res.send("test")
+        //imageHandler.imgType()
+        console.log(req.body)
+        console.log()
+        res.send(req.data)
         
 
     }catch(e){
