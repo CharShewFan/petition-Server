@@ -124,21 +124,25 @@ exports.loginUser = async function(token,email) {
 exports.logOutUser = async function(token){
     try{
         const connection = await db.getPool().getConnection();
-        const sql1 = `SELECT * FROM use where auth_token = '${token}'`
+        const sql1 = `SELECT * FROM user WHERE auth_token = '${token}'`
         const [rows,fields] = await connection.query(sql1)
 
         let isExist = false
         rows.forEach(item => {
             if (item.email) {
+                console.log("1"+isExist)
                 isExist = true
             }
         })
 
         if (isExist) {
-            const sql2 = `UPDATE user SET auth_token = NULL where auth_token = '${token}'`
+            const sql2 = `UPDATE user SET auth_token = NULL WHERE auth_token = "${token}"`
             const [rows2,fields2] = await connection.query(sql2)
+            console.log("2"+isExist)
+
             return true
         }else{
+            console.log("3"+isExist)
             return  false
         }
     }catch (e){

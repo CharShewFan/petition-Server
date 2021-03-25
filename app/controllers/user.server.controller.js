@@ -58,7 +58,7 @@ exports.register = async function(req,res){
                 try{
                     const promiseId =  User.addUser(fname,lname,emails,passwords).then((result)=>{
                         res.status(201)
-                        res.send(result.toString())
+                        res.json({"userId":result})
                     })
                 }catch(e){
                     res.status(500)
@@ -105,8 +105,8 @@ exports.logIn = async function(req,res){
         const validation = LoginValid.loginValid({email:req.body.email,password:req.body.password})
         if(validation.error)  res.status(400).send(validation.error.details[0].message)
 
-        const repeatRg = await existence.checkExist(req.body.email).then(function(result){
-            return result ; //result.exists = true
+        const repeatRg = await existence.checkExist(req.body.email).then(function(results){
+            return results ; //result.exists = true
         })
         if( repeatRg.exists === false) res.status(400).send("email not exist")
 
@@ -121,8 +121,8 @@ exports.logIn = async function(req,res){
         let token = jwt.sign({"id":userInfo[0].id},"randomString")
         res.setHeader("auth-token",token)
         const result = await User.loginUser(token,req.body.email)
-        console.log(result)
-        if (result) res.status(200).send({"id":result[0].id.toString(),"token":token})
+        //console.log(result)
+        if (result) res.status(200).send({"userId":result[0].id.toString(),"token":token})
     }catch (e) {
         console.log(e)
     }
@@ -132,6 +132,8 @@ exports.logIn = async function(req,res){
 exports.logOut = async function(req,res){
     try{
         const isLogOut = await User.logOutUser(req.header('X-Authorization'))
+        console.log(req.header('X-Authorization'))
+        console.log(isLogOut)
         if(isLogOut === true) {
             res.status(200).send('ok')}
         else {
@@ -146,7 +148,7 @@ exports.logOut = async function(req,res){
 /*get user info with/without token*/
 exports.getDetails = async function(req,res){
     try{
-        let token = req.header('auth-token')
+        //console.log(req.header('X-Authorization')) 
         const user = await User.listUsersById({"id":req.params.id})
         verify.auth(req,res,user)
     }catch (e) {
@@ -160,11 +162,9 @@ exports.getDetails = async function(req,res){
 exports.uploadImg = async function(req,res){
     try{
         //imageHandler.imgType()
-        console.log(req.body)
-        console.log()
-        res.send(req.data)
-        
-
+        //console.log(req.body) //{}
+        //console.log()
+        res.send(req.data) //[] actully is null 
     }catch(e){
         console.log(e)
     }

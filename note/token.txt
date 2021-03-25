@@ -1,3 +1,49 @@
 ### How it works: your user ID, token, etc.
 
 Some of the Postman requests, such as POST /users/login, have scripts included, in the Tests tab. These set global variables, such as your user ID and the auth token, which are then used in other requests. For example, `auth_token` is used in the `X-Authorization` header of PATCH /users/:id. The POST /users/logout request then has a script to delete the user ID and token.
+
+
+=================================================
+
+
+put:
+      tags:
+        - users.images
+      summary: Set a user's profile image.
+      description: >-
+        Only accessible to the user themselves. If the user already has a profile photo, the current profile photo will be replaced with it, and a 200 OK response will be sent. If not, a 201 Created response will be sent.
+
+
+        If the file is a `.png`, the request will be sent with `Content-Type: image/png`. If the file is a `.jpeg` or `.jpg`, the request will be sent with `Content-Type: image/jpeg`. If the file is a `.gif`, the request will be sent with `Content-Type: image/gif`.
+
+
+        The request body should contain the raw binary content of the photo, i.e. it should not be in `multipart/form-data` format or contain any file metadata. 
+      security:
+        - UserToken: []
+      requestBody:
+        content:
+          image/png:
+            schema:
+              $ref: '#/components/schemas/BinaryImageFile'
+          image/jpeg:
+            schema:
+              $ref: '#/components/schemas/BinaryImageFile'
+          image/gif:
+            schema:
+              $ref: '#/components/schemas/BinaryImageFile'
+        required: true
+      responses:
+        '200':
+          description: OK
+        '201':
+          description: Created
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+        '500':
+          description: Internal Server Error
