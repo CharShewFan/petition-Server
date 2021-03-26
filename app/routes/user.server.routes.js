@@ -1,4 +1,5 @@
 const users = require("../controllers/user.server.controller.js");
+const userImage = require("../controllers/user.photo.controller")
 
 module.exports = function (app){
     app.route(app.rootUrl + '/users/:id')
@@ -22,8 +23,8 @@ module.exports = function (app){
 
     
     app.route(app.rootUrl + '/users/:id/image')
-        .get(users.getImg) 
-        .put(users.uploadImg)
-        .delete(users.deleteImg)
+        .get(userImage.retriveImg) 
+        .put(userImage.storeImg)
+        .delete(userImage.deleteImg)
 
 }

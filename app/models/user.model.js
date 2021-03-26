@@ -94,7 +94,7 @@ exports.deleteUser = async function(params){
 exports.updateUserInfo = async function(params){
     console.log("update user module called")
    // const sql = `UPDATE user SET email=${params.email},first_name=${first_name},last_name=${params.last_name},image_filename=${params.image_filename},password=${params.password},auth_token=${params.auth_token} WHERE id = ${params.id}`
-    const sql = `UPDATE user SET "${params}"`
+    const sql = `UPDATE user SET "${params[0]}" = "${params[1]}" WHERE id = ${params[2]}`
     const connection = await db.getPool().getConnection()
     const status = await connection.query(sql)
     const [rows,fields] = await listById(params.id)
@@ -151,39 +151,16 @@ exports.logOutUser = async function(token){
 }
 
 
-/*==================upload image======================*/
-exports.imgUpload = async function (params) { //check whether exist first . then upload
-    try{
-        res.send("hello ya")
-    }catch(e){
-        res.send(e)
-    }
-}
 
-exports.imgDelete = async function (req,res){
-    const sql = `UPDATE user SET image_filename = NULL WHERE id = ${req.params.id}`
+/*==================retrived hashed password======================*/
+exports.retrivePassword = async function(req,res){
     try{
+        const sql =  `SELECT password from user WHERE id = "${req.params.id}"`
         const connection = await db.getPool().getConnection()
-        const result = connection.query(sql)
-    }catch(e){
-        res.status(500)
-    }
-}
-
-exports.imgGet = async function (req,res){
-    const sql = `SELECT image_filename FROM user WHERE id = "${req.params.id}"`
-    console.log(req.params.id)
-
-    try{
-        const connection = await db.getPool().getConnection()
-        const [rows,fields] = await connection.query(sql)
-        console.log("-----------------------")
-        console.log(rows)
+        const [rows,fields] = connection.query(sql)
         return rows
-        
     }catch(e){
         console.log(e)
-        res.status(500).send("Interal Server Error")
     }
 }
 

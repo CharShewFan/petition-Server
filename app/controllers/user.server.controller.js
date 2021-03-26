@@ -8,11 +8,12 @@ const LoginValid = require('../middleware/validations/loginValidation')
 const Register = require('../middleware/validations/registerValid');
 const jwt = require('jsonwebtoken')
 const verify = require('../middleware/user/verifyToken')
-const verifyUpgrade = require('../middleware/user/verifyTokenUpgrade')
+const verifyUpdate = require('../middleware/user/verifyTokenUpdate')
 const patchValidate = require('../middleware/validations/patchValidation')
 const patchToken = require('../middleware/user/patchToken')
 //const fs = require('../middleware/HandleImage/fileHandle')
 const imageHandler = require('../../storage/fileHandle')
+const hash = require("../middleware/hashPassword")
 
 
 
@@ -74,28 +75,80 @@ exports.rmUser = async function(req,res){
     return null;
 }
 
+
+//patch endpoint update user information
 exports.updateUser = async function(req,res){
     try{
-        // query db to request id from user and match
-        //after check and match query update to db
-        //only update query with "200" return from ignory other case
-
         //user data to find id
-        const user = await User.listUsersById(req.params)
-        //validate user input
-        const validated = patchValidate.patchValid(req.body)
-        console.log("validated")
-        console.log(validated)
-        if(validated === true){
-            const statusCode = patchToken(req,res,user)
-            if(statusCode === "200"){
-                //update info
-                await User.updateUserInfo(req.body)
+        const userInfo = await User.listUsersById(req.params.id)
+        var isExist = false
+        userInfo.forEach(item=>{
+            if(item.id){
+                isExist = true;
             }
-        }
-    }catch(e){
+        })
+
+        if(isExist === true){
+           let result = verifyUpdate.auth(req,res,userInfo) //判断是否授权用户
+            if(result === true){
+
+                //validate user input
+                    const validated = patchValidate.patchValid(req.body)
+                    console.log("validated")
+                    console.log(validated)
+                    if(validated === true){
+                        /* update email */
+                       if(req.body.email && req.body.email !== ""){
+                           //check whether email repeated 
+                           const emailCheck = await User.returnEmail(req.body.email)
+                           if(emailCheck !== false){
+                               res.status(400).send("band request")
+                           }else{
+                              let results =await User.updateUserInfo(["email",req.body.email,req.params.id])
+                              res.status(200).send("successful")
+                           }
+                       }
+
+                        /* update firstName */
+                       if(req.body.firstName && req.body.firstName !== ""){
+                           let result_2 = await User.updateUserInfo(["first_name",req.body.firstName,req.params.id])
+                           res.status(200).send("successful")
+                        }
+
+                        /* update lastName */
+                        if(req.body.lastName && req.body.lastName !== ""){
+                            let result_3 = await User.updateUserInfo(["last_name",req.body.lastName,req.params.id])
+                            res.status(200).send("successful")
+                         }
+
+                         /* update password */
+                         if(req.body.password && req.body.password !== "" && req.body.currentPassword && req.body.currentPassword !== ""){
+
+                             let params = [req.body.password,req.body.currentPassword]
+                              let newPassword  = hash.hash(params[0])
+                              let oldPassword = hash.hash(params[1])
+
+                              const result_5 = User.retrivePassword(req,res)
+                              if(result_5[0].password === oldPassword){
+                                let result_6 = await User.updateUserInfo(["password",newPassword.toString(),req.params.id])
+                                res.status(200).send("successful")
+                              }else{
+                                  res.status(400).send("bad request")
+                              }
+                         }
+                            //update info
+                           // await User.updateUserInfo(req.body)
+                        }
+                    }else{
+                        res.status(401).send("unAuthorized user")
+                    }
+                }else{
+                    res.status(404).send("user not found")
+                }
+        }catch(e)
+        {
         console.log(e)
-    }
+        }
 
 }
 
@@ -156,67 +209,5 @@ exports.getDetails = async function(req,res){
     }
 }
 
-
-/*get user img with/without token*/
-
-exports.uploadImg = async function(req,res){
-    try{
-        //imageHandler.imgType()
-        //console.log(req.body) //{}
-        //console.log()
-        res.send(req.data) //[] actully is null 
-    }catch(e){
-        console.log(e)
-    }
-    //console.log(result)
-}
-
-exports.getImg = async function(req,res){
-    try{
-        const result = await User.imgGet(req,res)
-        let isExist = false;
-
-        result.forEach(item=>{
-            if(item.image_filename){
-                isExist = true
-            }
-        })
-
-        if(isExist == true){
-            let image_filename = result[0].image_filename
-            console.log(image_filename)
-            const data = imageHandler.readImg(image_filename)
-            let imageType = imageHandler.imgType(image_filename)
-            console.log(imageType.mime)
-            res.writeHead(200, {
-                'Content-Type': `${imageType.mime}`
-            }).end(data) 
-        }else{
-            res.status(404).send("image not found")
-        }
-}catch(e){
-    console.log(e)
-    res.status(500).send("Interal Server Error")
-    }
-}
-
-
-
-
-
-exports.deleteImg = function(req,res){
-    try{
-        //要先判断 auth 的模块
-        const auth = verifyUpgrade.auth
-        if(auth === true){
-            const execution = User.imgDelete(req,res)
-            res.status(200).send('user profile image delete')
-        }else{
-            res.status(401).send("user not authorized")
-        }
-    }catch(e){
-        res.status(500).send("Interal Server Error")
-    }
-}
 
 

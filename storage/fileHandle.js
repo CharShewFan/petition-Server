@@ -1,10 +1,10 @@
-const fs = require('fs')
 const readChunk = require('read-chunk');
 const imageType = require('image-type');
-const FileType = require('file-type');
+//const FileType = require('file-type');
 const path = require('path')
-var filePath = path.join(__dirname, '/default/')
-
+var filePath = path.join(__dirname, '/images/')
+const fs = require('mz/fs')
+const randomString = require("randomstring")
 
 
 exports.imgType = function(fileName){
@@ -18,20 +18,23 @@ exports.imgType = function(fileName){
     return imageType(buffer) //return {ext: 'png', mime: 'image/png'}
 }
 
-exports.readImg = function(fileName) { // read image to binary and return back to controller 
+exports.readFromStorage = function(fileName) { // read image to binary and return back to controller 
     //directly sendFile to 
     const binaryData = fs.readFileSync(filePath + `${fileName}`)
     console.log(binaryData)
     return binaryData
 }
 
-exports.writeImg = function(req,res){
-    fs.writeFileSync(`${req.header("image_filename")}`)
+exports.writeToStorage = async function(data,fileExt){
+    let fileName = randomString.generate(7) + "."+ fileExt
+    try{
+         await fsmz.WriteStream(filepath+fileName,data)
+         console.log("file stored")
+         return fileName
+        }
+        catch(e){
+        console.log(e)
+        fs.unlink(filepath+fileName).catch(err=>{console.log(err)})
+        }
 }
 
-/*
-const fs = require('fs');
-const path = require('path');
-const filePath = path.join(__dirname, '/pictures');
-fs.openSync(filePath, 'hello.jpeg');
-*/ 

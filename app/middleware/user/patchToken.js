@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken')
 
 exports.patchToken = function(req,res,user){
-    const token = req.get("auth-token")
+    const token = req.get("X-Authorization")
     try{
         if(!token){
             res.status(401).send("not authorized")
