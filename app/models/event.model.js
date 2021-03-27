@@ -1,21 +1,40 @@
 const db = require('../../config/db')
+const build = require('../middleware/buildSQL')
 
 
 exports.dbListEvents = async function(){
-    console.log("event model called")
+    //console.log("event model called")
     const sql = "SELECT * FROM event "
-    const connection = await db.getPool().getConnection
+    const connection = await db.getPool().getConnection()
     let [rows,field] =  await connection.query(sql)
-    console.log([rows,field])
+    //console.log([rows,field])
     return rows
 }
 
-exports.startIndex = async function(index){
-    const sql = `SELECT * FROM category where id >= ${index} `;
-    const connection = await db.getPool().getConnection();
-    let [rows,fields] = await connection.query(sql)
+exports.case_11 = async function(){
+    //console.log("event model called")
+    const sql = "SELECT * FROM event WHERE id = 11"
+    const connection = await db.getPool().getConnection()
+    let [rows,field] =  await connection.query(sql)
+    //console.log([rows,field])
     return rows
 }
+
+exports.search = async function(query){
+    try{
+        const sql = build.SQL(query)
+        console.log(sql.sql)
+        console.log(sql.value)
+
+        const connection = await db.getPool().getConnection()
+        const [rows,fields] = await connection.query(sql.sql,sql.value)
+        //console.log(rows)
+        return rows
+    }catch(e){
+        console.log(e)
+    }
+}
+
 
 
 // add event need authentication

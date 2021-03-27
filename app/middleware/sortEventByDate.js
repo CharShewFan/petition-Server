@@ -1,4 +1,4 @@
-exports.sortByDate = function(result){
+exports.byDate = function(result){
     let temp
     for(let i = 0;i < result.length - 1 ; i++){
         for(let j = 0; j < result.length - 1;j++){
@@ -9,7 +9,7 @@ exports.sortByDate = function(result){
             }
         }
     }
-    return result
+    return result //return an array contains [{}]
 
 
 }
