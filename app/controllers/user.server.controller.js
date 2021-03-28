@@ -188,17 +188,28 @@ exports.logIn = async function(req,res){
     }
 }
 
-/*login function delete token in db*/
+/*logout function delete token in db*/
 exports.logOut = async function(req,res){
     try{
-        const isLogOut = await User.logOutUser(req.header('X-Authorization'))
-        console.log(req.header('X-Authorization'))
-        console.log(isLogOut)
-        if(isLogOut === true) {
-            res.status(200).send('ok')}
-        else {
-            res.status(401).send('not authorized')
+
+        let auth = req.header('X-Authorization')
+        //console.log(typeof(auth))
+        //console.log("isLogOut")
+        //check token exist ? 
+        if(auth === undefined || auth === "") {
+            res.status(401).send("auth empty")
+        }else{
+            const isLogOut = await User.logOutUser(auth) //should return a boolean : whether user exist 
+            if(isLogOut === true) {
+                res.status(200).send('ok')}
+            else {
+                //doesnt match anyuser
+                res.status(401).send('not authorized')
+            }
         }
+  
+
+
     }catch (e){
         res.status(500)
         res.send(e)
