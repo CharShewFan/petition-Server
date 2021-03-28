@@ -233,10 +233,43 @@ exports.logOut = async function(req,res){
 exports.getDetails = async function(req,res){
     try{
         //console.log(req.header('X-Authorization')) 
-        const user = await User.listUsersById({"id":req.params.id})
-        verify.auth(req,res,user)
+        let token = req.header('X-Authorization')
+        let id = req.params.id
+        let userInfo = await User.listUsersById(id)
+        let isExist = false
+        userInfo.forEach(item=>{
+            if(item.id){
+                isExist = true
+            }
+        })
+
+        if(isExist === false){
+            res.status(404).send("user not found")
+        }else{
+            // console.log(token)
+            // console.log(typeof(token))
+            // console.log(userInfo[0].auth_token.trim())
+            // console.log(typeof(userInfo[0].auth_token))
+            if( token === undefined || token !== userInfo[0].auth_token.trim()){
+                res.status(200).send({
+                    "id": userInfo[0].id,
+                    "first_name": userInfo[0].first_name,
+                    "last_name":userInfo[0].last_name,
+                    "image_filename":userInfo[0].image_filename
+                })
+            }else{
+                res.status(200).send({
+                    "id": userInfo[0].id,
+                    "email":userInfo[0].email,
+                    "first_name": userInfo[0].first_name,
+                    "last_name":userInfo[0].last_name,
+                    "image_filename":userInfo[0].image_filename
+                })
+            }
+        }
     }catch (e) {
         console.log(e)
+        res.status(500)
     }
 }
 

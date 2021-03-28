@@ -12,9 +12,9 @@ exports.listUsers = async function (email){
 
 /*-------------------------------------------------*/
 
-exports.listUsersById = async function (params){
+exports.listUsersById = async function (id){
     try{
-        const sql1 = `SELECT * FROM user WHERE id = '${params.id}'`
+        const sql1 = `SELECT * FROM user WHERE id = '${id}'`
         const connection = await db.getPool().getConnection()
         const [rows,fileds] = await connection.query(sql1)
         return rows;
