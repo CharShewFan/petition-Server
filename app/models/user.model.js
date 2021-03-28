@@ -136,18 +136,15 @@ exports.logOutUser = async function(token){
             }
         })
 
+        //user exist and token is true
         if (isExist === true) {
-            const sql2 = `UPDATE user SET auth_token = NULL WHERE auth_token = "${token}"`
-            const [rows2,fields2] = await connection.query(sql2)
-            //console.log("2"+isExist)
-
-            return true
-        }else{
-            //console.log("3"+isExist)
-            return  false
+            const sql2 = `UPDATE user SET auth_token = NULL WHERE email = "${rows[0].email}"`
+            const result = await connection.query(sql2)
         }
+
+        return isExist
     }catch (e){
-        return e
+        console.log(e)
     }
 }
 

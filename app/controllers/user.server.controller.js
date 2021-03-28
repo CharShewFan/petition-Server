@@ -199,11 +199,11 @@ exports.logOut = async function(req,res){
         if(auth === undefined || auth === "") {
             res.status(401).send("auth empty")
         }else{
-            const isLogOut = await User.logOutUser(auth) //should return a boolean : whether user exist 
-            if(isLogOut === true) {
+            const status = await User.logOutUser(auth) //should return a boolean : whether user exist 
+            if(status === true) {
                 res.status(200).send('ok')}
             else {
-                //doesnt match anyuser
+                //doesnt match any user
                 res.status(401).send('not authorized')
             }
         }
