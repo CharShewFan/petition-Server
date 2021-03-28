@@ -163,12 +163,10 @@ exports.logIn = async function(req,res){
         if(validation.error) res.status(400).send(validation.error.details[0].message)
 
         //check wether user exist
-        const repeatRg = await existence.checkExist(req.body.email).then(function(results){
-            return results ; //result.exists = true
-        })
+        let result =  existence.checkExist(email)
 
         //user not register yet
-        if( repeatRg.exists === false) res.status(400).send("email not exist")
+        if( result === false) res.status(400).send("email not exist")
 
         //check password
         const userInfo = await User.listUsers(req.body.email)
@@ -179,7 +177,7 @@ exports.logIn = async function(req,res){
         //let randomString = Math.random().toString(36).replace(/[^a-z]+/g, '').substr(0, 5);
         let token = jwt.sign({"id":userInfo[0].id},"randomString")
        
-        const result = await User.loginUser(token,req.body.email)
+        const results = await User.loginUser(token,req.body.email)
         //console.log(result)
         res.setHeader("X-Authorization",token)
         if (result) res.status(200).send({"userId":result[0].id,"token":token})

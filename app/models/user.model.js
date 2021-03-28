@@ -28,22 +28,11 @@ exports.listUsersById = async function (params){
 /*return a user id by query with a email when create user successfully*/
 exports.returnEmail = async function(email){
     try{
+        
         const sql = 'SELECT email FROM user WHERE email = ?'
         const connection = await db.getPool().getConnection()
-        const [rows,fields] = await connection.query(sql,[email])
-        let isExist = false
-        rows.forEach(item => {
-            if (item.email) {
-                isExist = true
-            }
-        })
-        if (isExist) {
-            return rows[0].email
-        }
-
-        else{
-            return  false
-        }
+        let [rows,fields] = await connection.query(sql,[email])
+        return rows
 
     }catch (e) {
         console.log(e)

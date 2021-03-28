@@ -2,18 +2,18 @@ const User = require('../../models/user.model')
 
 
 /*check whether user email was registered*/
-exports.checkExist = async function(email){
+exports.checkExist = function(email){
     try{
-        const result = await User.returnEmail(email)
-        //console.log("result from checkExist")
-       // console.log(result)
-        if (result === false){
-            return {"exists":false}
-        }
-        if(result === email) {
-            
-            return {"exists":true}
-        }
+        const result = User.returnEmail(email)
+
+       let isExist = false
+       result.forEach(item=>{
+           if(item.email){
+               isExist = true
+           }
+       })
+       
+       return isExist
     }catch(e){
         console.log("checkExist" + e)
     }
