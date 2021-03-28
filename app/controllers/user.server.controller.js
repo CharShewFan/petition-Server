@@ -167,10 +167,10 @@ exports.logIn = async function(req,res){
     
     try{
         //check wether user exist
-        let result1 =await  existence.checkExist(email)
+        let result1 = await  existence.checkExist(email)
 
         //user not register yet
-        if( result === false) {
+        if( result1 === false) {
             res.status(400).send("email not exist")
         }else{
                 //check password
@@ -181,14 +181,14 @@ exports.logIn = async function(req,res){
                 }else{
                     /*create json web token*/
                     //let randomString = Math.random().toString(36).replace(/[^a-z]+/g, '').substr(0, 5);
-                    let token = jwt.sign({"id":userInfo[0].id},"randomString")
+                    let token = jwt.sign({"id":userInfos[0].id},"randomString")
        
                     const results = await User.loginUser(token,req.body.email)
                     //console.log(result)
         
                     if (results) {
                     res.setHeader("X-Authorization",token)
-                    res.status(200).send({"userId":result[0].id,"token":token})
+                    res.status(200).send({"userId":results[0].id,"token":token})
                 }
                 }
             }

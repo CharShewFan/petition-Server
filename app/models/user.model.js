@@ -97,7 +97,7 @@ exports.updateUserInfo = async function(params){
 exports.loginUser = async function(token,email) {
     try{
         //console.log("model called")
-        const sql = `UPDATE user SET auth_token = '${token}' where email = '${email}'` // 规范查询📖
+        const sql = `UPDATE user SET auth_token = '${token}' WHERE email = '${email}'` // 规范查询📖
         const sql2 = `SELECT id FROM user WHERE email = '${email}'`
         const connection = await db.getPool().getConnection();
         const loginQuery = await connection.query(sql)
