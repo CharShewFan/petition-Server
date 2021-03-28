@@ -182,7 +182,7 @@ exports.logIn = async function(req,res){
         const result = await User.loginUser(token,req.body.email)
         //console.log(result)
         res.setHeader("X-Authorization",token)
-        if (result) res.status(200).send({"userId":result[0].id.toString(),"token":token})
+        if (result) res.status(200).send({"userId":result[0].id,"token":token})
     }catch (e) {
         console.log(e)
     }
