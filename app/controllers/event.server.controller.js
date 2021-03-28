@@ -1,7 +1,12 @@
 const Events = require('../models/event.model');
 const Sort = require('../middleware/sortEventByDate')
-const Validate = require('../middleware/validations/eventQueryValidator')
+const Query = require('../middleware/validations/eventQueryValidator')
 const ValidCate = require("../models/category.model")
+const Validation = require("../middleware/validations/valid")
+const User = require("../models/user.model")
+const Token = require("../middleware/validations/valid")
+const Cate = require("../models/category.model")
+const tools = require('../middleware/getDate')
 
 
 //list event
@@ -14,7 +19,7 @@ exports.listEvents = async function(req,res){
 
     let valid = false
     if(query){
-        valid = Validate.check(query)
+        valid = Query.check(query)
         console.log("validation:" + valid)
         if(valid === false){
             res.status(400).send("bad request")
@@ -59,27 +64,76 @@ exports.listEvents = async function(req,res){
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//need authentication 
+//add authentication 
 exports.addEvents = async function(req,res){
     try{
-        const params = req.params.body;
-        const result = Events.add_events
+        //check token
+        const params = req.body;
+        let token = req.get("X-Authorization")
+        
+        //check token exist?
+        if(token === undefined){
+            res.status(401).send("unauthorized")
+        }
+
+        if(token){
+            const result = User.retriveIdByToken(token)
+            let isExist = false
+            result.forEach(item=>{
+                if(item.id){
+                    isExist = true
+                }
+            })
+
+            // date must larger than today
+            
+            let now = tools.now()
+            if(params.date && (params.date <= now) === true){
+                res.status(400).send("date is not in future")
+            }
+
+            //fake token ,user not exist
+            if(isExist === fasle){
+               res.status(401).send("unauthorized")
+            }
+
+            
+             //validate body?
+             let validStatus = Token.addEventValid(params)
+             console.log("valided?: " + validStatus)
+             if(validStatus === false){
+                 res.status(400).send("bad request check req.body")
+             }
+             
+             //check category id
+             let cateIds = []
+             let category = req.body.categoryIds
+             category.forEach(item=>{
+                 cateIds.push(parseInt(item))
+             })
+             //retirve the category id list back from the db
+             const maxId = await Cate.maxID()
+             let idWithinRange = true
+             cateIds.forEach(item=>{
+                 if(item > maxId){
+                     idWithinRange = false
+                 }
+             })
+             //category id valided and within max range
+             if(cateIds.length = 0 || idWithinRange === false){
+                 res.status(401).send("unvalided category id")
+             }
+
+             //send a creat query to db
+             const result4 = await addEvents(params)
+             res.status(200).send("new event gen!")
+        }
+        
+        
+        //check body 
+  
+        //const result = Events.add_events
+
 
     }catch(e){
         console.log(e)

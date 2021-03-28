@@ -3,8 +3,8 @@
 const handler = require('../../storage/fileHandle')
 const Image = require('../models/user.photo.model')
 const User = require('../models/user.model')
-const Exist = require("../middleware/user/isExist")
-const TokenAuth = require("../middleware/user/verifyToken")
+const Exist = require("../middleware/token/isExist")
+const TokenAuth = require("../middleware/token/verifyToken")
 const ImageType = require("../middleware/imageType");
 
 

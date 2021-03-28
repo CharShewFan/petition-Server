@@ -2,15 +2,15 @@ const User = require('../models/user.model');
 // const validate = require('../middleware/user/validation')
 const bcrypt = require('bcryptjs')
 const passport = require('passport')
-const existence = require('../middleware/user/checkRg')
+const existence = require('../middleware/token/checkRg')
 //const joi  = require('joi') 
 const LoginValid = require('../middleware/validations/loginValidation')
 const Register = require('../middleware/validations/registerValid');
 const jwt = require('jsonwebtoken')
-const verify = require('../middleware/user/verifyToken')
-const verifyUpdate = require('../middleware/user/verifyTokenUpdate')
+const verify = require('../middleware/token/verifyToken')
+const verifyUpdate = require('../middleware/token/verifyTokenUpdate')
 const patchValidate = require('../middleware/validations/patchValidation')
-const patchToken = require('../middleware/user/patchToken')
+const patchToken = require('../middleware/token/patchToken')
 //const fs = require('../middleware/HandleImage/fileHandle')
 const imageHandler = require('../../storage/fileHandle')
 const hash = require("../middleware/hashPassword")
@@ -155,26 +155,33 @@ exports.updateUser = async function(req,res){
 /*login function generate token set it to db and header*/
 exports.logIn = async function(req,res){
     try{
-        const validation = LoginValid.loginValid({email:req.body.email,password:req.body.password})
-        if(validation.error)  res.status(400).send(validation.error.details[0].message)
+        let password = req.body.password
+        let email = req.body.email
 
+        //check validation of password and email address
+        const validation = LoginValid.loginValid({email:req.body.email,password:req.body.password})
+        if(validation.error) res.status(400).send(validation.error.details[0].message)
+
+        //check wether user exist
         const repeatRg = await existence.checkExist(req.body.email).then(function(results){
             return results ; //result.exists = true
         })
+
+        //user not register yet
         if( repeatRg.exists === false) res.status(400).send("email not exist")
 
+        //check password
         const userInfo = await User.listUsers(req.body.email)
-
-
-        const checkPassword = await bcrypt.compare(req.body.password,userInfo[0].password)
-        if(!checkPassword)  res.status(400).send("password not valid")
+        //const checkPassword = await bcrypt.compare(req.body.password,userInfo[0].password)
+        if(password !== userInfo[0].password) res.status(400).send("password not valid")
 
         /*create json web token*/
         //let randomString = Math.random().toString(36).replace(/[^a-z]+/g, '').substr(0, 5);
         let token = jwt.sign({"id":userInfo[0].id},"randomString")
-        res.setHeader("auth-token",token)
+        //res.setHeader("X-Authorization",token)
         const result = await User.loginUser(token,req.body.email)
         //console.log(result)
+        res.setHeader("X-Authorization",token)
         if (result) res.status(200).send({"userId":result[0].id.toString(),"token":token})
     }catch (e) {
         console.log(e)

@@ -42,3 +42,18 @@ exports.validCateId = async function(categoryIds){
         }
 }
 
+
+// retrived category id list from db
+
+
+exports.maxID = async function(){
+        try{
+                const sql = "SELECT MAX(id) AS id from category"
+                const connection = await db.getPool().getConnection()
+                const [rows,field] = await connection.query(sql)
+                return rows
+        }catch(e){
+                console.log(e)
+        }
+}
+

@@ -106,7 +106,7 @@ exports.updateUserInfo = async function(params){
 
 exports.loginUser = async function(token,email) {
     try{
-        console.log("model called")
+        //console.log("model called")
         const sql = `UPDATE user SET auth_token = '${token}' where email = '${email}'` // 规范查询📖
         const sql2 = `SELECT id FROM user WHERE email = '${email}'`
         const connection = await db.getPool().getConnection();
@@ -164,5 +164,16 @@ exports.retrivePassword = async function(req,res){
     }
 }
 
+/*==================retrived userId by token======================*/
+exports.retriveIdByToken = async function(token){
+    try{
+        const sql =  `SELECT id from user WHERE auth_token = "${token}"`
+        const connection = await db.getPool().getConnection()
+        const [rows,fields] = connection.query(sql)
+        return rows
+    }catch(e){
+        console.log(e)
+    }
+}
 
 

@@ -1,5 +1,0 @@
-1,How to solve npm error “npm ERR! code ELIFECYCLE”
-:some module require failed or require from a wrong path;
-
-----------------------------------------------------------
-

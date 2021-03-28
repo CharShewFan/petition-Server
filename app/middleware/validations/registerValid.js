@@ -1,3 +1,4 @@
+//const { required } = require('joi')
 const joi = require('joi')
 
 const schema = joi.object({
@@ -9,4 +10,17 @@ const schema = joi.object({
 
 exports.registerValid = function(params){
     return schema.validate(params)
+}
+
+const schemaForAddEvent = joi.object({
+    title:joi.string().required(),
+    description:joi.string().required(),
+    categoryIds:joi.array().items(joi.string().alphanum().required())
+})
+
+exports.addEventValid = function(params){
+    let result = schemaForAddEvent.validate(params)
+    console.log(result)
+    return (result.error === undefined)
+
 }
