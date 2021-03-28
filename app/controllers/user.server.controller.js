@@ -154,33 +154,47 @@ exports.updateUser = async function(req,res){
 
 /*login function generate token set it to db and header*/
 exports.logIn = async function(req,res){
+    // check validation of password / email
+    let password = req.body.password
+    let email = req.body.email
+    
+    
+    let result = LoginValid.check({email:req.body.email,password:req.body.password})
+    if(result.error){
+        res.status(400).send("invalid email / password")
+    }
+    
+    
     try{
-        let password = req.body.password
-        let email = req.body.email
-
-        //check validation of password and email address
-        const validation = LoginValid.loginValid({email:req.body.email,password:req.body.password})
-        if(validation.error) res.status(400).send(validation.error.details[0].message)
-
         //check wether user exist
-        let result =  existence.checkExist(email)
+        let result1 =await  existence.checkExist(email)
 
         //user not register yet
-        if( result === false) res.status(400).send("email not exist")
-
-        //check password
-        const userInfo = await User.listUsers(req.body.email)
-        //const checkPassword = await bcrypt.compare(req.body.password,userInfo[0].password)
-        if(password !== userInfo[0].password) res.status(400).send("password not valid")
-
-        /*create json web token*/
-        //let randomString = Math.random().toString(36).replace(/[^a-z]+/g, '').substr(0, 5);
-        let token = jwt.sign({"id":userInfo[0].id},"randomString")
+        if( result === false) {
+            res.status(400).send("email not exist")
+        }else{
+                //check password
+                const userInfos = await User.listUsers(req.body.email)
+                //const checkPassword = await bcrypt.compare(req.body.password,userInfo[0].password)
+                if(password !== userInfos[0].password) {
+                    res.status(400).send("password not valid")        
+                }else{
+                    /*create json web token*/
+                    //let randomString = Math.random().toString(36).replace(/[^a-z]+/g, '').substr(0, 5);
+                    let token = jwt.sign({"id":userInfo[0].id},"randomString")
        
-        const results = await User.loginUser(token,req.body.email)
-        //console.log(result)
-        res.setHeader("X-Authorization",token)
-        if (result) res.status(200).send({"userId":result[0].id,"token":token})
+                    const results = await User.loginUser(token,req.body.email)
+                    //console.log(result)
+        
+                    if (results) {
+                    res.setHeader("X-Authorization",token)
+                    res.status(200).send({"userId":result[0].id,"token":token})
+                }
+                }
+            }
+
+
+        
     }catch (e) {
         console.log(e)
         res.status(500)

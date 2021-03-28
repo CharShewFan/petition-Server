@@ -5,7 +5,7 @@ const schema = joi.object( {
     password:joi.string().required()
 })
 
-exports.loginValid =  function (params){
+exports.check =  function (params){
     return schema.validate(params) // result = {error,value}
     //console.log("result.value:  " + result.value)
 }
