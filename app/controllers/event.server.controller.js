@@ -139,27 +139,6 @@ exports.addEvents = async function(req,res){
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 exports.rmEvents = async function(req,res){
     try{
         const password = req.body.password;
@@ -177,4 +156,26 @@ exports.updateEvents = async function(req,res){
     return null;
 }
 
+
+exports.viewById = async function(req,res){
+
+try{
+    let id = req.params.id
+
+    const result = await Events.viewById(id)
+    console.log(result)
+
+    result.forEach(item=>{
+        if(item.id){
+            res.status(200).json(result[0])
+        }else{
+            res.status(404).send("not found")
+        }
+    })
+    
+}catch(e){
+    console.log(e)
+    res.status(500).send(e)
+}
+}
 
