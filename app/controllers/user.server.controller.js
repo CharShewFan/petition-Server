@@ -233,7 +233,7 @@ exports.logOut = async function(req,res){
 exports.getDetails = async function(req,res){
     try{
         //console.log(req.header('X-Authorization')) 
-        let token = req.header('X-Authorization')
+        let token = req.get('X-Authorization')
         let id = req.params.id
         let userInfo = await User.listUsersById(id)
         let isExist = false
@@ -250,22 +250,45 @@ exports.getDetails = async function(req,res){
             // console.log(typeof(token))
             // console.log(userInfo[0].auth_token.trim())
             // console.log(typeof(userInfo[0].auth_token))
-            if( token === undefined || token !== userInfo[0].auth_token.trim()){
+
+            if(token === undefined || token === null || token === ""){
                 res.status(200).send({
                     "id": userInfo[0].id,
-                    "first_name": userInfo[0].first_name,
-                    "last_name":userInfo[0].last_name,
-                    "image_filename":userInfo[0].image_filename
-                })
-            }else{
-                res.status(200).send({
-                    "id": userInfo[0].id,
-                    "email":userInfo[0].email,
                     "first_name": userInfo[0].first_name,
                     "last_name":userInfo[0].last_name,
                     "image_filename":userInfo[0].image_filename
                 })
             }
+
+            let dbToken = userInfo[0].auth_token
+            if(dbToken !== null){
+                 dbToken = dbToken.trim()
+                if(token === dbToken){
+                    res.status(200).send({
+                        "id": userInfo[0].id,
+                        "email":userInfo[0].email,
+                        "first_name": userInfo[0].first_name,
+                        "last_name":userInfo[0].last_name,
+                        "image_filename":userInfo[0].image_filename
+                    })
+                }else{
+                    res.status(200).send({
+                        "id": userInfo[0].id,
+                        "first_name": userInfo[0].first_name,
+                        "last_name":userInfo[0].last_name,
+                        "image_filename":userInfo[0].image_filename
+                    })
+                }
+            }else{
+                res.status(200).send({
+                    "id": userInfo[0].id,
+                    "first_name": userInfo[0].first_name,
+                    "last_name":userInfo[0].last_name,
+                    "image_filename":userInfo[0].image_filename
+                })
+            }
+
+
         }
     }catch (e) {
         console.log(e)
