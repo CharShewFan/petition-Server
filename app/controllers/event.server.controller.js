@@ -72,71 +72,63 @@ exports.addEvents = async function(req,res){
         let token = req.get("X-Authorization")
         
         //check token exist?
-        if(token === undefined){
+        if(token === undefined || token === null || token == ""){
             res.status(401).send("unauthorized")
-        }
-
-        if(token){
-            const result = User.retriveIdByToken(token)
-            let isExist = false
-            result.forEach(item=>{
+        }else{
+            //compare token with current user 
+            let userInfo = await User.retriveIdByToken(token)
+            console.log(userInfo)
+            let userExist = false
+            userInfo.forEach(item=>{
                 if(item.id){
-                    isExist = true
+                    userExist = true
                 }
             })
 
-            // date must larger than today
-            
-            let now = tools.now()
-            if(params.date && (params.date <= now) === true){
-                res.status(400).send("date is not in future")
-            }
+            if(userExist === false){
+                res.status(401).send("unauthorized")
+            }else{
+                let userId  = userInfo[0].id // add as organizer id
+                //make sure event date > now
+                let now = tools.now()
+                if(params.date && (params.date <= now) === true){
+                    res.status(400).send("date is not in future")
+                }
+                //validate body 
+                let validStatus = Token.addEventValid(params)
+                console.log("valided?: " + validStatus)
+                if(validStatus === false){
+                    res.status(400).send("bad request check req.body")
+                }
 
-            //fake token ,user not exist
-            if(isExist === fasle){
-               res.status(401).send("unauthorized")
-            }
-
-            
-             //validate body?
-             let validStatus = Token.addEventValid(params)
-             console.log("valided?: " + validStatus)
-             if(validStatus === false){
-                 res.status(400).send("bad request check req.body")
-             }
-             
-             //check category id
-             let cateIds = []
-             let category = req.body.categoryIds
-             category.forEach(item=>{
-                 cateIds.push(parseInt(item))
-             })
-             //retirve the category id list back from the db
-             const maxId = await Cate.maxID()
-             let idWithinRange = true
-             cateIds.forEach(item=>{
-                 if(item > maxId){
-                     idWithinRange = false
+                             //check category id
+                let cateIds = []
+                let category = req.body.categoryIds
+                category.forEach(item=>{
+                    cateIds.push(parseInt(item))
+                })
+                //retirve the category id list back from the db
+                const maxId = await Cate.maxID()
+                let idWithinRange = true
+                cateIds.forEach(item=>{
+                    if(item > maxId){
+                        idWithinRange = false
                  }
              })
              //category id valided and within max range
-             if(cateIds.length = 0 || idWithinRange === false){
+             if(cateIds.length = 0 || idWithinRange === false){     
                  res.status(401).send("unvalided category id")
+             }else{
+                    //send a creat query to db
+                    const result4 = await Events.addEvents(params,userId) //need finished the addEvents
+                    res.status(200).send(result4[0])
              }
 
-             //send a creat query to db
-             const result4 = await addEvents(params)
-             res.status(200).send("new event gen!")
+            }
         }
-        
-        
-        //check body 
-  
-        //const result = Events.add_events
-
-
     }catch(e){
         console.log(e)
+        res.status(500)
     }
 }
 

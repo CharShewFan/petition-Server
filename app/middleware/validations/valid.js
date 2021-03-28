@@ -49,7 +49,19 @@ exports.registerValid = function(params){
 const schemaForAddEvent = joi.object({
     title:joi.string().required(),
     description:joi.string().required(),
-    categoryIds:joi.array().items(joi.string().alphanum().required())
+    categoryIds:joi.array().items(
+        joi.string(),
+        joi.number(),
+        joi.required()
+    ),
+    date:[joi.string(),joi.number()],
+    image_filename:joi.string(),
+    url:joi.string(),
+    venue:joi.string(),
+    capacity:joi.number(),
+    requires_attendance:joi.number(),
+    fee:[joi.string(),joi.number()],
+    organizer_id:joi.number()
 })
 
 exports.addEventValid = function(params){

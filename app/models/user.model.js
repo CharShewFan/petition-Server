@@ -157,7 +157,7 @@ exports.retriveIdByToken = async function(token){
     try{
         const sql =  `SELECT id from user WHERE auth_token = "${token}"`
         const connection = await db.getPool().getConnection()
-        const [rows,fields] = connection.query(sql)
+        const [rows,fields] =await connection.query(sql)
         return rows
     }catch(e){
         console.log(e)

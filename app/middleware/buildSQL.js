@@ -110,3 +110,68 @@ return {sql:sql,value:value}
 
 // console.log(SQL(queryString))
 
+const postSQL = {
+	"title": "Film Club",
+	"description": "Meetup with others to watch interesting movies.",
+    "venue": "Haere-roa",
+	"categoryIds": [14,17,23],
+	"date": "2021-07-02 18:25:00"
+}
+
+exports.addEvent = function(body,id){
+    let query = ""
+    let value = []
+    if(body.hasOwnProperty("title")){
+        query += "title,"
+        value.push([body.title])
+    }
+    if(body.hasOwnProperty("description")){
+        query += "description,"
+        value.push([body.description])
+    }
+    if(body.hasOwnProperty("date")){
+        query += "date,"
+        value.push([body.date])
+    }
+    if(body.hasOwnProperty("image_filename")){
+        query += "image_filename,"
+        value.push(body.image_filename)
+    }
+    if(body.hasOwnProperty("is_online")){
+        query += "is_online,"
+        value.push(body.is_online)
+    }
+    if(body.hasOwnProperty("url")){
+        query += "url,"
+        value.push([body.url])
+    }
+    if(body.hasOwnProperty("venue")){
+        query += "venue,"
+        value.push([body.venue])
+    }
+    if(body.hasOwnProperty("capacity")){
+        query += "capacity,"
+        value.push([body.capacity])
+     }
+    //else{
+    //     query += "capacity,"
+    //     value.push(null)
+    // }
+    if(body.hasOwnProperty("requires_attendance_control")){
+        query += "requires_attendance_control,"
+        value.push(body.requires_attendance_control)
+    }
+    if(body.hasOwnProperty("fee")){
+        query += "fee,"
+        value.push([body.fee])
+    }
+
+    query += "organizer_id"
+    value.push([id])
+
+    console.log(query)
+    console.log(value)
+    let sql = `INSERT INTO event (${query}) VALUES (?)`
+    console.log(sql)
+    return {"sql":sql,"value":value}
+}

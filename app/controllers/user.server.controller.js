@@ -282,8 +282,8 @@ exports.getDetails = async function(req,res){
             }else{
                 res.status(200).send({
                     "id": userInfo[0].id,
-                    "first_name": userInfo[0].first_name,
-                    "last_name":userInfo[0].last_name,
+                    "firstName": userInfo[0].first_name,
+                    "lastName":userInfo[0].last_name,
                     "image_filename":userInfo[0].image_filename
                 })
             }

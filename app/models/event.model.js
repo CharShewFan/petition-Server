@@ -1,5 +1,5 @@
 const db = require('../../config/db')
-const build = require('../middleware/buildSQL')
+const builder = require('../middleware/buildSQL')
 
 
 exports.dbListEvents = async function(){
@@ -22,7 +22,7 @@ exports.case_11 = async function(){
 
 exports.search = async function(query){
     try{
-        const sql = build.SQL(query)
+        const sql = builder.SQL(query)
         console.log(sql.sql)
         console.log(sql.value)
 
@@ -38,11 +38,14 @@ exports.search = async function(query){
 
 
 // add event need authentication
-exports.add_events  = async function(data){
-    const sql = `INSERT INTO event("id", "title", "description", "date", "image_filename", "is_online", "url", "venue", "capacity", "requires_attendance_control", "fee", "organizer_id") VALUES (${data})`
+exports.addEvents  = async function(body,id){
+    //need a SQL builder
+    const sql = builder.addEvent(body,id)
+    const sql2 = 'SELECT MAX(id) AS event_id from event'
     const connection = await db.getPool().getConnection()
-    let result = await connection.query(sql)
-    return result
+    const result = await connection.query(sql.sql,[sql.value])
+    const [rows,fields] = await connection.query(sql2)
+    return rows
 }
 
 
