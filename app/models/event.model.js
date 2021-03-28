@@ -1,4 +1,3 @@
-const { func } = require('joi')
 const db = require('../../config/db')
 const builder = require('../middleware/buildSQL')
 
@@ -60,6 +59,9 @@ exports.deleteEvent = async function(auth_token,email,user_id){
 
 //search event by id
 exports.viewById = async function(id){
+    console.log("calllllllllllllllll")
+    console.log("calllllllllllllllll")
+    console.log("calllllllllllllllll")
 try{
     const sql = `SELECT * from event WHERE id = ${id}`
     const connection = await db.getPool().getConnection()

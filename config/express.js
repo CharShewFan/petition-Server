@@ -2,8 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const { allowCrossOriginRequestsMiddleware } = require('../app/middleware/cors.middleware');
 const passport = require('passport')
-//const bcrypt = require('bcryptjs')
-//const fileUpload = require('express-fileupload');
+
 
 
 module.exports = function () {
@@ -42,13 +41,6 @@ module.exports = function () {
    require('../app/routes/user.server.routes')(app);
    require('../app/routes/category.server.routes')(app);
    require('../app/routes/event.server.routes')(app);
-
-
-  
-    require('../app/routes/event.server.routes')(app);
-  /*
-    require('../app/routes/attendance.server.routes')(app);
-
-      */
-    return app;
+   require('../app/routes/attendance.server.routes')(app);
+  return app;
 };

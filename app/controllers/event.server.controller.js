@@ -158,11 +158,9 @@ exports.updateEvents = async function(req,res){
 
 
 exports.viewById = async function(req,res){
-
-try{
     let id = req.params.id
-
-    const result = await Events.viewById(id)
+try{
+    let result = await Events.viewById(id)
     console.log(result)
 
     result.forEach(item=>{
