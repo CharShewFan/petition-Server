@@ -178,13 +178,14 @@ exports.logIn = async function(req,res){
         /*create json web token*/
         //let randomString = Math.random().toString(36).replace(/[^a-z]+/g, '').substr(0, 5);
         let token = jwt.sign({"id":userInfo[0].id},"randomString")
-        //res.setHeader("X-Authorization",token)
+       
         const result = await User.loginUser(token,req.body.email)
         //console.log(result)
         res.setHeader("X-Authorization",token)
         if (result) res.status(200).send({"userId":result[0].id,"token":token})
     }catch (e) {
         console.log(e)
+        res.status(500)
     }
 }
 
