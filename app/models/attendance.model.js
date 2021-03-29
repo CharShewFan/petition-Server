@@ -19,7 +19,7 @@ exports.findById = async function(eventId){
 /*------------------------------retrive event_att info  with event id------------------------------------------- */
 exports.listAtt = async function(eventId){
 try{
-    const sql = `SELECT user_id AS attendeeID,name AS status,first_name AS firstName,last_name AS lastName,date_of_interest AS dateOfInterest FROM event_attendees AS ea JOIN user AS u ON ea.user_id = u.id JOIN attendance_status AS ass ON attendance_status_id = ass.id WHERE event_id = ${eventId} AND attendance_status_id = 1 ORDER BY date_of_interest ASC`
+    const sql = `SELECT user_id AS attendeeId,name AS status,first_name AS firstName,last_name AS lastName,date_of_interest AS dateOfInterest FROM event_attendees AS ea JOIN user AS u ON ea.user_id = u.id JOIN attendance_status AS ass ON attendance_status_id = ass.id WHERE event_id = ${eventId} AND attendance_status_id = 1 ORDER BY date_of_interest ASC`
     const connection = await db.getPool().getConnection()
     const [rows,fields] = await connection.query(sql)
     //console.log(rows)
