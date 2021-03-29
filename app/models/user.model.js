@@ -18,7 +18,8 @@ exports.listUsersById = async function (id){
         const connection = await db.getPool().getConnection()
         const [rows,fileds] = await connection.query(sql1)
         return rows;
-    }catch (e){
+    }catch (e)
+    {
         console.log(e)
     }
 }

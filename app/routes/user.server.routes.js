@@ -7,8 +7,8 @@ module.exports = function (app){
         .delete(users.rmUser) // delete own account
         .patch(users.updateUser) //change part of info in multiple time "idempotence"
 
-    app.route(app.rootUrl + '/users')
-        .get(users.listUserDetails)
+    // app.route(app.rootUrl + '/users')
+    //     .get(users.listUserDetails)
         
     
     app.route(app.rootUrl + '/users/register')
