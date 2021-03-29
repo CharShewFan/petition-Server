@@ -15,6 +15,7 @@ const patchToken = require('../middleware/token/patchToken')
 const imageHandler = require('../../storage/fileHandle')
 const hash = require("../middleware/hashPassword")
 const userFormater = require("../middleware/formater/user")
+const build = require('../middleware/buildSQL')
 
 
 /*retrieve users info with email address*/
@@ -76,79 +77,47 @@ exports.rmUser = async function(req,res){
 
 //patch endpoint update user information
 exports.updateUser = async function(req,res){
-    try{
-        //user data to find id
-        const userInfo = await User.listUsersById(req.params.id)
-        var isExist = false
-        userInfo.forEach(item=>{
-            if(item.id){
-                isExist = true;
-            }
-        })
+    console.log("controller called")
+    let token = req.get("X-Authorization")
+    let id  = req.params.id
+    let newEmail = req.body.email
+    let newPassword = req.body.password
+    let oldPassword = req.body.currentPassword
 
-        if(isExist === true){
-           let result = verifyUpdate.auth(req,res,userInfo) //判断是否授权用户
-            if(result === true){
+    let userExist = false
+    let userInfo = await User.listUsersById(id)
+    let dbTokenExist = false
 
-                //validate user input
-                    const validated = patchValidate.patchValid(req.body)
-                    console.log("validated")
-                    console.log(validated)
-                    if(validated === true){
-                        /* update email */
-                       if(req.body.email && req.body.email !== ""){
-                           //check whether email repeated 
-                           const emailCheck = await User.returnEmail(req.body.email)
-                           if(emailCheck !== false){
-                               res.status(400).send("band request")
-                           }else{
-                              let results =await User.updateUserInfo(["email",req.body.email,req.params.id])
-                              res.status(200).send("successful")
-                           }
-                       }
-
-                        /* update firstName */
-                       if(req.body.firstName && req.body.firstName !== ""){
-                           let result_2 = await User.updateUserInfo(["first_name",req.body.firstName,req.params.id])
-                           res.status(200).send("successful")
-                        }
-
-                        /* update lastName */
-                        if(req.body.lastName && req.body.lastName !== ""){
-                            let result_3 = await User.updateUserInfo(["last_name",req.body.lastName,req.params.id])
-                            res.status(200).send("successful")
-                         }
-
-                         /* update password */
-                         if(req.body.password && req.body.password !== "" && req.body.currentPassword && req.body.currentPassword !== ""){
-
-                             let params = [req.body.password,req.body.currentPassword]
-                              let newPassword  = hash.hash(params[0])
-                              let oldPassword = hash.hash(params[1])
-
-                              const result_5 = User.retrivePassword(req,res)
-                              if(result_5[0].password === oldPassword){
-                                let result_6 = await User.updateUserInfo(["password",newPassword.toString(),req.params.id])
-                                res.status(200).send("successful")
-                              }else{
-                                  res.status(400).send("bad request")
-                              }
-                         }
-                            //update info
-                           // await User.updateUserInfo(req.body)
-                        }
-                    }else{
-                        res.status(401).send("unAuthorized user")
-                    }
-                }else{
-                    res.status(404).send("user not found")
-                }
-        }catch(e)
-        {
-        console.log(e)
+    userInfo.forEach(item=>{
+        if(item.email){
+            userExist = true
         }
+    })
 
+    if(userInfo[0].auth_token && userInfo[0].auth_token !== null){
+        dbTokenExist = true
+    }
+    if(dbTokenExist === false){
+        res.status(401).send("un auth user")
+    }
+    console.log(dbTokenExist)
+
+    if(token == undefined || token == null){
+        res.send(401).send("un auth user")
+    }
+
+
+    if(userInfo[0].auth_token !== token){
+        res.status(401).send("userInfo[0].auth_token !== toke")
+    }
+
+    
 }
+
+
+
+
+
 
 /*login function generate token set it to db and header*/
 exports.logIn = async function(req,res){

@@ -17,9 +17,6 @@ function convertCate(list){
      //const categoryIds = convertCate(query.categoryIds)
     // const organizerId = parseInt(query.organizerId)
 
-
-
-
     var sql = `SELECT * FROM event E LEFT JOIN event_category EC ON event_id = E.id `
     
     let value = []
@@ -174,4 +171,30 @@ exports.addEvent = function(body,id){
     let sql = `INSERT INTO event (${query}) VALUES (?)`
     console.log(sql)
     return {"sql":sql,"value":value}
+}
+
+// user patch endpoint
+exports.userPatch = function(params){
+    let value = []
+    let query = "UPDATE user SET "
+    // const sql = `UPDATE user SET email=${params.email},first_name=${first_name},last_name=${params.last_name},image_filename=${params.image_filename},password=${params.password},auth_token=${params.auth_token} WHERE id = ${params.id}`
+    if(params.hasOwnProperty("email")){
+        query += "email = ?, "
+        value.push(params.email)
+    }
+    if(params.hasOwnProperty("firstName")){
+        query += "first_name = ?, "
+        value.push(params.firstName)
+    }
+    if(params.hasOwnProperty("lastName")){
+        query += "last_name = ?, "
+        value.push(params.lastName)
+    }
+    if(params.hasOwnProperty("password")){
+        query += "first_name = ?"
+        value.push(params.password)
+    }
+
+    return ({"query":query,"value":value})
+
 }

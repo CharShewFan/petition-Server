@@ -87,15 +87,20 @@ exports.deleteUser = async function(params){
 /*----------------------update user info---------------------------*/
 
 
-exports.updateUserInfo = async function(params){
+exports.updateUserInfo = async function(sql){
     console.log("update user module called")
-   // const sql = `UPDATE user SET email=${params.email},first_name=${first_name},last_name=${params.last_name},image_filename=${params.image_filename},password=${params.password},auth_token=${params.auth_token} WHERE id = ${params.id}`
-    const sql = `UPDATE user SET "${params[0]}" = "${params[1]}" WHERE id = ${params[2]}`
-    const connection = await db.getPool().getConnection()
-    const status = await connection.query(sql)
-    const [rows,fields] = await listById(params.id)
-    connection.release()
-    return [rows]
+    try{
+       
+        const connection = await db.getPool().getConnection()
+        const status = await connection.query(sql.query,[sql.value])
+        const [rows,fields] = await listById(params.id)
+        connection.release()
+        return true
+    }catch(e){
+        console.log(e)
+        return false
+    }
+
 }
 
 /*--------------------login user-----------------------------*/

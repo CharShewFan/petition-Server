@@ -4,26 +4,46 @@ const schema_3 = joi.object( {
     email:joi.string().email(),
     lastName:joi.string(),
     firstName:joi.string(),
-    password:joi.string()
+    password:joi.string(),
+    currentPassword:joi.string()
 })
 
 
 // the worst case is user provide is empty json {}
 exports.patchValid =  function (params){
-    let error = []
-    if(params){
-        error.push(schema_3.validate(params))
+
+    let result = schema.validate(params) // result = {error,value}
+    let valid = true
+    let pass = false
+    
+    if(result.error){
+        valid = false
     }
-    console.log(error[0].error)
-    error.forEach(item=>{
-        console.log(!item.error)
-        return !item.error; // true: error occured , false: validated
-    })
 
+    let passwordTest = true
+    if(params.password){
+        if(params.currentPassword === undefined){
+            passwordTest = false
+        }
+    }
 
+    if(valid === true && passwordTest === true){
+        pass = true
+    }
 
-   // return schema.validate(params) // result = {error,value}
-    //console.log("result.value:  " + result.value)
+    return pass
+    
 }
 
 
+/**
+ * 
+  {
+  "firstName": "Adam",
+  "lastName": "Anderson",
+  "email": "aaa11@uclive.ac.nz",
+  "password": "letmein",
+  "currentPassword": "letmein"
+}
+
+ **/
