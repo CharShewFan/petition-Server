@@ -5,6 +5,8 @@
 const filePath = (__dirname + '/images/')
 const fs = require('mz/fs')
 const randomString = require("randomstring")
+const fss = require('fs')
+const { type } = require('os')
 
 
 
@@ -27,16 +29,35 @@ exports.readFromStorage = function(fileName) { // read image to binary and retur
 
 exports.writeToStorage = async function(data,fileExt){
     let fileName = randomString.generate(7)+ fileExt
+    console.log("the type of data is :  " + typeof(data))
     try{
         console.log("=========================================")
         console.log(fileName)
         console.log(filePath)
-         await fs.WriteStream( filePath+fileName,data)
-         console.log("file stored")
-         return fileName
+        await fs.WriteStream(filePath + fileName, data)
+        return fileName
     }catch(e){
         console.log(e)
         fs.unlink(filePath+fileName).catch(err=>{console.log(err)})
     }
 }
 
+
+
+
+
+
+
+
+
+
+
+        // wrstream.write(data,(err)=>{
+        //     if(err){
+        //         console.log("abhjdfjhfdjhdfjhdfjhfdjhdfjhfdjhfdjh")
+        //         console.log(err)
+                
+        //     }else{
+        //         console.log("data write success")
+        //     }
+        // })

@@ -3,7 +3,6 @@ const handler = require('../../storage/fileHandle')
 const image = require('../models/user.photo.model')
 const User = require('../models/user.model')
 const Exist = require("../middleware/token/isExist")
-
 const imageType = require("../middleware/imageType");
 
 
@@ -16,9 +15,10 @@ exports.storeImg = async function(req,res){
         const data = req.body
         const token = req.get("X-Authorization")
         const db = await User.tokenTaker(id)
-        let mime = req.get('Content-Type')
-        console.log(mime)
+        let mime = req.header('Content-Type')
+        
         const ext = imageType.readMime(mime)
+        console.log(mime)
         
         
 
@@ -52,9 +52,9 @@ exports.storeImg = async function(req,res){
             res.status(400).send("image must be jpg/gif/png")
         }
 
-        console.log("date.length")
-        console.log(data.length)
-        console.log(typeof(data))
+        //console.log("date.length")
+        //console.log(data.length)
+        //console.log(typeof(data))
         //if(data.length === undefined || data.length === 0){
         //    res.status(400).send("image cannot be empty")
         //}
@@ -77,7 +77,7 @@ exports.storeImg = async function(req,res){
 
         console.log("33")
         if(fileNameExist === true){
-            const fileName = await handler.writeToStorage(data,ext)
+            const fileName =  handler.writeToStorage(data,ext)
             let results = await image.uploadToServer(fileName,id)
             if(results === true){
                 res.status(200).send("image upload ")
