@@ -174,7 +174,7 @@ exports.addEvent = function(body,id){
 }
 
 // user patch endpoint
-exports.userPatch = function(params){
+exports.userPatch = function(params,id){
     let value = []
     let query = "UPDATE user SET "
     // const sql = `UPDATE user SET email=${params.email},first_name=${first_name},last_name=${params.last_name},image_filename=${params.image_filename},password=${params.password},auth_token=${params.auth_token} WHERE id = ${params.id}`
@@ -191,10 +191,15 @@ exports.userPatch = function(params){
         value.push(params.lastName)
     }
     if(params.hasOwnProperty("password")){
-        query += "first_name = ?"
+        query += "password = ? "
         value.push(params.password)
     }
 
-    return ({"query":query,"value":value})
+    query += `WHERE id = ${id}`
+
+
+    console.log(query)
+    console.log(value)
+    return {"query":query,"value":value}
 
 }

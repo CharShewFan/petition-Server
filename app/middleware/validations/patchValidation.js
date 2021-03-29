@@ -1,6 +1,6 @@
 const joi = require('joi')
 
-const schema_3 = joi.object( {
+const schema = joi.object( {
     email:joi.string().email(),
     lastName:joi.string(),
     firstName:joi.string(),

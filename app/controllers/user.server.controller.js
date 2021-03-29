@@ -126,11 +126,12 @@ exports.updateUser = async function(req,res){
         
     }
     // patch to db
+    const sql = build.userPatch(req.body,id)
     const result = await User.updateUserInfo(sql)
     if(result === true){
-        res.send(200).send("ok")
+        res.status(200).send("ok")
     }else{
-        res.send(500).send("internal error")
+        res.status(500).send("internal error")
     }
 }
 
@@ -207,9 +208,6 @@ exports.logOut = async function(req,res){
                 res.status(401).send('not authorized')
             }
         }
-  
-
-
     }catch (e){
         res.status(500)
         res.send(e)
