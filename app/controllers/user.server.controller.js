@@ -42,16 +42,14 @@ exports.register = async function(req,res){
 
     let validation = Register.registerValid({firstName:fname,lastName:lname,password:passwords,email:emails})
     //check whether user is already exit: //有 getDetail
-     const repeatRg = existence.checkExist(emails).then(function(result){
-         return result; //result.exists = true
-        })
+     const repeatRg = await existence.checkExist(emails)
 
         
         // condition check : both validation and none existed in db
-    if(validation.error || (await repeatRg).exists === true) {
+    if(validation.error || repeatRg === true) {
         res.status(400)
         res.send("bad request")
-    }else{
+    }else{ // vali pass and not existed user
         bcrypt.genSalt(10,(err,salt)=>{
             bcrypt.hash(passwords.toString(),salt,(err,hash)=>{
                 if(err) throw err;

@@ -32,11 +32,11 @@ exports.returnEmail = async function(email){
         
         const connection = await db.getPool().getConnection()
         let [rows,fields] = await connection.query(sql,[email])
-        return rows.length < 1 ? null : rows
+        return rows
 
     }catch (e) {
         console.log(e)
-        return null
+        return []
     }
 
 }
