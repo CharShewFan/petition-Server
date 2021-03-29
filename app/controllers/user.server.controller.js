@@ -15,7 +15,8 @@ const patchToken = require('../middleware/token/patchToken')
 const imageHandler = require('../../storage/fileHandle')
 const hash = require("../middleware/hashPassword")
 const userFormater = require("../middleware/formater/user")
-const build = require('../middleware/buildSQL')
+const build = require('../middleware/buildSQL');
+const { getPool } = require('../../config/db');
 
 
 /*retrieve users info with email address*/
@@ -159,10 +160,6 @@ exports.updateUser = async function(req,res){
 }
 
 
-
-
-
-
 /*login function generate token set it to db and header*/
 exports.logIn = async function(req,res){
     // check validation of password / email
@@ -211,6 +208,7 @@ exports.logIn = async function(req,res){
         res.status(500)
     }
 }
+
 
 /*logout function delete token in db*/
 exports.logOut = async function(req,res){
@@ -294,6 +292,8 @@ exports.getDetails = async function(req,res){
         res.status(500)
     }
 }
+
+
 
 
 

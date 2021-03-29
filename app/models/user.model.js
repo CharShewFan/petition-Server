@@ -1,3 +1,4 @@
+const { func } = require('joi');
 const db = require('../../config/db');
 
 
@@ -46,7 +47,7 @@ exports.returnEmail = async function(email){
 }
 
 
-/*-------------------------------------------------*/
+/*-----------------add user with --------------------------------*/
 
 
 exports.addUser = async function(firstName,lastName,email,password){
@@ -179,5 +180,23 @@ exports.retriveIdByToken = async function(token){
         console.log(e)
     }
 }
+
+
+/*==================retrived token by id======================*/
+exports.tokenTaker = async function (id) {
+    try{
+        const sql = `SELECT auth_token FROM user WHERE id = ${id}`
+        const connection = await db.getPool().getConnection()
+        const [rows,fields] = await connection.query(sql)
+        connection.release()
+        return rows
+    }catch(e){
+        console.log(e)
+    }
+
+}
+
+
+
 
 

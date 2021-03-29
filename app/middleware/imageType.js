@@ -6,3 +6,16 @@ exports.imgType = function(data){
     return imageType(buffer) //return {ext: 'png', mime: 'image/png'}
 }
 
+
+exports.readMime = function(mime){
+    if(mime === "image/jpg" || mime === "image/jpeg"){
+        return ".jpeg"
+    }
+    if(mime === "image/gif"){
+        return ".gif"
+    }
+    if(mime === "image/png"){
+        return ".gif"
+    }
+
+}
