@@ -7,6 +7,7 @@ exports.listUsers = async function (email){
     const sql = "SELECT * from user WHERE email = ?"
     const connection = await db.getPool().getConnection();
     let [rows,feilds] = await connection.query(sql,[email]);
+    connection.release()
     return rows;
 }
 
@@ -34,6 +35,7 @@ exports.returnEmail = async function(email){
         
         const connection = await db.getPool().getConnection()
         let [rows,fields] = await connection.query(sql,[email])
+        connection.release()
         return rows
 
     }catch (e) {
@@ -61,6 +63,7 @@ try{
     const connection = await db.getPool().getConnection()
     await connection.query(sql,[values])
     const [rows,fields] = await connection.query(sql2,[email])
+    connection.release()
     return rows[0].id
 }catch (e) {
     console.log(e)
@@ -76,6 +79,7 @@ exports.deleteUser = async function(params){
     const sql = `DELETE from user where id = ${params.id}`
     const connection = await db.getPool().getConnection()
     const status = await connection.query(sql)
+    connection.release()
     return status
 }
 
@@ -90,6 +94,7 @@ exports.updateUserInfo = async function(params){
     const connection = await db.getPool().getConnection()
     const status = await connection.query(sql)
     const [rows,fields] = await listById(params.id)
+    connection.release()
     return [rows]
 }
 
@@ -104,6 +109,7 @@ exports.loginUser = async function(token,email) {
         const connection = await db.getPool().getConnection();
         const loginQuery = await connection.query(sql)
         const [rows, fields] = await connection.query(sql2)
+        connection.release()
         return rows
     }catch (e) {
         console.log(e)
@@ -118,6 +124,7 @@ exports.logOutUser = async function(token){
         const connection = await db.getPool().getConnection();
         const sql1 = `SELECT * FROM user WHERE auth_token = '${token}'`
         const [rows,fields] = await connection.query(sql1)
+        connection.release()
 
         let isExist = false
         rows.forEach(item => {
@@ -148,6 +155,7 @@ exports.retrivePassword = async function(req,res){
         const sql =  `SELECT password from user WHERE id = "${req.params.id}"`
         const connection = await db.getPool().getConnection()
         const [rows,fields] = connection.query(sql)
+        connection.release()
         return rows
     }catch(e){
         console.log(e)
@@ -160,6 +168,7 @@ exports.retriveIdByToken = async function(token){
         const sql =  `SELECT id from user WHERE auth_token = "${token}"`
         const connection = await db.getPool().getConnection()
         const [rows,fields] =await connection.query(sql)
+        connection.release()
         return rows
     }catch(e){
         console.log(e)

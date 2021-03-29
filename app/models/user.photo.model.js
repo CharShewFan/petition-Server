@@ -10,6 +10,8 @@ exports.uploadToServer = async function (file_name,id) { //check whether exist f
     try{
         const connection = await db.getPool().getConnection()
         const query = await connection.query(sql)
+
+        connection.release()
     }catch(e){
         console.log(e)
     }
@@ -26,6 +28,8 @@ exports.deleteFromServer = async function (req,res){
     try{
         const connection = await db.getPool().getConnection()
         const result = connection.query(sql)
+
+        connection.release()
     }catch(e){
         res.status(500)
     }
@@ -47,6 +51,8 @@ exports.retriveFromServer = async function (req,res){
         const [rows,fields] = await connection.query(sql)
         console.log("-----------------------")
         console.log(rows)
+
+        connection.release()
         return rows
         
     }catch(e){

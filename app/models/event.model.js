@@ -7,6 +7,7 @@ exports.dbListEvents = async function(){
     const sql = "SELECT * FROM event "
     const connection = await db.getPool().getConnection()
     let [rows,field] =  await connection.query(sql)
+    connection.release()
     //console.log([rows,field])
     return rows
 }
@@ -16,6 +17,7 @@ exports.case_11 = async function(){
     const sql = "SELECT * FROM event WHERE id = 11"
     const connection = await db.getPool().getConnection()
     let [rows,field] =  await connection.query(sql)
+    connection.release()
     //console.log([rows,field])
     return rows
 }
@@ -28,6 +30,7 @@ exports.search = async function(query){
 
         const connection = await db.getPool().getConnection()
         const [rows,fields] = await connection.query(sql.sql,sql.value)
+        connection.release()
         //console.log(rows)
         return rows
     }catch(e){
@@ -45,6 +48,8 @@ exports.addEvents  = async function(body,id){
     const connection = await db.getPool().getConnection()
     const result = await connection.query(sql.sql,[sql.value])
     const [rows,fields] = await connection.query(sql2)
+
+    connection.release()
     return rows
 }
 
@@ -66,6 +71,8 @@ try{
     const sql = `SELECT * from event WHERE id = ${id}`
     const connection = await db.getPool().getConnection()
     let [rows,field] =  await connection.query(sql)
+
+    connection.release()
     //console.log([rows,field])
     return rows
 }catch(e){
