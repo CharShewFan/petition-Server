@@ -17,6 +17,7 @@ exports.listUsersById = async function (id){
         const sql1 = `SELECT * FROM user WHERE id = '${id}'`
         const connection = await db.getPool().getConnection()
         const [rows,fileds] = await connection.query(sql1)
+            connection.release()
         return rows;
     }catch (e)
     {
