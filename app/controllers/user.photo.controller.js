@@ -141,23 +141,44 @@ exports.retriveImg = async function(req,res){
 
 /*==================delete image======================*/
 
-exports.deleteImg = function(req,res){
+exports.deleteImg = async function(req,res){
+    let id = req.params.id
     let token =req.get("X-Authorization")
+try{
     if(token === undefined || token === null){
         res.status(401).send("unAuthorized")
     }
 
-    try{
-        //要先判断 auth 的模块
-        
-        if(auth === true){
-            const execution = User.imgDelete(req,res)
-            res.status(200).send('user profile image delete')
-        }else{
-            res.status(401).send("user not authorized")
+    let isExist = false
+    let user = await User.listUsersById(id)
+
+    user.forEach(item=>{
+        if(item.id){
+            isExist = true
         }
-    }catch(e){
-        res.status(500).send("Interal Server Error")
+    })
+
+    if(isExist === false){
+        res.status(404).send("user not exist")
+    }
+
+    let dbToken = user[0].auth_token
+    if(token !== dbToken){
+        res.status(403).send("not correct user")
+    }
+
+  
+        // send query to db
+    const execution = await image.deleteFromServer(id)
+    if(execution === true){
+        res.status(200).send('user profile image delete')
+    }else{
+        res.status(500).send("sql fialed")
+    }
+
+}catch(e){
+    console.log(e)
+    res.status(500).send("Interal Server Error")
     }
 }
 

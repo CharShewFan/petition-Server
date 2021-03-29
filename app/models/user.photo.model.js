@@ -25,8 +25,8 @@ exports.uploadToServer = async function (file_name,id) { //check whether exist f
 
 
 
-exports.deleteFromServer = async function (req,res){
-    const sql = `UPDATE user SET image_filename = NULL WHERE id = ${req.params.id}`
+exports.deleteFromServer = async function (id){
+    const sql = `UPDATE user SET image_filename = NULL WHERE id = ${id}`
     try{
         const connection = await db.getPool().getConnection()
         const result = connection.query(sql)
