@@ -14,7 +14,7 @@ const patchToken = require('../middleware/token/patchToken')
 //const fs = require('../middleware/HandleImage/fileHandle')
 const imageHandler = require('../../storage/fileHandle')
 const hash = require("../middleware/hashPassword")
-
+const userFormater = require("../middleware/formater/user")
 
 
 /*retrieve users info with email address*/
@@ -265,26 +265,26 @@ exports.getDetails = async function(req,res){
                  dbToken = dbToken.trim()
                 if(token === dbToken){
                     res.status(200).send({
-                        "id": userInfo[0].id,
-                        "email":userInfo[0].email,
-                        "first_name": userInfo[0].first_name,
-                        "last_name":userInfo[0].last_name,
-                        "image_filename":userInfo[0].image_filename
+                      
+                        
+                        "firstName": userInfo[0].first_name,
+                        "lastName":userInfo[0].last_name,
+                        "email":userInfo[0].email
+                        
                     })
                 }else{
                     res.status(200).send({
-                        "id": userInfo[0].id,
-                        "first_name": userInfo[0].first_name,
-                        "last_name":userInfo[0].last_name,
-                        "image_filename":userInfo[0].image_filename
+                       
+                        "firstName": userInfo[0].first_name,
+                        "lastName":userInfo[0].last_name
+                       
                     })
                 }
             }else{
                 res.status(200).send({
-                    "id": userInfo[0].id,
                     "firstName": userInfo[0].first_name,
                     "lastName":userInfo[0].last_name,
-                    "image_filename":userInfo[0].image_filename
+                   
                 })
             }
 
