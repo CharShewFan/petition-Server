@@ -108,10 +108,30 @@ exports.updateUser = async function(req,res){
 
 
     if(userInfo[0].auth_token !== token){
-        res.status(401).send("userInfo[0].auth_token !== toke")
+        res.status(403).send("userInfo[0].auth_token !== toke")
     }
 
-    
+    if(userExist === false){
+        res.status(404).send("not found")
+    }
+    const pass = patchValidate.patchValid(req.body)
+    if(pass === false){
+        res.status(400).send("bad request")
+    }
+    if(newEmail){
+        const eamilCheck = await User.returnEmail(newEmail)
+        if(emailCheck[0].id !== undefined ){
+            res.status(400).send("email been taken")
+        }
+        
+    }
+    // patch to db
+    const result = await User.updateUserInfo(sql)
+    if(result === true){
+        res.send(200).send("ok")
+    }else{
+        res.send(500).send("internal error")
+    }
 }
 
 
