@@ -42,11 +42,11 @@ exports.register = async function(req,res){
 
     let validation = Register.registerValid({firstName:fname,lastName:lname,password:passwords,email:emails})
     //check whether user is already exit: //有 getDetail
-     const repeatRg = await existence.checkExist(emails)
+     const isExist = await existence.checkExist(emails)
 
         
         // condition check : both validation and none existed in db
-    if(validation.error || repeatRg === true) {
+    if(validation.error || isExist === true) {
         res.status(400)
         res.send("bad request")
     }else{ // vali pass and not existed user
@@ -243,48 +243,39 @@ exports.getDetails = async function(req,res){
 
         if(isExist === false){
             res.status(404).send("user not found")
-        }else{
-            // console.log(token)
-            // console.log(typeof(token))
-            // console.log(userInfo[0].auth_token.trim())
-            // console.log(typeof(userInfo[0].auth_token))
-
+        }else{ 
+            //user exist
             if(token === undefined || token === null || token === ""){
                 res.status(200).send({
-                    "id": userInfo[0].id,
-                    "first_name": userInfo[0].first_name,
-                    "last_name":userInfo[0].last_name,
-                    "image_filename":userInfo[0].image_filename
+                    "firstName": userInfo[0].first_name,
+                    "lastName":userInfo[0].last_name
                 })
-            }
-
-            let dbToken = userInfo[0].auth_token
-            if(dbToken !== null){
-                 dbToken = dbToken.trim()
-                if(token === dbToken){
-                    res.status(200).send({
-                      
-                        
-                        "firstName": userInfo[0].first_name,
-                        "lastName":userInfo[0].last_name,
-                        "email":userInfo[0].email
-                        
-                    })
+            }else{
+                //header token exist
+                let dbToken = userInfo[0].auth_token
+                if(dbToken !== null){
+                     dbToken = dbToken.trim()
+                    if(token === dbToken){
+                        res.status(200).send({
+                            "firstName": userInfo[0].first_name,
+                            "lastName":userInfo[0].last_name,
+                            "email":userInfo[0].email
+                        })
+                    }else{
+                        res.status(200).send({
+                            "firstName": userInfo[0].first_name,
+                            "lastName":userInfo[0].last_name
+                           
+                        })
+                    }
                 }else{
                     res.status(200).send({
-                       
                         "firstName": userInfo[0].first_name,
                         "lastName":userInfo[0].last_name
-                       
                     })
                 }
-            }else{
-                res.status(200).send({
-                    "firstName": userInfo[0].first_name,
-                    "lastName":userInfo[0].last_name,
-                   
-                })
             }
+
 
 
         }
