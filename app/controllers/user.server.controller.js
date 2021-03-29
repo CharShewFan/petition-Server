@@ -94,37 +94,49 @@ exports.updateUser = async function(req,res){
         }
     })
 
-    if(userInfo[0].auth_token && userInfo[0].auth_token !== null){
-        dbTokenExist = true
-    }
-    if(dbTokenExist === false){
-        res.status(401).send("un auth user")
-    }
-    console.log(dbTokenExist)
-
-    if(token == undefined || token == null){
-        res.send(401).send("un auth user")
-    }
-
-
-    if(userInfo[0].auth_token !== token){
-        res.status(403).send("userInfo[0].auth_token !== toke")
-    }
-
-    if(userExist === false){
-        res.status(404).send("not found")
-    }
-    const pass = patchValidate.patchValid(req.body)
-    if(pass === false){
-        res.status(400).send("bad request")
-    }
+    //repeat email , unvalied data 
     if(newEmail){
         const eamilCheck = await User.returnEmail(newEmail)
         if(emailCheck[0].id !== undefined ){
             res.status(400).send("email been taken")
-        }
-        
+        } 
     }
+
+
+    // first , check data validation
+    const pass = patchValidate.patchValid(req.body)
+    if(pass === false){
+        res.status(400).send("bad request")
+    }
+
+    //check user wether exist with id
+    if(userExist === false){
+        res.status(404).send("not found")
+    }
+
+    // the id user is auth but may not same with client token
+    if(userInfo[0].auth_token !== null){
+        dbTokenExist = true
+    }
+
+    if(dbTokenExist === false){
+        res.status(403).send("un auth user")
+    }
+    console.log(dbTokenExist)
+
+    //no token ,no auth
+    if(token == undefined || token == null){
+        res.send(401).send("un auth user")
+    }
+
+    // token !== db.token 403
+    if(userInfo[0].auth_token !== token){
+        res.status(403).send("userInfo[0].auth_token !== toke")
+    }
+
+
+
+
     // patch to db
     const sql = build.userPatch(req.body,id)
     const result = await User.updateUserInfo(sql)
