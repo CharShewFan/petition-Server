@@ -92,7 +92,7 @@ exports.updateUserInfo = async function(sql){
     try{
        
         const connection = await db.getPool().getConnection()
-        const status = await connection.query(sql.query,[sql.value])
+        const status = await connection.query(sql)
         //const [rows,fields] = await listById(params.id)
         connection.release()
         return true

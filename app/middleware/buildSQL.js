@@ -176,30 +176,32 @@ exports.addEvent = function(body,id){
 // user patch endpoint
 exports.userPatch = function(params,id){
     let value = []
+    let condition = []
     let query = "UPDATE user SET "
     // const sql = `UPDATE user SET email=${params.email},first_name=${first_name},last_name=${params.last_name},image_filename=${params.image_filename},password=${params.password},auth_token=${params.auth_token} WHERE id = ${params.id}`
     if(params.hasOwnProperty("email")){
-        query += "email = ?, "
+        condition.push(`email = '${params.email}' `)
         value.push(params.email)
     }
     if(params.hasOwnProperty("firstName")){
-        query += "first_name = ?, "
+        condition.push(`first_name = '${params.firstName}'`) 
         value.push(params.firstName)
     }
     if(params.hasOwnProperty("lastName")){
-        query += "last_name = ?, "
+        condition.push(`last_name = '${params.lastName}'`)
         value.push(params.lastName)
     }
     if(params.hasOwnProperty("password")){
-        query += "password = ? "
+        condition.push( `password = '${params.password}'`)
         value.push(params.password)
     }
 
-    query += `WHERE id = ${id}`
+    query += condition.join()
+    query += ` WHERE id = ${id}`
 
 
     console.log(query)
     console.log(value)
-    return {"query":query,"value":value}
+    return query
 
 }

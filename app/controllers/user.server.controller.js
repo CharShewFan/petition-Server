@@ -123,16 +123,18 @@ exports.updateUser = async function(req,res){
         if(userInfo[0].auth_token !== null){
             dbTokenExist = true
         }
-    
-        if(dbTokenExist === false){
-            res.status(401).send("un auth user")
-        }
-        console.log(dbTokenExist)
-    
+        
         //no token ,no auth
         if(token == undefined || token == null){
             res.status(401).send("un auth user")
         }
+
+        if(dbTokenExist === false){
+            res.status(403).send("un auth user")
+        }
+        console.log(dbTokenExist)
+    
+
     
         // token !== db.token 403
         if(userInfo[0].auth_token !== token){
