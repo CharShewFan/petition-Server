@@ -40,7 +40,7 @@ exports.returnEmail = async function(email){
 
     }catch (e) {
         console.log(e)
-        return []
+        return undefined
     }
 
 }
