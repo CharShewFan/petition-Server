@@ -236,7 +236,7 @@ exports.getDetails = async function(req,res){
         let userInfo = await User.listUsersById(id)
         let isExist = false
         userInfo.forEach(item=>{
-            if(item.id){
+            if(item.email){
                 isExist = true
             }
         })
@@ -245,7 +245,7 @@ exports.getDetails = async function(req,res){
             res.status(404).send("user not found")
         }else{ 
             //user exist
-            if(token === undefined || token === null || token === ""){
+            if(token === undefined || token === null){
                 res.status(200).send({
                     "firstName": userInfo[0].first_name,
                     "lastName":userInfo[0].last_name
@@ -253,22 +253,22 @@ exports.getDetails = async function(req,res){
             }else{
                 //header token exist
                 let dbToken = userInfo[0].auth_token
-                if(dbToken !== null){
-                     dbToken = dbToken.trim()
-                    if(token === dbToken){
+                if(dbToken !== null ){
+                    
+                    if(token === dbToken){ //auth user
                         res.status(200).send({
                             "firstName": userInfo[0].first_name,
                             "lastName":userInfo[0].last_name,
                             "email":userInfo[0].email
                         })
-                    }else{
+                    }else{ //not correct token
                         res.status(200).send({
                             "firstName": userInfo[0].first_name,
                             "lastName":userInfo[0].last_name
                            
                         })
                     }
-                }else{
+                }else{ // db token = null
                     res.status(200).send({
                         "firstName": userInfo[0].first_name,
                         "lastName":userInfo[0].last_name
