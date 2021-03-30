@@ -1,6 +1,7 @@
 const dbAtt = require("../models/attendance.model")
 const user = require("../models/user.model")
 const tools  = require("../middleware/getDate")
+const timeTool = require('../middleware/validations/parse')
 
 
 
@@ -67,7 +68,7 @@ try{
     }
 
     //有了 token 需要找到用户 id
-    let userInfo = await user.retriveIdByToken(token)
+    let userInfo = await user.retrieveIdByToken(token)
     console.log(userInfo)
     let userExist = false
     userInfo.forEach(item=>{
@@ -138,7 +139,7 @@ exports.rmAtt = async function(req,res){
 
 
     //find user by user token 
-    let userInfo = await user.retriveIdByToken(token)
+    let userInfo = await user.retrieveIdByToken(token)
     console.log(userInfo)
     let userExist = false
     userInfo.forEach(item=>{
@@ -147,14 +148,22 @@ exports.rmAtt = async function(req,res){
         }
     })
 
+    console.log(userExist)
     if(userExist === false){
         res.status(401).send("user not exist")
     }
 
-    // check have user join these event and retrive attendance_status_id,date_of_interest
+    // check have user join these event and retrieve attendance_status_id,date_of_interest
     let user_id = userInfo[0].id
     let joined = false
     let joinedSearch = await dbAtt.joinStatusFull(event_id,user_id)
+    console.log("123456789")
+    console.log(joinedSearch)
+    console.log("123456789")
+
+    if(joinedSearch === false){
+        res.status(500).send("internal error")
+    }
 
     joinedSearch.forEach(item=>{
         if(item.date_of_interest){
@@ -172,6 +181,7 @@ exports.rmAtt = async function(req,res){
     }
 
     let date = joinedSearch[0].date_of_interest
+
     let now = tools.now() // need a date generator
     console.log(now)
     console.log(date)

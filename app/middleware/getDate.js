@@ -16,6 +16,16 @@ exports.now = function(){
         strDate = "0" + strDate
     }
 
+    if(hour <= 9 && hour != "00"){
+        hour = "0" + hour
+    }
+
+    if(minute <= 9 && minute != "00"){
+        minute = "0" + minute
+    }
+    if(second <= 9 && second != "00"){
+        second = "0" + second
+    }
     let time = date.getFullYear()+sep+month+sep+strDate+" "+hour+":"+minute+":"+second
     console.log(time)
     return time

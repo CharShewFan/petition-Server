@@ -94,7 +94,7 @@ exports.joinStatus = async function(eventId,userId){
 /*=================== retrive attendance_status_id,date_of_interest with user_id and event_id=====================*/
 exports.joinStatusFull = async function(eventId,userId){
     try{
-        const sql = `SELECT attendance_status_id,date_of_interest from event_attendees WHERE user_id = ${userId} AND event_id = ${eventId}`
+        const sql = `SELECT * from event_attendees WHERE user_id = ${userId} AND event_id = ${eventId}`
         const connection = await db.getPool().getConnection()
         const [rows,fields] = await connection.query(sql)
         console.log(rows)
