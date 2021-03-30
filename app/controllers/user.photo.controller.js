@@ -103,7 +103,7 @@ exports.retrieveImg = async function(req,res){
            // console.log(data)
             let mime = handler.getMimeType(image_filename)
             console.log("==============================================")
-            console.log(data)
+            console.log(mime)
 
             if(data === null){
                 res.status(404).send()
@@ -129,6 +129,19 @@ try{
     if(token === undefined || token === null){
         res.status(401).send("unAuthorized")
     }
+
+    //check user exist
+    const users = await User.listUsersById(id)
+    let userExist = false
+    users.forEach(item=>{
+        if(item.id){
+            userExist = true
+        }
+    })
+    if(userExist === false){
+        res.status(404).send("user not found")
+    }
+
 
     const userInfo = await User.tokenTaker(id)
     let dbToken = userInfo[0].auth_token
