@@ -1,9 +1,7 @@
 const User = require('../models/user.model');
-// const validate = require('../middleware/user/validation')
 const bcrypt = require('bcryptjs')
 const passport = require('passport')
 const existence = require('../middleware/token/checkRg')
-//const joi  = require('joi') 
 const LoginValid = require('../middleware/validations/loginValidation')
 const Register = require('../middleware/validations/registerValid');
 const jwt = require('jsonwebtoken')
@@ -11,12 +9,10 @@ const verify = require('../middleware/token/verifyToken')
 const verifyUpdate = require('../middleware/token/verifyTokenUpdate')
 const patchValidate = require('../middleware/validations/patchValidation')
 const patchToken = require('../middleware/token/patchToken')
-//const fs = require('../middleware/HandleImage/fileHandle')
 const imageHandler = require('../../storage/fileHandle')
 const hash = require("../middleware/hashPassword")
 const userFormater = require("../middleware/formater/user")
 const build = require('../middleware/buildSQL');
-const { getPool } = require('../../config/db');
 
 
 /*retrieve users info with email address*/
@@ -292,6 +288,8 @@ exports.getDetails = async function(req,res){
         res.status(500)
     }
 }
+
+
 
 
 

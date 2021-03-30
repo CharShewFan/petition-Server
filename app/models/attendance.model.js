@@ -46,7 +46,44 @@ exports.getToken = async function(eventId){
     }
     }
 
-// SELECT `user_id`, `attendance_status.attendance_status`,`user.first_name`, `user.last_name` `date_of_interest` FROM `event_attendees` 
-// JOIN `user` ON `user_id` = `user.id` AND `event_attendees` JOIN `attendance_status` ON `attendance_status_id` = `attendance_status.id`
-// WHERE event_id = 1
 
+ 
+/*==================join attendee by user_id,event_id======================*/
+exports.joinEvent = async function (eventId,userId) {
+    let value = [
+        [eventId],
+        [userId]
+    ]
+    console.log(value)
+    try{
+
+        let sql = `INSERT INTO event_attendees (event_id, user_id) VALUES (?) `
+        const connection = await db.getPool().getConnection()
+        const result = await connection.query(sql,[value])
+        connection.release()
+        return true
+        
+        
+        //event exist ? 
+    }catch(e){
+        console.log(e)
+        return false
+
+    }
+}
+
+
+// check whether join event already
+exports.joinStatus = async function(eventId,userId){
+    try{
+        const sql = `SELECT event_id from event_attendees WHERE user_id = ${userId} AND event_id = ${eventId}`
+        const connection = await db.getPool().getConnection()
+        const [rows,fields] = await connection.query(sql)
+        console.log(rows)
+        connection.release()
+        return rows
+    }catch(e){
+        console.log(e)
+        return false
+    }
+}
