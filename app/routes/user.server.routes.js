@@ -23,7 +23,7 @@ module.exports = function (app){
 
     
     app.route(app.rootUrl + '/users/:id/image')
-        .get(userImage.retriveImg) 
+        .get(userImage.retrieveImg)
         .put(userImage.storeImg)
         .delete(userImage.deleteImg)
 
