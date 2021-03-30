@@ -31,10 +31,8 @@ exports.deleteFromServer = async function (id){
         const connection = await db.getPool().getConnection()
         const result = await connection.query(sql)
         connection.release()
-        return true
     }catch(e){
         console.log(e)
-        return false
     }
 }
 
