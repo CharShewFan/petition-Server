@@ -133,7 +133,7 @@ exports.rmAtt = async function(req,res){
     })
 
     if(eventExist === false){
-        res.status(404).send("event not found")
+        res.status(403).send("event not exist")
     }
 
 
@@ -148,7 +148,7 @@ exports.rmAtt = async function(req,res){
     })
 
     if(userExist === false){
-        res.status(403).send("forbidden not allow join event")
+        res.status(401).send("user not exist")
     }
 
     // check have user join these event and retrive attendance_status_id,date_of_interest
