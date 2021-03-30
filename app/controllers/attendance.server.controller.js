@@ -115,7 +115,7 @@ try{
 
 /*==================delete attendee by user_id,event_id======================*/
 exports.rmAtt = async function(req,res){
-    const token = req.get("Authorization")
+    const token = req.get("X-Authorization")
     const event_id = req.params.id
 
     // token check 
@@ -125,7 +125,7 @@ exports.rmAtt = async function(req,res){
 
     //check event exist ?
     let eventExist = false
-    const result = await dbAtt.findById(eventId)
+    const result = await dbAtt.findById(event_id)
     result.forEach(item=>{
         if(item.id){
             eventExist = true
@@ -173,6 +173,8 @@ exports.rmAtt = async function(req,res){
 
     let date = joinedSearch[0].date_of_interest
     let now = tools.now() // need a date generator
+    console.log(now)
+    console.log(date)
     if(date < now){
         res.status(403).send("a past event")
     }else{
