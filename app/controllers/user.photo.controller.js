@@ -111,17 +111,12 @@ exports.storeImg = async function(req,res){
 exports.retrieveImg = async function(req,res){
     const id = req.params.id
     try{
-        const result = await image.getFileName(id)
-        let isExist = false;
+        const image_filename = await image.getFileName(id)
+        if(image_filename === null){
+            res.status(404).send("not found")
+        }else{
 
-        result.forEach(item=>{
-            if(item.image_filename){
-                isExist = true
-            }
-        })
 
-        if(isExist === true){
-            let image_filename = result[0].image_filename
             let data = await handler.readFromStorage(image_filename)
             let mime = handler.getMimeType(image_filename)
 
@@ -130,12 +125,11 @@ exports.retrieveImg = async function(req,res){
             }else{
                 res.status(200).contentType(mime).send(data)
             }
-        }else{
-            res.status(404).send("image not found")
         }
-}catch(e){
-    console.log(e)
-    res.status(500).send("Internal Server Error 5")
+
+    }catch(e){
+        console.log(e)
+        res.status(500).send("Internal Server Error 5")
     }
 }
 
@@ -172,9 +166,3 @@ try{
     }
 }
 
-/*const execution = await image.deleteFromServer(id)
-if(execution === true){
-    res.status(200).send('image not found 2')
-}else{
-    res.status(500).send("sql failed")
-}*/

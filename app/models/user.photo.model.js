@@ -71,10 +71,12 @@ exports.getFileName = async function(id){
         const connection = await db.getPool().getConnection()
         const [rows,fields] = await connection.query(sql)
         connection.release()
-        return rows    
-    
+        if(rows.length){
+            return rows[0].image_filename
+        }
+
     }catch(e){
         console.log(e)
-        return false
     }
+    return null
 }
