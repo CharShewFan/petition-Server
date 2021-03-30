@@ -52,35 +52,17 @@ exports.storeImg = async function(req,res){
             res.status(400).send("image must be jpg/gif/png")
         }
 
-        //console.log("date.length")
-        //console.log(data.length)
-        //console.log(typeof(data))
-        //if(data.length === undefined || data.length === 0){
-        //    res.status(400).send("image cannot be empty")
-        //}
-
-        //check whether photo exist first
         console.log("11")
-        const result = await image.getFileName(id)
-        if(result === false){
-            res.status(500).send("internal error 1")
-        }
+        const result = await image.getFileName(id) // return file name or null(not pre exist)
 
         console.log("22")
 
-        let fileNameExist = false
-        result.forEach(item=>{
-            if(item.image_filename){
-                fileNameExist = true
-            }
-        })
-
         console.log("33")
-        if(fileNameExist === true){
-            const fileName =  handler.writeToStorage(data,ext)
+        if(result === null ){
+            const fileName = await handler.writeToStorage(data,ext)
             let results = await image.uploadToServer(fileName,id)
             if(results === true){
-                res.status(200).send("image upload ")
+                res.status(201).send("image upload ")
             }else{
                 res.status(500).send('internal error 2')
             }
@@ -89,7 +71,7 @@ exports.storeImg = async function(req,res){
             const fileName = await handler.writeToStorage(data,ext)
             let results = await image.uploadToServer(fileName,id)
             if(results === true){
-                res.status(201).send("image upload ")
+                res.status(200).send("image upload ")
             }else{
                 res.status(500).send('internal error 3')
             }
@@ -118,7 +100,10 @@ exports.retrieveImg = async function(req,res){
 
 
             let data = await handler.readFromStorage(image_filename)
+           // console.log(data)
             let mime = handler.getMimeType(image_filename)
+            console.log("==============================================")
+            console.log(data)
 
             if(data === null){
                 res.status(404).send()
@@ -145,7 +130,12 @@ try{
         res.status(401).send("unAuthorized")
     }
 
-    let dbToken = user[0].auth_token
+    const userInfo = await User.tokenTaker(id)
+    let dbToken = userInfo[0].auth_token
+
+    if(dbToken === undefined || dbToken === null){
+        res.status(403).send("forbidden")
+    }
     if(token !== dbToken){
         res.status(403).send("not correct user")
     }

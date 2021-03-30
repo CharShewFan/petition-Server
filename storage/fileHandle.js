@@ -1,6 +1,7 @@
 const filePath = (__dirname + '/images/')
-const fs = require('mz/fs')
+const fs = require('fs')
 const randomString = require("randomstring")
+const mz = require('mz/fs')
 
 
 
@@ -15,12 +16,16 @@ exports.getMimeType = function(fileName){
 // read image to binary and return back to controller directly sendFile to
 exports.readFromStorage = async function(fileName) {
     try{
-        if(await fs.exists(filePath + fileName)){
-            const image = await fs.readFile(filePath + fileName)
-            return image
-        }else{
-            return null
-        }
+
+            fs.readFile(filePath + fileName, (err,data)=>{
+                if(err){
+                    console.log(err)
+                    return null
+                }
+                console.log(data)
+                return data
+            })
+
     }catch(e){
         console.log(e.message)
         throw err
@@ -35,11 +40,16 @@ exports.writeToStorage = async function(data,fileExt){
         console.log("=========================================")
         console.log(fileName)
         console.log(filePath)
-        await fs.WriteStream(filePath + fileName, data)
+        fs.writeFile(filePath + fileName, data,(err => {
+            console.log(err)
+        })
+        )
         return fileName
     }catch(e){
         console.log(e)
-        fs.unlink(filePath+fileName).catch(err=>{console.log(err)})
+        fs.unlink(filePath+fileName,(err=>{
+            console.log(err)
+        }))
     }
 }
 
@@ -60,8 +70,8 @@ exports.readMime = function(mime){
 
 exports.deletePhoto = async function(filename){
     try {
-        if (await fs.exists(filePath + filename)) {
-            await fs.unlink(filePath + filename);
+        if (await mz.exists(filePath + filename)) {
+            await mz.unlink(filePath + filename);
         }
     } catch (err) {
         console.log(err);
