@@ -38,8 +38,6 @@ exports.search = async function(query){
     }
 }
 
-
-
 // add event need authentication
 exports.addEvents  = async function(body,id){
     //need a SQL builder
@@ -64,21 +62,31 @@ exports.deleteEvent = async function(auth_token,email,user_id){
 
 //search event by id
 exports.viewById = async function(id){
-    console.log("calllllllllllllllll")
-    console.log("calllllllllllllllll")
-    console.log("calllllllllllllllll")
+
 try{
     const sql = `SELECT * from event WHERE id = ${id}`
     const connection = await db.getPool().getConnection()
     let [rows,field] =  await connection.query(sql)
-
     connection.release()
-    //console.log([rows,field])
     return rows
+
 }catch(e){
     console.log(e)
     return []
 }
-
 }
 
+
+//post image to event
+exports.postImage = async function(fileName,eventId){
+    try{
+        const sql = `UPDATE event SET 'image_filename' = ${fileName} WHERE id = ${eventId}`
+        const connection = await db.getPool().getConnection()
+        const result = await connection.query(sql)
+        return true
+
+    }catch (err){
+        console.log(err)
+        return false
+    }
+}

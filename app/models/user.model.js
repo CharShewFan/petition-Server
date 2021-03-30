@@ -19,11 +19,12 @@ exports.listUsersById = async function (id){
         const sql1 = `SELECT * FROM user WHERE id = '${id}'`
         const connection = await db.getPool().getConnection()
         const [rows,fileds] = await connection.query(sql1)
-            connection.release()
+        connection.release()
         return rows;
     }catch (e)
     {
         console.log(e)
+        return false
     }
 }
 
@@ -168,8 +169,9 @@ exports.retrivePassword = async function(req,res){
     }
 }
 
-/*==================retrived userId by token======================*/
-exports.retriveIdByToken = async function(token){
+
+/*==================retreived userId by token======================*/
+exports.retrieveIdByToken = async function(token){
     try{
         const sql =  `SELECT id from user WHERE auth_token = "${token}"`
         const connection = await db.getPool().getConnection()
@@ -178,11 +180,12 @@ exports.retriveIdByToken = async function(token){
         return rows
     }catch(e){
         console.log(e)
+        return false
     }
 }
 
 
-/*==================retrived token by id======================*/
+/*==================retrieved token by id======================*/
 exports.tokenTaker = async function (id) {
     try{
         const sql = `SELECT auth_token FROM user WHERE id = ${id}`

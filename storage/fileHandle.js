@@ -5,8 +5,6 @@
 const filePath = (__dirname + '/images/')
 const fs = require('mz/fs')
 const randomString = require("randomstring")
-const fss = require('fs')
-const { type } = require('os')
 
 
 
@@ -18,9 +16,10 @@ exports.geType = function(fileName){
     //return {ext: 'png', mime: 'image/png'}
 }
 
-exports.readFromStorage = function(fileName) { // read image to binary and return back to controller 
-    //directly sendFile to 
-    const binaryData = fs.readFileSync(filePath + `${fileName}`)
+// read image to binary and return back to controller directly sendFile to
+exports.readFromStorage = async function(fileName) {
+
+    const binaryData = await fs.readFile(filePath + `${fileName}`)
     console.log(binaryData)
     return binaryData
 }
@@ -43,6 +42,19 @@ exports.writeToStorage = async function(data,fileExt){
 }
 
 
+
+exports.readMime = function(mime){
+    if(mime === "image/jpg" || mime === "image/jpeg"){
+        return ".jpeg"
+    }
+    if(mime === "image/gif"){
+        return ".gif"
+    }
+    if(mime === "image/png"){
+        return ".gif"
+    }
+
+}
 
 
 

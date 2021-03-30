@@ -29,7 +29,7 @@ exports.deleteFromServer = async function (id){
     const sql = `UPDATE user SET image_filename = NULL WHERE id = ${id}`
     try{
         const connection = await db.getPool().getConnection()
-        const result = connection.query(sql)
+        const result = await connection.query(sql)
         connection.release()
         return true
     }catch(e){
@@ -45,7 +45,7 @@ exports.deleteFromServer = async function (id){
 
 
 
-exports.retriveFromServer = async function (req,res){
+exports.retrieveFromServer = async function (req,res){
     const sql = `SELECT image_filename FROM user WHERE id = "${req.params.id}"`
     console.log(req.params.id)
 
@@ -60,11 +60,11 @@ exports.retriveFromServer = async function (req,res){
         
     }catch(e){
         console.log(e)
-        res.status(500).send("Interal Server Error")
+        res.status(500).send("Internal Server Error")
     }
 }
 
-/*==================retrived image_filename by id======================*/
+/*==================retrieved user_image_filename by id======================*/
 
 exports.getFileName = async function(id){
     try{

@@ -48,7 +48,7 @@ exports.storeImg = async function(req,res){
         }
         
 
-        if(ext === null || ext === undefined){
+        if( ext === undefined){
             res.status(400).send("image must be jpg/gif/png")
         }
 
@@ -59,7 +59,7 @@ exports.storeImg = async function(req,res){
         //    res.status(400).send("image cannot be empty")
         //}
 
-        //check wether photo exist first
+        //check whether photo exist first
         console.log("11")
         const result = await image.getFileName(id)
         if(result === false){
@@ -108,7 +108,7 @@ exports.storeImg = async function(req,res){
 
 /*==================get image======================*/
 
-exports.retriveImg = async function(req,res){
+exports.retrieveImg = async function(req,res){
     const id = req.params.id
     try{
         const result = await image.getFileName(id)
@@ -134,7 +134,7 @@ exports.retriveImg = async function(req,res){
         }
 }catch(e){
     console.log(e)
-    res.status(500).send("Interal Server Error 5")
+    res.status(500).send("Internal Server Error 5")
     }
 }
 
@@ -173,12 +173,12 @@ try{
     if(execution === true){
         res.status(200).send('user profile image delete')
     }else{
-        res.status(500).send("sql fialed")
+        res.status(500).send("sql failed")
     }
 
 }catch(e){
     console.log(e)
-    res.status(500).send("Interal Server Error")
+    res.status(500).send("Internal Server Error")
     }
 }
 

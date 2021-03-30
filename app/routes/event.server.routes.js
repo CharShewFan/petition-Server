@@ -15,5 +15,7 @@ module.exports = function (app){
         .post(category.addCategory) // auth user add a category
         .delete(category.rmCategory) //auth user remove a personal category
 
-
+    app.route(app.rootUrl + 'events/:id/image')
+        .get(events.getImage)
+        .post(events.postImage)
 }

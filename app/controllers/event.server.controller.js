@@ -2,11 +2,12 @@ const Events = require('../models/event.model');
 const Sort = require('../middleware/sortEventByDate')
 const Query = require('../middleware/validations/eventQueryValidator')
 const ValidCate = require("../models/category.model")
-const Validation = require("../middleware/validations/valid")
 const User = require("../models/user.model")
 const Token = require("../middleware/validations/valid")
 const Cate = require("../models/category.model")
 const tools = require('../middleware/getDate')
+const users = require('../models/user.model')
+const handler = require('../../storage/fileHandle')
 
 
 //list event
@@ -59,10 +60,6 @@ exports.listEvents = async function(req,res){
 
 
 }
-
-
-
-
 
 //add authentication 
 exports.addEvents = async function(req,res){
@@ -132,13 +129,6 @@ exports.addEvents = async function(req,res){
     }
 }
 
-
-
-
-
-
-
-
 exports.rmEvents = async function(req,res){
     try{
         const password = req.body.password;
@@ -155,7 +145,6 @@ exports.rmEvents = async function(req,res){
 exports.updateEvents = async function(req,res){
     return null;
 }
-
 
 exports.viewById = async function(req,res){
     let id = req.params.id
@@ -175,5 +164,130 @@ try{
     console.log(e)
     res.status(500).send(e)
 }
+}
+
+
+
+/*=================get events/:id/image=============================*/
+exports.getImage = async function(req,res){
+    const eventId = req.params.id
+    //check event exist
+
+
+    try{
+        // check event exist
+        let eventExist = false
+        let eventInfo = await Events.viewById(eventId)
+        if(eventInfo === []){
+            res.status(404).send("event not exist")
+        }
+
+        eventInfo.forEach(item=>{
+            if(item.id){
+                eventExist = true
+            }
+        })
+
+        if(eventExist === false){
+            res.status(404).send("event not exist")
+        }
+
+        //check whether image_file exist
+        let dbImageFileName = eventInfo[0].image_filename
+        if(dbImageFileName === undefined || dbImageFileName === "" || dbImageFileName === null){
+            res.status(404).send("event not exist")
+        }
+
+        // get image file name and send the data back to client
+        let binaryData = await handler.readFromStorage(dbImageFileName)
+        let type = handler.geType(dbImageFileName)
+        console.log("binary")
+        console.log(binaryData)
+        if(binaryData === undefined || binaryData === null ){
+            res.status(500).send("image data shit")
+        }else{
+            res.writeHead(200, {
+                'Content-Type': `${type}`
+            }).end(binaryData)
+        }
+
+
+
+    }catch(e){
+        console.log(e)
+        res.status(500).send("internal shit 1")
+    }
+}
+
+
+/*=================post events/:id/image=============================*/
+exports.postImage = async function(req,res){
+    const eventId = req.params.id
+    const token = req.get("X-Authorization")
+    let imageType = req.header("content-type")
+
+    try{
+        // check event exist
+        let eventExist = false
+        let eventInfo = await Events.viewById(eventId)
+        if(eventInfo === []){
+            res.status(404).send("event not exist")
+        }
+
+        eventInfo.forEach(item=>{
+            if(item.id){
+                eventExist = true
+            }
+        })
+
+        if(eventExist === false){
+            res.status(404).send("event not exist")
+        }
+
+        if(token === undefined || token === null){
+            res.status(401).send("no token provided")
+        }
+
+        //token => userId => organizerId should match then auth
+        let userExist = false
+        const userInfo = await users.retrieveIdByToken(token)
+        if(userInfo === false){
+            res.status(500).send("internal error 2")
+        }
+
+        userInfo.forEach(item=>{
+            if(item.id){
+                userExist = true
+            }
+        })
+
+        if(userExist === false){
+            res.status(401).send("provided token not match any user")
+        }
+
+        //match event_id with organizer_id with user_id
+        if(eventInfo[0].organizer_id !== userInfo[0].id){
+            res.status(403).send("organizer id not match user id")
+        }
+
+        //check data validation
+        if(imageType !== "image/jpg" && imageType !== "image/gif" && imageType !== "image/png"){
+            res.status(400).send("image type must either be jpg,gif,png")
+        }
+
+        //pass all test
+        let data = req.body
+        let fileExt = handler.readMime(imageType)
+        const fileName = handler.writeToStorage(data,fileExt)
+        const result = await Events.postImage(fileName,eventId)
+        if(result === true){
+            res.status(200).send("upload hero image success")
+        }else{
+            res.status(500).send("upload failed")
+        }
+    }catch(e){
+        console.log(e)
+        res.status(500).send("internal error 1")
+    }
 }
 
