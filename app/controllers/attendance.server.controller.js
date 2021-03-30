@@ -1,5 +1,6 @@
 const dbAtt = require("../models/attendance.model")
 const user = require("../models/user.model")
+const tools  = require("../middleware/getDate")
 
 
 
@@ -112,7 +113,75 @@ try{
 
 
 
+/*==================delete attendee by user_id,event_id======================*/
+exports.rmAtt = async function(req,res){
+    const token = req.get("Authorization")
+    const event_id = req.params.id
 
-exports.rmAtt = async function(){
-    return null
+    // token check 
+    if(token === undefined || token === null){
+        res.status(401).send("no token no authorized")
+    }
+
+    //check event exist ?
+    let eventExist = false
+    const result = await dbAtt.findById(eventId)
+    result.forEach(item=>{
+        if(item.id){
+            eventExist = true
+        }
+    })
+
+    if(eventExist === false){
+        res.status(404).send("event not found")
+    }
+
+
+    //find user by user token 
+    let userInfo = await user.retriveIdByToken(token)
+    console.log(userInfo)
+    let userExist = false
+    userInfo.forEach(item=>{
+        if(item.id){
+            userExist = true
+        }
+    })
+
+    if(userExist === false){
+        res.status(403).send("forbidden not allow join event")
+    }
+
+    // check have user join these event and retrive attendance_status_id,date_of_interest
+    let user_id = userInfo[0].id
+    let joined = false
+    let joinedSearch = await dbAtt.joinStatusFull(event_id,user_id)
+
+    joinedSearch.forEach(item=>{
+        if(item.date_of_interest){
+            joined = true
+        }
+    })
+
+    if(joined === false){
+        res.status(403).send("user havent join these event")
+    }
+
+    let att_status = joinedSearch[0].attendance_status_id
+    if(att_status === 3 || att_status === "3"){
+        res.status(403).send("user been rejected joining this event")
+    }
+
+    let date = joinedSearch[0].date_of_interest
+    let now = tools.now() // need a date generator
+    if(date < now){
+        res.status(403).send("a past event")
+    }else{
+            // pass all valid test
+            const results = await dbAtt.leaveEvent(event_id,user_id)
+            if(results === true){
+                res.status(200).send("delete succefully")
+            }else{
+                res.status(500).send("internal error 5")
+            }
+    }
 }

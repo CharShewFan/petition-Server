@@ -1,3 +1,4 @@
+const { func } = require('joi')
 const db = require('../../config/db')
 
 
@@ -73,7 +74,7 @@ exports.joinEvent = async function (eventId,userId) {
 }
 
 
-// check whether join event already
+/*==================check whether join event already======================*/
 exports.joinStatus = async function(eventId,userId){
     try{
         const sql = `SELECT event_id from event_attendees WHERE user_id = ${userId} AND event_id = ${eventId}`
@@ -87,3 +88,36 @@ exports.joinStatus = async function(eventId,userId){
         return false
     }
 }
+
+
+
+/*=================== retrive attendance_status_id,date_of_interest with user_id and event_id=====================*/
+exports.joinStatusFull = async function(eventId,userId){
+    try{
+        const sql = `SELECT attendance_status_id,date_of_interest from event_attendees WHERE user_id = ${userId} AND event_id = ${eventId}`
+        const connection = await db.getPool().getConnection()
+        const [rows,fields] = await connection.query(sql)
+        console.log(rows)
+        connection.release()
+        return rows
+    }catch(e){
+        console.log(e)
+        return false
+    }
+}
+
+
+/*===================leave event =====================*/
+exports.leaveEvent = async function(eventId,userId){
+try{
+    const sql = `DELETE FROM event_attendees WHERE event_id = ${eventId} AND user_id = ${userId}`
+    const connection = await db.getPool().getConnection()
+    await connection.query(sql)
+    connection.release()
+    return true
+}catch(e){
+    console.log(e)
+    return false
+}
+}
+
