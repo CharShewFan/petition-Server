@@ -123,9 +123,11 @@ exports.retrieveImg = async function(req,res){
         if(isExist === true){
             let image_filename = result[0].image_filename
             console.log(image_filename)
-            const data = handler.readFromStorage(image_filename)
+            const data = await handler.readFromStorage(image_filename)
             let type = handler.geType(image_filename)
             console.log(type)
+            console.log(data)
+            console.log("=======================write header and sent date ================================")
             res.writeHead(200, {
                 'Content-Type': `${type}`
             }).end(data) 
@@ -145,10 +147,12 @@ exports.deleteImg = async function(req,res){
     let id = req.params.id
     let token =req.get("X-Authorization")
 try{
+        // header token check
     if(token === undefined || token === null){
         res.status(401).send("unAuthorized")
     }
 
+    //user exist ? check by id
     let isExist = false
     let user = await User.listUsersById(id)
 
@@ -162,16 +166,15 @@ try{
         res.status(404).send("user not exist")
     }
 
+    //user exist , is him an auth user ? compare header token with db token
     let dbToken = user[0].auth_token
     if(token !== dbToken){
         res.status(403).send("not correct user")
     }
-
-  
         // send query to db
     const execution = await image.deleteFromServer(id)
     if(execution === true){
-        res.status(200).send('user profile image delete')
+        res.status(200).status(404).send('image not found 2')
     }else{
         res.status(500).send("sql failed")
     }
