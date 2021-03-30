@@ -226,10 +226,16 @@ exports.postImage = async function(req,res){
     const token = req.get("X-Authorization")
     let imageType = req.header("content-type")
 
+    if(token === undefined || token === null){
+        res.status(401).send("no token provided")
+    }
+
     try{
         // check event exist
         let eventExist = false
         let eventInfo = await Events.viewById(eventId)
+        console.log("eventInfo")
+        console.log(eventInfo)
         if(eventInfo === []){
             res.status(404).send("event not exist")
         }
@@ -244,9 +250,7 @@ exports.postImage = async function(req,res){
             res.status(404).send("event not exist")
         }
 
-        if(token === undefined || token === null){
-            res.status(401).send("no token provided")
-        }
+
 
         //token => userId => organizerId should match then auth
         let userExist = false
