@@ -19,7 +19,8 @@ function convertCate(list){
 
     //let newTable =  "(SELECT e.id as eventId,title,ec.categories,u.first_name as organizerFirstName, u.Last_name as organizerLastName,numAcceptedAttendees,capacity  FROM event as e join user as u on u.id = e.organizer_id join (SELECT event_id ,count(*) as numAcceptedAttendees from event_attendees WHERE attendance_status_id = 1 GROUP BY event_id) as attNum on e.id = attNum.event_id join (SELECT GROUP_CONCAT(category_id) as categories,event_id from event_category GROUP by event_id) as ec on ec.event_id = e.id order by e.id ASC )"
 
-    var sql = `select eventId,title,categories,firstName as organizerFirstName,lastName as organizerLastName,number as numAcceptedAttendees,capacity from (SELECT e.id as eventId,title,ec.categories,u.first_name as firstName, u.Last_name as lastName,number,capacity,e.organizer_id,e.date  FROM event as e 
+    var sql = `select eventId,title,categories,firstName as organizerFirstName,lastName as organizerLastName,number as numAcceptedAttendees,capacity from 
+    (SELECT e.id as eventId,title,ec.categories,u.first_name as firstName, u.Last_name as lastName,number,capacity,e.organizer_id,e.date,e.description FROM event as e 
     join user as u on u.id = e.organizer_id
     join (SELECT event_id ,count(*) as number from event_attendees WHERE attendance_status_id = 1 GROUP BY event_id) as attNum on e.id = attNum.event_id
     join (SELECT GROUP_CONCAT(category_id) as categories,event_id from event_category GROUP by event_id) as ec on ec.event_id = e.id
@@ -29,7 +30,8 @@ function convertCate(list){
     let value = []
     let conditions = []
     if(query.hasOwnProperty("q")){
-        conditions.push("title LIKE ?")
+        conditions.push("title LIKE ? or description like ?")
+        value.push(`%${query.q}%`)
         value.push(`%${query.q}%`)
     }
     if(query.hasOwnProperty("categoryIds") ){
