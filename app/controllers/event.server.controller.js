@@ -15,7 +15,8 @@ exports.listEvents = async function(req,res){
 
     let query = req.query
     console.log("query: " + query)
-
+    console.log(query.sortBy)
+    console.log(typeof(query.sortBy))
     let valid = false
 
 
@@ -45,12 +46,11 @@ exports.listEvents = async function(req,res){
                 
                 // event.search is condition (query) search
                 const result = await Events.search(query)
-                res.status(200).send(result)
+                const arrayed = tools.parseToArray(result)
+                res.status(200).send(arrayed)
             }
-
-
-
         }
+
     }else{
         // 这是没有 query 参数的返回情况
         const result = await Events.dbListEvents()

@@ -17,8 +17,15 @@ function convertCate(list){
      //const categoryIds = convertCate(query.categoryIds)
     // const organizerId = parseInt(query.organizerId)
 
-    var sql = `SELECT * FROM event E LEFT JOIN event_category EC ON event_id = E.id `
-    
+    //let newTable =  "(SELECT e.id as eventId,title,ec.categories,u.first_name as organizerFirstName, u.Last_name as organizerLastName,numAcceptedAttendees,capacity  FROM event as e join user as u on u.id = e.organizer_id join (SELECT event_id ,count(*) as numAcceptedAttendees from event_attendees WHERE attendance_status_id = 1 GROUP BY event_id) as attNum on e.id = attNum.event_id join (SELECT GROUP_CONCAT(category_id) as categories,event_id from event_category GROUP by event_id) as ec on ec.event_id = e.id order by e.id ASC )"
+
+    var sql = `select eventId,title,categories,firstName as organizerFirstName,lastName as organizerLastName,number as numAcceptedAttendees,capacity from (SELECT e.id as eventId,title,ec.categories,u.first_name as firstName, u.Last_name as lastName,number,capacity,e.organizer_id,e.date  FROM event as e 
+    join user as u on u.id = e.organizer_id
+    join (SELECT event_id ,count(*) as number from event_attendees WHERE attendance_status_id = 1 GROUP BY event_id) as attNum on e.id = attNum.event_id
+    join (SELECT GROUP_CONCAT(category_id) as categories,event_id from event_category GROUP by event_id) as ec on ec.event_id = e.id
+    order by e.id ASC) as newTable`
+    //const sql = "(SELECT e.id as eventId,title,ec.categories,u.first_name as organizerFirstName, u.Last_name as organizerLastName,numAcceptedAttendees,capacity  FROM event as e join user as u on u.id = e.organizer_id join (SELECT event_id ,count(*) as numAcceptedAttendees from event_attendees WHERE attendance_status_id = 1 GROUP BY event_id) as attNum on e.id = attNum.event_id join (SELECT GROUP_CONCAT(category_id) as categories,event_id from event_category GROUP by event_id) as ec on ec.event_id = e.id order by e.id ASC )"
+
     let value = []
     let conditions = []
     if(query.hasOwnProperty("q")){
@@ -27,7 +34,7 @@ function convertCate(list){
     }
     if(query.hasOwnProperty("categoryIds") ){
         let categoryIds = convertCate(query.categoryIds)
-        conditions.push('EC.category_id IN (?) ')
+        conditions.push('categories IN (?) ')
         value.push(categoryIds)
     }
     if(query.hasOwnProperty("organizerId") &&  isNaN(parseInt(query.organizerId)) === false){
@@ -38,41 +45,33 @@ function convertCate(list){
     }
 
   if(conditions.length)  {
-      sql += `WHERE ${(conditions ? conditions.join(' AND ') : 1)}`
+      sql += ` WHERE ${(conditions ? conditions.join(' AND ') : 1)}`
   }
 
-  switch(query.hasOwnProperty("sortBy")){
-      case "DATE_ASC":
-          sql += ' ORDER BY date ASC';
-          break;
-
-        case "ALPHABETICAL_ASC":
+  if(query.hasOwnProperty("sortBy")){
+        if(query.sortBy === "DATE_ASC") { 
+          sql += ' ORDER BY date ASC'
+        }
+        if(query.sortBy === "ALPHABETICAL_ASC"){
             sql += ' ORDER BY title ASC'
-            break;
-
-        case "ALPHABETICAL_DESC":
+        }
+        if(query.sortBy === "ALPHABETICAL_DESC"){
             sql += ' ORDER BY title DESC'
-            break;
-        
-        case "CAPACITY_ASC":
+        }
+        if(query.sortBy === "CAPACITY_ASC"){
             sql += 'ORDER BY capacity ASC '
-            break;
-        case "CAPACITY_DESC":
-            sql += ' ORDER BY capacity DESC '
-            break;
-
-        case "ATTENDEES_ASC":
-            sql += ' ORDER BY attendees ASC '
-            break;
-        
-        case "ATTENDEES_DESC":
-            sql += ' ORDER BY attendees DESC '
-            break;
-            
-        case "DATE_DESC":
-            default:
-                sql += ' ORDER BY date DESC ' 
-                break;
+        }
+        if(query.sortBy === "CAPACITY_DESC"){
+            sql += 'ORDER BY capacity DESC '
+        }
+        if(query.sortBy === "ATTENDEES_ASC"){
+            sql += ' ORDER BY numAcceptedAttendees ASC '
+        }
+        if(query.sortBy === "ATTENDEES_DESC"){
+            sql += ' ORDER BY numAcceptedAttendees DESC '
+        }
+  }else{
+    sql += ' ORDER BY date DESC '  
   }
 if(typeof(query.count) !== undefined &&  isNaN(parseInt(query.count)) === false){
     sql += 'LIMIT ? '

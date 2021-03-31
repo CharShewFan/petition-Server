@@ -32,7 +32,7 @@ exports.search = async function(query){
         const [rows,fields] = await connection.query(sql.sql,sql.value)
         connection.release()
         console.log("=================================")
-        console.log(rows)
+        //console.log(rows)
         console.log("=================================")
 
         return rows
