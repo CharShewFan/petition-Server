@@ -81,12 +81,13 @@ if(typeof(query.count) !== undefined &&  isNaN(parseInt(query.count)) === false)
 
 if(typeof(query.startIndex) !== undefined &&  isNaN(parseInt(query.startIndex)) === false){
     console.log(isNaN(query.startIndex))
-    sql += 'OFFSET ?'
+    
     let startIndex = parseInt(query.startIndex)
-    if(startIndex > 11){
-        startIndex = 10000000
+    if(startIndex < 11){
+        sql += 'OFFSET ?'
+        value.push(startIndex)
     }
-    value.push(startIndex)
+    
 }
 
 console.log(parseInt(query.startIndex))

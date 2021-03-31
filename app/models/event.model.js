@@ -14,7 +14,7 @@ exports.dbListEvents = async function(){
 
 exports.case_11 = async function(){
     //console.log("event model called")
-    const sql = "SELECT * FROM event WHERE id = 11"
+    const sql = "SELECT * FROM event WHERE id = 100000"
     const connection = await db.getPool().getConnection()
     let [rows,field] =  await connection.query(sql)
     connection.release()
@@ -31,7 +31,10 @@ exports.search = async function(query){
         const connection = await db.getPool().getConnection()
         const [rows,fields] = await connection.query(sql.sql,sql.value)
         connection.release()
-        //console.log(rows)
+        console.log("=================================")
+        console.log(rows)
+        console.log("=================================")
+
         return rows
     }catch(e){
         console.log(e)

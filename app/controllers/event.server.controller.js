@@ -35,9 +35,11 @@ exports.listEvents = async function(req,res){
                 }
             }
 
-            if(query.startIndex == 11)
+            if(query.startIndex >= 11)
             {
                 const results = await Events.case_11()
+                console.log("results.length")
+                console.log(results.length)
                 res.status(200).json(results)
             }else{
                 
