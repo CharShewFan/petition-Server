@@ -221,6 +221,7 @@ exports.getImage = async function(req,res){
         if(eventInfo[0].image_filename === undefined || eventInfo[0].image_filename === "" || eventInfo[0].image_filename === null){
             res.status(404).send("image not exist")
         }
+        let dbImageFileName = eventInfo[0].image_filename
 
         // get image file name and send the data back to client
         let binaryData = await handler.readFromStorage(dbImageFileName)
