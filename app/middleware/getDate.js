@@ -30,3 +30,18 @@ exports.now = function(){
     console.log(time)
     return time
 }
+
+
+exports.parseToArray = function (data) {
+   
+    data.forEach(event=>{
+        let cateStr = event.categories //=> "3,6,18,24"
+        let strList = cateStr.split(",")
+        for(let i = 0 ;i < strList.length;i++){
+            strList[i] = parseInt(strList[i])
+        }
+        event.categories = strList
+    })
+    return data
+    
+} //data should be an irat
