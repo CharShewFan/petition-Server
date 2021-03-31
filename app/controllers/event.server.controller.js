@@ -15,11 +15,6 @@ exports.listEvents = async function(req,res){
 
     let query = req.query
     console.log("query: " + query)
-    // console.log("???????? fuck ??????? 操你妈逼")
-    // console.log(query.categoryIds)
-    // console.log("???????? fuck ??????? 操你妈逼")
-    // console.log(typeof(query.categoryIds))
-    // //let categoryId = query.categoryIds
 
     let valid = false
 
@@ -58,7 +53,7 @@ exports.listEvents = async function(req,res){
         // 这是没有 query 参数的返回情况
         const result = await Events.dbListEvents()
         const arrayed = tools.parseToArray(result)
-        res.status(200).send(result)
+        res.status(200).send(arrayed)
     }
 
     
