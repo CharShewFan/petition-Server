@@ -136,6 +136,7 @@ exports.addEvents = async function(req,res){
     }
 }
 
+/*=================delete events by event id=============================*/
 exports.rmEvents = async function(req,res){
     try{
         const password = req.body.password;
@@ -149,10 +150,13 @@ exports.rmEvents = async function(req,res){
 
 }
 
+/*=================patch and update events by event id=============================*/
 exports.updateEvents = async function(req,res){
     return null;
 }
 
+
+/*=================get eventsby event id=============================*/
 exports.viewById = async function(req,res){
     let id = req.params.id
 try{
@@ -172,7 +176,6 @@ try{
     res.status(500).send(e)
 }
 }
-
 
 
 /*=================get events/:id/image=============================*/

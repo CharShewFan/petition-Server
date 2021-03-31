@@ -1,8 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const { allowCrossOriginRequestsMiddleware } = require('../app/middleware/cors.middleware');
-const passport = require('passport')
-const rawReader = require("../app/middleware/readRawDate")
+
 
 
 
@@ -10,6 +9,7 @@ module.exports = function () {
     // INITIALISE EXPRESS //
     const app = express();
     app.rootUrl = '/api/v1';
+
 
     // MIDDLEWARE
     //app.use(fileUpload()); // express module process fileUpload
@@ -22,12 +22,6 @@ module.exports = function () {
     app.use(bodyParser.raw({type:'image/jpeg',limit: '50mb' }))
 
 
-    
-    //what is express session for ?
-    //app.use(require('express-session')({ secret: 'keyboard cat', resave: true, saveUninitialized: true }));
-     app.use(passport.initialize()); // ?
-     //app.use(passport.session()); // ?
-
     // DEBUG (you can remove these)
     app.use((req, res, next) => {
         console.log(`##### ${req.method} ${req.path} #####`);
@@ -35,12 +29,11 @@ module.exports = function () {
     });
 
     app.get('/', function (req, res) {
-        res.send({ 'message': 'Hello World!' })
+        res.status(200).send({ 'message': 'Hello World!' })
     });
 
     app.get(app.rootUrl,(req,res)=>{
-        res.send("hello rootUrl")
-        res.status(200)
+        res.status(200).send("hello rootUrl")
     })
 
     // ROUTES
@@ -49,5 +42,6 @@ module.exports = function () {
    require('../app/routes/category.server.routes')(app);
    require('../app/routes/event.server.routes')(app);
    require('../app/routes/attendance.server.routes')(app);
-  return app;
+    
+   return app;
 };
