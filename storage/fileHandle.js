@@ -16,15 +16,18 @@ exports.getMimeType = function(fileName){
 // read image to binary and return back to controller directly sendFile to
 exports.readFromStorage = async function(fileName) {
     try{
-
-            fs.readFile(filePath + fileName, (err,data)=>{
-                if(err){
-                    console.log(err)
-                    return null
-                }
-                console.log(data)
-                return data
-            })
+        const data = await mz.readFile(filePath + `${fileName}`)
+        return data
+        //=>{
+            //     if(err){
+            //         console.log(err)
+            //         return null
+            //     }
+            //     console.log("data is from readFromStorage fileHandle.js")
+            //     console.log(data)
+            //     console.log("data is from readFromStorage fileHandle.js")
+            //     
+            // })
 
     }catch(e){
         console.log(e.message)
@@ -40,10 +43,7 @@ exports.writeToStorage = async function(data,fileExt){
         console.log("=========================================")
         console.log(fileName)
         console.log(filePath)
-        fs.writeFile(filePath + fileName, data,(err => {
-            console.log(err)
-        })
-        )
+        await mz.writeFile(filePath + fileName,data)
         return fileName
     }catch(e){
         console.log(e)

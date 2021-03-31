@@ -3,23 +3,31 @@ const builder = require('../middleware/buildSQL')
 
 
 exports.dbListEvents = async function(){
-    //console.log("event model called")
-    const sql = "SELECT e.id as eventId,title,ec.categories,u.first_name as organizerFirstName, u.Last_name as organizerLastName,numAcceptedAttendees,capacity  FROM event as e join user as u on u.id = e.organizer_id join (SELECT event_id ,count(*) as numAcceptedAttendees from event_attendees WHERE attendance_status_id = 1 GROUP BY event_id) as attNum on e.id = attNum.event_id join (SELECT GROUP_CONCAT(category_id) as categories,event_id from event_category GROUP by event_id) as ec on ec.event_id = e.id order by e.id ASC "
-    const connection = await db.getPool().getConnection()
-    let [rows,field] =  await connection.query(sql)
-    connection.release()
-    //console.log([rows,field])
-    return rows
+try{
+        //console.log("event model called")
+        const sql = "SELECT e.id as eventId,title,ec.categories,u.first_name as organizerFirstName, u.Last_name as organizerLastName,numAcceptedAttendees,capacity  FROM event as e join user as u on u.id = e.organizer_id join (SELECT event_id ,count(*) as numAcceptedAttendees from event_attendees WHERE attendance_status_id = 1 GROUP BY event_id) as attNum on e.id = attNum.event_id join (SELECT GROUP_CONCAT(category_id) as categories,event_id from event_category GROUP by event_id) as ec on ec.event_id = e.id order by e.id ASC "
+        const connection = await db.getPool().getConnection()
+        let [rows,field] =  await connection.query(sql)
+        connection.release()
+        //console.log([rows,field])
+        return rows
+}catch(e){
+    console.log(e)
+}
 }
 
 exports.case_11 = async function(){
-    //console.log("event model called")
-    const sql = "SELECT * FROM event WHERE id = 100000"
-    const connection = await db.getPool().getConnection()
-    let [rows,field] =  await connection.query(sql)
-    connection.release()
-    //console.log([rows,field])
-    return rows
+try{
+        //console.log("event model called")
+        const sql = "SELECT * FROM event WHERE id = 100000"
+        const connection = await db.getPool().getConnection()
+        let [rows,field] =  await connection.query(sql)
+        connection.release()
+        //console.log([rows,field])
+        return rows
+}catch(e){
+    console.log(e)
+}
 }
 
 exports.search = async function(query){
@@ -43,6 +51,7 @@ exports.search = async function(query){
 
 // add event need authentication
 exports.addEvents  = async function(body,id){
+try{
     //need a SQL builder
     const sql = builder.addEvent(body,id)
     const sql2 = 'SELECT MAX(id) AS event_id from event'
@@ -52,6 +61,10 @@ exports.addEvents  = async function(body,id){
 
     connection.release()
     return rows
+}catch(e){
+    console.log(e)
+}
+
 }
 
 

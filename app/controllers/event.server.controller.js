@@ -12,14 +12,10 @@ const handler = require('../../storage/fileHandle')
 
 //list event
 exports.listEvents = async function(req,res){
-
     let query = req.query
-    console.log("query: " + query)
-    console.log(query.sortBy)
-    console.log(typeof(query.sortBy))
     let valid = false
 
-
+try{
 
     if(query.q !== undefined || query.categoryIds !== undefined || query.organizerId !== undefined || query.sortBy !== undefined || query.count !== undefined || query.startIndex !== undefined) {
         valid = Query.check(query)
@@ -30,6 +26,8 @@ exports.listEvents = async function(req,res){
             // check category id
             console.log("query.categoryIds:" + typeof(query.categoryIds))
             if(query.categoryIds){
+
+                // if query.cateId > max cate id == > 400
                 const cateValid = await ValidCate.validCateId(req.query.categoryIds)
                 if(cateValid !== true){
                     res.status(400).send(" cateValid bad request")
@@ -57,9 +55,14 @@ exports.listEvents = async function(req,res){
         const arrayed = tools.parseToArray(result)
         res.status(200).send(arrayed)
     }
+}catch(e){
+    console.log(e)
+    res.status(500).send()
+}
+
 
     
-    // no query or query not valid
+  
 
 
 

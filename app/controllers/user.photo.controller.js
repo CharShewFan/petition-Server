@@ -13,6 +13,8 @@ exports.storeImg = async function(req,res){
         const id = req.params.id
         const user = await User.listUsersById(id)
         const data = req.body
+        console.log("request body is:")
+        console.log(data)
         const token = req.get("X-Authorization")
         const db = await User.tokenTaker(id)
         let mime = req.header('Content-Type')
@@ -71,7 +73,7 @@ exports.storeImg = async function(req,res){
             const fileName = await handler.writeToStorage(data,ext)
             let results = await image.uploadToServer(fileName,id)
             if(results === true){
-                res.status(200).send("image upload ")
+                res.status(200).send("image upload " + fileName)
             }else{
                 res.status(500).send('internal error 3')
             }
@@ -98,9 +100,11 @@ exports.retrieveImg = async function(req,res){
             res.status(404).send("not found")
         }else{
 
-
+            console.log("let data = await handler.readFromStorage(image_filename)")
             let data = await handler.readFromStorage(image_filename)
-           // console.log(data)
+            console.log(data)
+            console.log("let data = await handler.readFromStorage(image_filename)")
+
             let mime = handler.getMimeType(image_filename)
             console.log("==============================================")
             console.log(mime)
