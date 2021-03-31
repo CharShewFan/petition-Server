@@ -185,10 +185,11 @@ try{
 
 /*=================get events/:id/image=============================*/
 exports.getImage = async function(req,res){
+    console.log("call ?????????????")
+    
+    
     const eventId = req.params.id
     //check event exist
-
-
     try{
         // check event exist
         let eventExist = false
