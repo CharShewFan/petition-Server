@@ -16,7 +16,7 @@ exports.listEvents = async function(req,res){
     let valid = false
 
 try{
-    if(query.q == undefined && query.categoryIds == undefined && query.organizerId == undefined && query.sortBy == undefined && query.count == undefined && query.startIndex == undefined){
+    if(query.q === undefined && query.categoryIds === undefined && query.organizerId === undefined && query.sortBy === undefined && query.count === undefined && query.startIndex === undefined){
         const result = await Events.dbListEvents()
         const arrayed = tools.parseToArray(result)
         res.status(200).send(arrayed)
@@ -188,35 +188,43 @@ exports.getImage = async function(req,res){
     console.log("call ?????????????")
     
     
-    const eventId = req.params.id
+
     //check event exist
     try{
         // check event exist
+        const eventId = req.params.id
+        if(eventId === undefined){
+            res.status(404).send("not event id provided")
+        }
+
         let eventExist = false
         let eventInfo = await Events.viewById(eventId)
-        if(eventInfo === []){
+
+        if(eventInfo === [] || eventInfo === undefined || eventInfo[0] === undefined){
             res.status(404).send("event not exist")
         }
 
-        eventInfo.forEach(item=>{
-            if(item.id){
-                eventExist = true
-            }
-        })
+        if(eventInfo !== null){
+            eventInfo.forEach(item=>{
+                if(item.id){
+                    eventExist = true
+                }
+            })
+        }
+
 
         if(eventExist === false){
             res.status(404).send("event not exist")
         }
 
         //check whether image_file exist
-        let dbImageFileName = eventInfo[0].image_filename
-        if(dbImageFileName === undefined || dbImageFileName === "" || dbImageFileName === null){
-            res.status(404).send("event not exist")
+        if(eventInfo[0].image_filename === undefined || eventInfo[0].image_filename === "" || eventInfo[0].image_filename === null){
+            res.status(404).send("image not exist")
         }
 
         // get image file name and send the data back to client
         let binaryData = await handler.readFromStorage(dbImageFileName)
-        let type = handler.geType(dbImageFileName)
+        let type = handler.getMimeType(dbImageFileName)
         console.log("binary")
         console.log(binaryData)
         if(binaryData === undefined || binaryData === null ){
@@ -231,7 +239,7 @@ exports.getImage = async function(req,res){
 
     }catch(e){
         console.log(e)
-        res.status(500).send("internal shit 1")
+        //res.status(500).send("internal shit 1")
     }
 }
 
