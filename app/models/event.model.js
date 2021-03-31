@@ -104,3 +104,15 @@ exports.postImage = async function(fileName,eventId){
         return false
     }
 }
+
+exports.getEventFileName = async function(eventId){
+    try{
+        const sql = "SELECT * from event where id = ?"
+        const connection = await db.getPool().getConnection()
+        const [rows,fields] = await connection.query(sql,[eventId])
+        return rows
+
+    }catch (err){
+        throw err
+    }
+}

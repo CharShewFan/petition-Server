@@ -221,11 +221,13 @@ exports.getImage = async function(req,res){
         if(eventInfo[0].image_filename === undefined || eventInfo[0].image_filename === "" || eventInfo[0].image_filename === null){
             res.status(404).send("image not exist")
         }
-        let dbImageFileName = eventInfo[0].image_filename
+        let dbInfo = await Events.getEventFileName(eventId)
+        console.log("call 2222222222")
+        console.log(dbInfo[0].image_filename)
 
         // get image file name and send the data back to client
-        let binaryData = await handler.readFromStorage(dbImageFileName)
-        let type = handler.getMimeType(dbImageFileName)
+        let binaryData = await handler.readFromStorage(dbInfo[0].image_filename)
+        let type = handler.getMimeType(dbInfo[0].image_filename)
         console.log("binary")
         console.log(binaryData)
         if(binaryData === undefined || binaryData === null ){
@@ -310,7 +312,8 @@ exports.postImage = async function(req,res){
         //pass all test
         let data = req.body
         let fileExt = handler.readMime(imageType)
-        const fileName = handler.writeToStorage(data,fileExt)
+        const fileName = await handler.writeToStorage(data,fileExt)
+        console.log(fileName)
         const result = await Events.postImage(fileName,eventId)
         if(result === true){
             res.status(200).send("upload hero image success")
@@ -319,6 +322,7 @@ exports.postImage = async function(req,res){
         }
     }catch(e){
         console.log(e)
+        res.status(500).end()
     }
 }
 
