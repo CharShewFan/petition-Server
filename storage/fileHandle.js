@@ -8,9 +8,9 @@ const mz = require('mz/fs')
 exports.getMimeType = function(fileName){
 
     console.log(fileName)
-    let list = fileName.split(".")
+    let list = fileName.split(".") //[name, png/gif/jpeg]
     return "image/"+list[1]
-    //return {ext: 'png', mime: 'image/png'}
+    //return 'image/png'
 }
 
 // read image to binary and return back to controller directly sendFile to
@@ -18,16 +18,6 @@ exports.readFromStorage = async function(fileName) {
     try{
         const data = await mz.readFile(filePath + `${fileName}`)
         return data
-        //=>{
-            //     if(err){
-            //         console.log(err)
-            //         return null
-            //     }
-            //     console.log("data is from readFromStorage fileHandle.js")
-            //     console.log(data)
-            //     console.log("data is from readFromStorage fileHandle.js")
-            //     
-            // })
 
     }catch(e){
         console.log(e.message)
@@ -58,11 +48,12 @@ exports.readMime = function(mime){
     if(mime === "image/jpg" || mime === "image/jpeg"){
         return ".jpeg"
     }
+
     if(mime === "image/gif"){
         return ".gif"
     }
     if(mime === "image/png"){
-        return ".gif"
+        return ".png"
     }
 
 }

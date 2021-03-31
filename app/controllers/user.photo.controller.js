@@ -96,6 +96,9 @@ exports.retrieveImg = async function(req,res){
     const id = req.params.id
     try{
         const image_filename = await image.getFileName(id)
+       
+        console.log(image_filename)
+
         if(image_filename === null){
             res.status(404).send("not found")
         }else{
@@ -105,7 +108,7 @@ exports.retrieveImg = async function(req,res){
             console.log(data)
             console.log("let data = await handler.readFromStorage(image_filename)")
 
-            let mime = handler.getMimeType(image_filename)
+            let mime = handler.getMimeType(image_filename) //此处返回 mime 类型到 header 
             console.log("==============================================")
             console.log(mime)
 
