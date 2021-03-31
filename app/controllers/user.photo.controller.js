@@ -18,9 +18,9 @@ exports.storeImg = async function(req,res){
         const token = req.get("X-Authorization")
         const db = await User.tokenTaker(id)
         let mime = req.header('Content-Type')
-        
-        const ext = imageType.readMime(mime)
         console.log(mime)
+        const ext = imageType.readMime(mime)
+        console.log(ext)
         
         
 

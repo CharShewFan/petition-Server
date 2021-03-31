@@ -12,7 +12,7 @@ exports.readMime = function(mime){
         return ".gif"
     }
     if(mime === "image/png"){
-        return ".gif"
+        return ".png"
     }
 
 }
