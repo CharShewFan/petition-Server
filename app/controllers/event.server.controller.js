@@ -14,12 +14,18 @@ const handler = require('../../storage/fileHandle')
 exports.listEvents = async function(req,res){
 
     let query = req.query
+    console.log(query)
+    console.log("???????? fuck ??????? 操你妈逼")
     console.log(query.categoryIds)
+    console.log("???????? fuck ??????? 操你妈逼")
     console.log(typeof(query.categoryIds))
     //let categoryId = query.categoryIds
 
     let valid = false
-    if(query){
+
+
+
+    if(query.q !== undefined || query.categoryIds !== undefined || query.organizerId !== undefined || query.sortBy !== undefined || query.count !== undefined || query.startIndex !== undefined) {
         valid = Query.check(query)
         console.log("validation:" + valid)
         if(valid === false){
@@ -49,13 +55,14 @@ exports.listEvents = async function(req,res){
 
         }
     }else{
+        // 这是没有 query 参数的返回情况
         const result = await Events.dbListEvents()
         const sorted = Sort.byDate(result)
         res.status(200).send(sorted)
     }
 
     
-    // no query or query not valied
+    // no query or query not valid
 
 
 
@@ -226,8 +233,13 @@ exports.postImage = async function(req,res){
     const token = req.get("X-Authorization")
     let imageType = req.header("content-type")
 
+    // return 401 no token
     if(token === undefined || token === null){
         res.status(401).send("no token provided")
+    }
+
+    if(imageType !== "image/png" && imageType !== "image/jpg" && imageType !== "image/jpeg" && imageType !== "image/gif"){
+        res.status(400).send("must be valid image type")
     }
 
     try{
@@ -236,6 +248,7 @@ exports.postImage = async function(req,res){
         let eventInfo = await Events.viewById(eventId)
         console.log("eventInfo")
         console.log(eventInfo)
+
         if(eventInfo === []){
             res.status(404).send("event not exist")
         }
@@ -275,12 +288,14 @@ exports.postImage = async function(req,res){
         }
 
         //check data validation
-        if(imageType !== "image/jpg" && imageType !== "image/gif" && imageType !== "image/png"){
-            res.status(400).send("image type must either be jpg,gif,png")
-        }
 
         //pass all test
         let data = req.body
+        console.log(req.body)
+        console.log(req.body[0])
+        data.forEach(item=>{
+            console.log(item)
+        })
         let fileExt = handler.readMime(imageType)
         const fileName = handler.writeToStorage(data,fileExt)
         const result = await Events.postImage(fileName,eventId)
