@@ -93,9 +93,10 @@ try{
 //post image to event
 exports.postImage = async function(fileName,eventId){
     try{
-        const sql = `UPDATE event SET 'image_filename' = ${fileName} WHERE id = ${eventId}`
+        const sql = `UPDATE event SET image_filename = '${fileName}' WHERE id = ${eventId}`
         const connection = await db.getPool().getConnection()
-        const result = await connection.query(sql)
+        await connection.query(sql)
+        connection.release()
         return true
 
     }catch (err){

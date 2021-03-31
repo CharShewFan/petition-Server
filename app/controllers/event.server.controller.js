@@ -267,34 +267,34 @@ exports.postImage = async function(req,res){
         console.log("eventInfo")
         console.log(eventInfo)
 
-        if(eventInfo === []){
+        if(eventInfo === [] || eventInfo === undefined || eventInfo === null){
             res.status(404).send("event not exist")
+        }else{
+            eventInfo.forEach(item=>{
+                if(item.id){
+                    eventExist = true
+                }
+            })
         }
 
-        eventInfo.forEach(item=>{
-            if(item.id){
-                eventExist = true
-            }
-        })
 
         if(eventExist === false){
             res.status(404).send("event not exist")
         }
 
 
-
         //token => userId => organizerId should match then auth
         let userExist = false
         const userInfo = await users.retrieveIdByToken(token)
-        if(userInfo === false){
+        if(userInfo === false || userInfo === undefined || userInfo === null){
             res.status(500).send("internal error 2")
+        }else{
+            userInfo.forEach(item=>{
+                if(item.id){
+                    userExist = true
+                }
+            })
         }
-
-        userInfo.forEach(item=>{
-            if(item.id){
-                userExist = true
-            }
-        })
 
         if(userExist === false){
             res.status(401).send("provided token not match any user")
@@ -309,11 +309,6 @@ exports.postImage = async function(req,res){
 
         //pass all test
         let data = req.body
-        console.log(req.body)
-        console.log(req.body[0])
-        data.forEach(item=>{
-            console.log(item)
-        })
         let fileExt = handler.readMime(imageType)
         const fileName = handler.writeToStorage(data,fileExt)
         const result = await Events.postImage(fileName,eventId)
@@ -324,7 +319,6 @@ exports.postImage = async function(req,res){
         }
     }catch(e){
         console.log(e)
-        res.status(500).send("internal error 1")
     }
 }
 
