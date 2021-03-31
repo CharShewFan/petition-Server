@@ -28,25 +28,24 @@ exports.validCateId = async function(categoryIds){
         let StartIndex = categoryIds[0]
         let endIndex = categoryIds[1]
         //console.log(StartIndex)
-        const sql = "SELECT * FROM event_category WHERE category_id BETWEEN ? AND ? ORDER BY category_id ASC";
-        const connection = await db.getPool().getConnection();
-        let [rows,fields] = await connection.query(sql,[StartIndex,endIndex]) //connection 前面必须要有 await
-        connection.release()
-        //console.log(rows)
-        let isExist = false
         try{
-        rows.forEach(element => {
-                if(element.id){
-                        isExist = true  
+                if(StartIndex !== undefined && endIndex !== undefined){
+                        const sql = "SELECT * FROM event_category WHERE category_id BETWEEN ? AND ? ORDER BY category_id ASC";
+                        const connection = await db.getPool().getConnection();
+                        let [rows,fields] = await connection.query(sql,[StartIndex,endIndex]) //connection 前面必须要有 await
+                        connection.release()
+                                //console.log(rows)
+                        let isExist = false
+        
+                        rows.forEach(element => {
+                                if(element.id){
+                                        isExist = true  
+                                }
+                        })
                 }
-        
-        
-        })
-        //console.log("isexsit:" + isExist)
-        return isExist
         }catch(e){
-                if(e) throw e;
-        }
+                console.log(e)
+        }    
 }
 
 
@@ -58,9 +57,8 @@ exports.maxID = async function(){
                 const sql = "SELECT MAX(id) AS id from category"
                 const connection = await db.getPool().getConnection()
                 const [rows,field] = await connection.query(sql)
-
                 connection.release()
-                return rows
+                return rows[0].id
         }catch(e){
                 console.log(e)
         }

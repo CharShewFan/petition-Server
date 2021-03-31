@@ -9,40 +9,37 @@ try{
         const connection = await db.getPool().getConnection()
         let [rows,field] =  await connection.query(sql)
         connection.release()
-        //console.log([rows,field])
         return rows
 }catch(e){
     console.log(e)
 }
 }
 
+
+
 exports.case_11 = async function(){
 try{
-        //console.log("event model called")
         const sql = "SELECT * FROM event WHERE id = 100000"
         const connection = await db.getPool().getConnection()
         let [rows,field] =  await connection.query(sql)
         connection.release()
-        //console.log([rows,field])
         return rows
 }catch(e){
     console.log(e)
 }
 }
 
+
+
+
+
+
 exports.search = async function(query){
     try{
         const sql = builder.SQL(query)
-        console.log(sql.sql)
-        console.log(sql.value)
-
         const connection = await db.getPool().getConnection()
         const [rows,fields] = await connection.query(sql.sql,sql.value)
         connection.release()
-        console.log("=================================")
-        //console.log(rows)
-        console.log("=================================")
-
         return rows
     }catch(e){
         console.log(e)

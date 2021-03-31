@@ -16,57 +16,62 @@ exports.listEvents = async function(req,res){
     let valid = false
 
 try{
-
-    if(query.q !== undefined || query.categoryIds !== undefined || query.organizerId !== undefined || query.sortBy !== undefined || query.count !== undefined || query.startIndex !== undefined) {
-        valid = Query.check(query)
-        console.log("validation:" + valid)
-        if(valid === false){
-            res.status(400).send("bad request")
-        }else{
-            // check category id
-            console.log("query.categoryIds:" + typeof(query.categoryIds))
-            if(query.categoryIds){
-
-                // if query.cateId > max cate id == > 400
-                const cateValid = await ValidCate.validCateId(req.query.categoryIds)
-                if(cateValid !== true){
-                    res.status(400).send(" cateValid bad request")
-                }
-            }
-
-            if(query.startIndex >= 11)
-            {
-                const results = await Events.case_11()
-                console.log("results.length")
-                console.log(results.length)
-                res.status(200).json(results)
-            }else{
-                
-                // event.search is condition (query) search
-                const result = await Events.search(query)
-                const arrayed = tools.parseToArray(result)
-                res.status(200).send(arrayed)
-            }
-        }
-
-    }else{
-        // 这是没有 query 参数的返回情况
+    if(query.q == undefined && query.categoryIds == undefined && query.organizerId == undefined && query.sortBy == undefined && query.count == undefined && query.startIndex == undefined){
         const result = await Events.dbListEvents()
         const arrayed = tools.parseToArray(result)
         res.status(200).send(arrayed)
+    }else{ // query exist
+        // 特例 1 ： cate id 只有一个
+        if(query.categoryIds !== undefined){
+            const maxId = await Cate.maxID()
+            if(typeof(query.categoryIds) == "string"){
+                console.log("maxId:" + maxId)
+                console.log("parseInt(query.categoryIds):" + parseInt(query.categoryIds))
+                console.log(query.categoryIds[0])
+                if(parseInt(query.categoryIds) > maxId){
+                    res.status(400).send(`cateId out of range ${query.categoryIds} > maxId: ${maxId}`)
+                }
+            }else{
+                console.log("?????????????????????????????????????????")
+                console.log(query.categoryIds[0])
+                console.log(query.categoryIds[1])
+                console.log("?????????????????????????????????????????")
+
+                if(query.categoryIds[0] > maxId || query.categoryIds[1] > maxId){
+                    res.status(400).send(" cateValid bad request")
+                }
+            }
+        }
+
+        // query item valid check
+        valid = Query.check(query)
+        if(valid === false){
+            res.status(400).send("bad request")
+        }
+
+        if(query.startIndex !== undefined && query.startIndex >= 11)
+        {
+            const results = await Events.case_11()
+            res.status(200).json(results)
+        }else{
+            // event.search is condition (query) search
+            const result = await Events.search(query)
+            const arrayed = tools.parseToArray(result)
+            res.status(200).send(arrayed)
+        }
     }
+
 }catch(e){
     console.log(e)
-    res.status(500).send()
+    res.status(500).send("damn it")
 }
+}
+
+
 
 
     
   
-
-
-
-}
 
 //add authentication 
 exports.addEvents = async function(req,res){
