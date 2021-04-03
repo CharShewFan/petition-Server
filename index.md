@@ -1,37 +1,65 @@
-## Welcome to GitHub Pages
+# a petition website server base on node.js and express.js framework
 
 You can use the [editor on GitHub](https://github.com/CharShewFan/petition-Server/edit/gh-pages/index.md) to maintain and preview the content for your website in Markdown files.
 
 Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
 
-### Markdown
+## [1] Overview of this project
+1. this project is a RESTful petition website server based on node.js and express.js framework
+2. the database is mySQL in this case, you could config differnt database with modificaton on model component and .env file
+3. the endpoints it provides : /users/:id,  /users/:id/image,  /events, /events/:id,  /events/:id/image
+4. it provides database setup and sample script on /app/resource/ derectory
+5. the /user and /event/:id endpoint has authentication function 
 
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
 
-```markdown
-Syntax highlighted code block
+## Running locally
 
-# Header 1
-## Header 2
-### Header 3
+1. Use `npm install` to populate the `node_modules/` directory with up-to-date packages
+2. Create a file called `.env`, following the instructions in the section below
+3. Go to phpMyAdmin and create a database with the name that you set in the `.env` file
+2. Run `npm run start` or `npm run debug` to start the server
+3. The server will be accessible on `localhost:4941`
 
-- Bulleted
-- List
+### `.env` file
+Create a `.env` file in the root directory of this project including the following information (note that you will need to create the database first in phpMyAdmin):
 
-1. Numbered
-2. List
-
-**Bold** and _Italic_ and `Code` text
-
-[Link](url) and ![Image](src)
+```
+dbName_MYSQL_HOST=XXX
+dbName_MYSQL_USER={your usercode}
+dbName_MYSQL_PASSWORD={your password}
+dbName_MYSQL_DATABASE={a database starting with your usercode then an underscore}
 ```
 
-For more details see [GitHub Flavored Markdown](https://guides.github.com/features/mastering-markdown/).
+## Manual testing with Postman
 
-### Jekyll Themes
+There is a Postman collection, in `app/resources/postman`, with request(s) for each endpoint. You can use this to query your application.
 
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/CharShewFan/petition-Server/settings). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
+To import the collection:
+1. Click Import (top left)
+2. Click Choose Files
+3. Select `Petitions site.postman_collection.json`
 
-### Support or Contact
+To import the environments:
+4. Click the gear icon (⚙️)
+5. Click Import
+6. Click Choose Files
+6. Select the three files that end in `.postman_environment.json`
+7. Click Petitions: deployed application
+8. Change the current value so that it uses your `SENG365_PORT` instead of `4001`
+9. Click Update
 
-Having trouble with Pages? Check out our [documentation](https://docs.github.com/categories/github-pages-basics/) or [contact support](https://support.github.com/contact) and we’ll help you sort it out.
+To choose which application you send your requests to, select the corresponding environment from the dropdown in the top right (by default, it will be "No Environment"). This will set the `BASE_URL` variable.
+
+* "Petitions: deployed application" will use the version of your application that is deployed to the docker container.
+* "Petitions: localhost" will use the locally running application (on port 4941).
+* "Petitions: reference server" will use the reference server.
+
+To test the PUT photo endpoints, you will need to copy the images in `app/resources/postman/files` into your working directory. By default, this will be `~/Postman/files`, but you can check by clicking the spanner icon in the top right, clicking Settings, the scrolling down to Working Directory.
+
+### How it works: your user ID, token, etc.
+
+Some of the Postman requests, such as POST /users/login, have scripts included, in the Tests tab. These set global variables, such as your user ID and the auth token, which are then used in other requests. For example, `auth_token` is used in the `X-Authorization` header of PATCH /users/:id. The POST /users/logout request then has a script to delete the user ID and token.
+
+## Storing photos
+
+You should set up your application to store files in the `storage/photos` directory; this is where the photos used for the sample data are copied into when you run a `/resample` or `/reload` request. There will initially be a file called `.gitkeep` in there; this is just so that the directory gets included in the git repository
