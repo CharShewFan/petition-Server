@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+
+<html lang = en>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>the web console to demonstrate web server function</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="">
+        <style>
+            .container{
+                margin:0 auto;
+                width: 700px;
+                height: auto;
+            }
+            .user{
+                margin:0 auto;
+                width: auto;
+                height: auto;
+                border-bottom:  1px black dashed;
+            }
+
+            button{
+                background-color: rgb(203, 198, 198);
+            }
+
+            input{
+                border: 1px black solid;
+                border-radius: 2px;
+            }
+
+            .update{
+                padding-bottom: 50px;
+            }
+
+            .sortBtn :focus{
+                background-color: rgb(17, 55, 127);
+                color: white;
+                text-decoration: dashed;
+            }
+            .updateEvents{
+                padding-bottom: 50px;
+            }
+        </style>
+
+
+        <script>
+    var URL = "http://localhost:4941/api/v1/users/register";
+    function SignUp(){
+        let firstName = document.getElementById("first-name").value
+        let lastName = document.getElementById("last-name").value
+        let email = document.getElementById("emailSU").value
+        let password = document.getElementById("passwordSU").value
+        let confirm = document.getElementById("confirmSU").value
+        let XHR = new XMLHttpRequest();
+         
+
+        console.log("hello world")
+        console.log(email)
+        //window.alert("hello world")
+
+
+        let data = {
+            "firstName":firstName,
+            "lastName":lastName,
+            "email":email,
+            "password":password
+        }
+
+        console.log(data)
+        console.log(typeof(data))
+
+        if(password !== confirm){
+            alert("please type in same password")
+            password = null 
+        }else{
+
+
+           
+            XHR.open("POST" ,URL);
+            XHR.setRequestHeader("Content-Type", "application/json;charset=UTF-8")
+            XHR.send(JSON.stringify(data))
+        }
+        
+        XHR.responseType = "json"
+
+        XHR.onload = function(){
+            let res = XHR.response
+            console.log(res)
+            let element = document.getElementById("displayUser")
+            element.innerHTML = "Login successefully and user ID: " + JSON.stringify(res).userId
+        }
+
+    }
+
+    /* ======================================= */
+
+    function logIn(){
+            let XHR = new XMLHttpRequest();
+            let URL = "http://localhost:4941/api/v1/users/login";
+     
+            let email = document.getElementById("email2").value
+            let password = document.getElementById("password2").value
+            
+            let data = {
+                "email":email,
+                "password":password
+            }
+
+            console.log(data)
+            console.log(JSON.stringify(data))
+
+            XHR.open("POST",URL)
+            XHR.setRequestHeader("Content-Type", "application/json; charset=UTF-8")
+            XHR.send(JSON.stringify(data))
+            
+            XHR.onload = function(){
+                let res = XHR.response
+                console.log(res)
+                let element = document.getElementById("loginResp")
+                element.innerHTML = res
+            }
+ 
+
+        }
+
+        </script>
+    </head>
+    <body>
+        <div class="container">
+            <h1>/user</h1>
+            <div class="user">
+               
+                <h4>registration:</h4>
+                <form method="POST">
+                    <div><label for="first-name">first name:</label><input type="text" placeholder="first name" id="first-name"></div> 
+                    <div><label for="last-name">last name:</label><input type="text" placeholder="last name" id="last-name"></div> 
+                    <div><label for="email">email:</label><input type="email" name="email" id="emailSU"></div> 
+                    <div><label for="password">password:</label><input type="password" name="password" id="passwordSU"></div>
+                    <div><label for="confirm password">confirm:</label><input type="password" name="confirm" id="confirmSU"></div>
+                </form>
+                <button id="rgUser" type="button" onclick="SignUp()">sign up</button>
+            
+    
+            <div id="displayUser">
+                <!--return a user id-->
+            </div>
+    
+            <div id="login">
+    
+            
+    
+            
+            <div class="login">
+                <h1>login</h1>
+                <form>
+                    <div><label for="email2">email</label><input type="email" name="email" id="email2"></div>
+                    <div><label for="password2">password</label><input type="password" name="password2" id="password2"></div>
+                </form>
+                <button type="button" onclick="logIn()">login</button>
+
+            </div>
+
+            <h4 id="loginResp">
+
+            </h4>
+    
+            <div id="getUinfo">
+                <h4>click bottom and get user info</h4>
+                <label for="userId">type in user Id</label><input type="text" id="userId">
+                <button type="button" click="">get user information</button> 
+                <div id="userInfo"></div>
+            </div>
+
+            <div class="update">
+                <h4>update user infomation</h4>
+                <form>
+                    <div><label for="newEmail">email</label><input type="email" id="newEmail"></div>
+                    <div><label for="newFirstName">first name</label><input type="text" id="newFirstName"></div>
+                    <div><label for="newLastName">last name</label><input type="text" id="newLastName"></div>
+                    <div><label for="password3">password</label><input type="password" name="password3" id="password"></div>
+                </form>
+                <button id="updateUser">submit</button>
+            </div>
+            </div>
+
+        </div>
+
+
+        <div class="eventContainer">
+            <h1>/events</h1>
+            <h4>get all events</h4>
+            <div class="allEvent">
+                <button type="click">get all event</button>
+                <div id="eventDisplayer"></div>
+            </div>
+
+            <div class="filter">
+                <h4>search by filter</h4>
+                <form >
+                                   
+                <label for="queryStr">keyword:</label><input type="text" id="queryStr">
+                <label for="categoryId1">categoryId:</label><input type="text" name="" id="categoryId1">
+                <label for="categoryId2">categoryId:</label><input type="text" id="categoryId2">
+                <label for="sortBy">sortBy</label> 
+             
+                    <label for="sort_1">by date ascending</label><input id="sort_1" type="radio">
+                    <label for="sort_1">by date descending</label><input id="sort_1" type="radio">
+                    <label for="sort_1">by title alphabet ascending</label><input id="sort_1" type="radio">
+                    <label for="sort_1">by title alphabet descending</label><input id="sort_1" type="radio">
+                    <label for="startIndex">start from</label><input type="text" id="startIndex">
+                    <label for="num">display event number</label><input type="text" name="" id="num">      
+            
+                </form>
+
+            </div>
+
+            <div class="updateEvents">
+                <h4>update event</h4>
+                <p>endpoint: /events/:id</p>
+                <form >
+                <div><label for="title">title：</label><input type="text" id="title"></div>
+                <div><label for="description">description:</label><input type="textarea"></div>
+                <div><label for="categorIds">categorIds:</label><textarea type="text"></div>
+               </form>
+               <button>submit</button>
+            </div>
+
+            
+
+
+
+        </div>
+      
+
+
+
+
+
+
+
+
+
+    </body>
+</html>

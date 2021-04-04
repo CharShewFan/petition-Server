@@ -1,6 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const { allowCrossOriginRequestsMiddleware } = require('../app/middleware/cors.middleware');
+//const homePage = require("../index.html")
 
 
 
@@ -29,7 +30,7 @@ module.exports = function () {
     });
 
     app.get('/', function (req, res) {
-        res.status(200).send({ 'message': 'Hello World!' })
+        res.status(200).sendFile("index.html",{root:__dirname})
     });
 
     app.get(app.rootUrl,(req,res)=>{
