@@ -1,13 +1,18 @@
 const db = require('../../config/db')
 
 exports.listAll = async function(){
-        console.log("calllllllllllllllll")
-        const sql = "SELECT * FROM category"
-        const connection = await db.getPool().getConnection();
-        let [rows,fields] = await connection.query(sql) //connection 前面必须要有 await
+        try{
+                console.log("calllllllllllllllll")
+                const sql = "SELECT * FROM category"
+                const connection = await db.getPool().getConnection();
+                let [rows,fields] = await connection.query(sql) //connection 前面必须要有 await
+        
+                connection.release()
+                return rows
+        }catch(e){
+                return e
+        }
 
-        connection.release()
-        return rows
 }
 
 exports.findById = async function(id){

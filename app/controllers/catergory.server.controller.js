@@ -6,16 +6,13 @@ exports.listAll = async function(req,res){
     try{
         const list_db_object = await Category.listAll()
         let result = Tools.parseCategory(list_db_object);
-        // for(let index in result){
-        //     console.log(result[index].id);
-        //     console.log(result[index].name);
-        // }
         res.status(200)
         res.send(result)
 
     }catch(e){
-        res.status(500)
-            console.log(`error happened + ${e}`)
+        console.log(`error happened + ${e}`)
+        res.status(500).send(`error happened + ${e}`)
+           
     }
 }
 

@@ -10,7 +10,7 @@ module.exports = function (app){
         .get(events.viewById) // find events and sort by date
         .delete(events.rmEvents) //need auth
 
-    app.route(app.rootUrl + 'events/categories')
+    app.route(app.rootUrl + '/events/categories')
         .get(category.listAll) // not auth needed, list all category
         .post(category.addCategory) // auth user add a category
         .delete(category.rmCategory) //auth user remove a personal category
